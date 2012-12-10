@@ -77,7 +77,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         m = re.match('(.+)/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?$', user_input)
         regex = m.group(1) if m else user_input
         option = m.group(2) if m and m.group(2) else "l1"
-        f = m.group(3) if m and m.group(3) else "f1"
+        f = m.group(3) if m and m.group(3) else "f0"
         option = [pat if len(pat)>1 else pat+"1" for pat in re.findall('[rlc][0-9]*', option)]
         f = "f1" if f == "f" else f
         view = self.view
