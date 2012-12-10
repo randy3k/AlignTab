@@ -2,11 +2,11 @@ Align Tabular
 ==============
 This plug-in is an attempt to reproduce vim tabular functionality in sublimetext
 
-Introduction
+How it differs from other alignment plugins?
 ------------
-- align selection with regular expression
-- smart auto selection detection if no lines are selected
-- multiple selection support
+- Flexibility: Align with regular expression
+- Efficiency: Smart Detection if no lines are selected
+- Multiple cursors support
 
 Usage
 ------------
@@ -30,46 +30,46 @@ apple& orange & grapes
 ```
 
 
-- `&` gives
+- `&` or `&/l` or `&/l1` gives 
 
 ```
 apple & orange       & grapes
 red   & orange color & purple color
 ```
 
-- `&/c` gives
+- `&/c` gives (center aligned)
 
 ```
 apple &    orange    &    grapes
  red  & orange color & purple color
 ```
-- `&/c0` gives
+- `&/c0` gives (no space after columns)
 
 ```
 apple&   orange   &   grapes
  red &orange color&purple color
 ```
-- `&/c0l1` or `&/c0l` gives
+- `&/c0l1` or `&/c0l` gives (no space after odd columns)
 
 ```
 apple&    orange   &    grapes
  red & orange color& purple color
 ```
-- `&/l0l2c0l2r0l2` gives
+- `&/l0l2c0l2r0l2` gives (each column has its own alignment)
 
 ```
 apple&     orange   &        grapes
 red  &  orange color&  purple color
 ```
 
-###Another toy (only the first delimiter is detected):
+###Another toy
 
 ```
 apple = banana==1
 banana = car==0
 car = dog
 ```
-- `=/f` or `=/lf` or `=/l1f` or `=/lf1` or `=/l1f1` aligns  to
+- `=/f` or `=/lf` or `=/l1f` or `=/lf1` or `=/l1f1` gives (only the first delimiter is used)
 
 ```
 apple  = banana==1
@@ -77,9 +77,17 @@ banana = car==0
 car    = dog
 ```
 
+- `(?<==)\s/l0l1` gives (aligning space)
+
+```
+apple =  banana==1
+banana = car==0   
+car =    dog           
+```
+
 Keymaps
 ------------
-If you use a same regex to align frequently, you can put something similar below in to your user keyblind file.
+If you use a particular regex to align frequently, you can put something similar below in your user keyblind file.
 
 ```
   // latex align key blind
