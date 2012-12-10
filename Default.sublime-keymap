@@ -1,0 +1,27 @@
+[
+
+	{
+		"keys": ["up"], "command": "cycle_align_tab_history",
+		"args": {
+			"backwards": true
+		},
+		"context":
+		[
+			{ "key": "selector", "operator": "equal", "operand": "text.aligntab" }
+		]
+	},
+
+	{
+		"keys": ["down"], "command": "cycle_align_tab_history",
+		"context":
+		[
+			{ "key": "selector", "operator": "equal", "operand": "text.aligntab" }
+		]
+
+	},
+
+	{
+		"keys": ["super+shift+a"], "command": "align_tab"
+
+	}
+]

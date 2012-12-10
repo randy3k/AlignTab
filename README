@@ -1,0 +1,19 @@
+This plug-in is an attempt to reproduce vim tabular functionality in sublimetext
+
+Features:
+- align and unalign selection with regular expression
+- adjust selection if it doesn't capture the whole lines
+- don't align lines without delimiter inside if any are in selection
+- use special format for more precise alignment
+- multiple selection support
+
+Usage:
+1. Select text you want to align
+2. Run `tabular` command throw command pallete
+3. Input delimiter/[dilimiters_to_use]/[format]
+    where:
+        1. delimiter: python style regular expression
+        2. dilimiters_to_use: optional, list, range or number of which delimiters we should use when aligning
+        3. format: optional, columns's alignment, one of l,c,r. Default is l.
+
+    
