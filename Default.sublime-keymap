@@ -18,10 +18,7 @@
 			{ "key": "selector", "operator": "equal", "operand": "text.aligntab" }
 		]
 
-	},
-
-	{
-		"keys": ["super+shift+a"], "command": "align_tab"
-
 	}
+
+
 ]

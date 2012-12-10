@@ -12,7 +12,7 @@ def colwidth(lines_content):
             if width[i]<len(x): width[i] = len(x)
     return width
 
-def align(lines_content, option):
+def fill_spaces(lines_content, option):
     width = colwidth(lines_content)
     # can make more efficient by pre-computing variable to
     for k in range(len(lines_content)):
@@ -33,6 +33,17 @@ def align(lines_content, option):
 
 class AlignTabCommand(sublime_plugin.TextCommand):
 
+    def run(self, _, user_input=None):
+        if not user_input:
+            v = self.view.window().show_input_panel('Align with regex:', '',
+                    self.align_tab, None, None)
+            # print os.getcwd()
+            v.set_syntax_file('Packages/AlignTab/AlignTab.tmLanguage')
+            v.settings().set('gutter', False)
+            v.settings().set('rulers', [])
+        else:
+            self.align_tab(user_input)
+
     def expand_sel(self, regex):
         view = self.view
         lastrow = view.rowcol(view.size())[0]
@@ -45,12 +56,12 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             beginrow = endrow = row
             if not re.search(regex, view.substr(view.line(saved_pt))): return
             rows.append(row)
-            while endrow+1<=lastrow or not (endrow+1 in rows):
+            while endrow+1<=lastrow and not (endrow+1 in rows):
                 if re.search(regex, view.substr(view.line(view.text_point(endrow+1,0)))):
                     endrow = endrow+1
                     rows.append(endrow)
                 else: break
-            while beginrow-1>=0 or not (beginrow-1 in rows):
+            while beginrow-1>=0 and not (beginrow-1 in rows):
                 if re.search(regex, view.substr(view.line(view.text_point(beginrow-1,0)))):
                     beginrow = beginrow-1
                     rows.append(beginrow)
@@ -58,15 +69,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         for row in rows:
             view.sel().add(view.line(view.text_point(row,0)))
 
-    def run(self, _):
-        v = self.view.window().show_input_panel('Align with regex:', '',
-                self.on_done, None, None)
-        # print os.getcwd()
-        v.set_syntax_file('Packages/AlignTab/AlignTab.tmLanguage')
-        v.settings().set('gutter', False)
-        v.settings().set('rulers', [])
-
-    def on_done(self, user_input):
+    def align_tab(self, user_input):
         # insert history and reset index
         if not HIST or user_input!= HIST[-1]: HIST.append(user_input)
         CycleAlignTabHistory.INDEX = None
@@ -89,7 +92,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     lines_content.append(content)
         if not lines_content: return
 
-        lines_content = align(lines_content, option)
+        lines_content = fill_spaces(lines_content, option)
         spacebefore = re.match("^(\s*)", view.substr(view.line(lines[0].begin()))).group(1)
         view.sel().clear()
         edit = view.begin_edit()
