@@ -74,11 +74,14 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         if not HIST or user_input!= HIST[-1]: HIST.append(user_input)
         CycleAlignTabHistory.INDEX = None
 
-        m = re.match('(.+)/((?:[rlc][0-9]*)+)$', user_input)
-        [regex, option] = m.groups() if m else [user_input, "l1"]
+        m = re.match('(.+)/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?$', user_input)
+        regex = m.group(1) if m else user_input
+        option = m.group(2) if m and m.group(2) else "l1"
+        f = m.group(3) if m and m.group(3) else "f1"
         option = [pat if len(pat)>1 else pat+"1" for pat in re.findall('[rlc][0-9]*', option)]
+        f = "f1" if f == "f" else f
         view = self.view
-
+        print regex,option,f
         self.expand_sel(regex)
         view.run_command("split_selection_into_lines")
         lines = []
@@ -86,7 +89,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         for sel in view.sel():
             for line in view.lines(sel):
                 if line in lines: continue
-                content = [s.strip() for s in re.split("("+regex+")",view.substr(line)) ]
+                content = [s.strip() for s in re.split("("+regex+")",view.substr(line),int(f[1:])) ]
                 if len(content)>1:
                     lines.append(line)
                     lines_content.append(content)
