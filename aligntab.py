@@ -49,12 +49,12 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         lastrow = view.rowcol(view.size())[0]
         rows = []
         for sel in view.sel():
-            if sel.begin()!=sel.end(): return
+            if sel.begin()!=sel.end(): continue
             saved_pt =sel.begin()
             row = view.rowcol(saved_pt)[0]
             if row in rows: continue
+            if not re.search(regex, view.substr(view.line(saved_pt))): continue
             beginrow = endrow = row
-            if not re.search(regex, view.substr(view.line(saved_pt))): return
             rows.append(row)
             while endrow+1<=lastrow and not (endrow+1 in rows):
                 if re.search(regex, view.substr(view.line(view.text_point(endrow+1,0)))):
@@ -66,6 +66,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     beginrow = beginrow-1
                     rows.append(beginrow)
                 else: break
+        if not rows: return
         for row in rows:
             view.sel().add(view.line(view.text_point(row,0)))
 
