@@ -1,11 +1,11 @@
 Align Tabular
 ==============
-This plug-in is an attempt to reproduce vim tabular functionality in sublimetext
+This plugin is a Sublime Text 2 version of the excellent VIM plugin - tabular.
 
-How it differs from other alignment plugins?
+How does it differ from other alignment plugins?
 ------------
-- Flexibility: Align with regular expression
-- Efficiency: Smart Detection if no lines are selected
+- Flexibility: Align with user defined regular expression
+- Efficiency: Smart line detection for alignment if no lines are selected
 - Multiple cursors support
 
 Usage
@@ -17,7 +17,7 @@ Usage
  - left/right/center alignment
  - spaces after the columns
  - max number of splits
-- Default option is `l1`. <br>
+- Default option is `l1f0`. <br>
 It means all columns are left-aligned. A space is added for each column. All matched delimiters are used.
 - The option for alignment cycles through the columns. Note that delimiter is also a column.
 
