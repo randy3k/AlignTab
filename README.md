@@ -62,6 +62,13 @@ apple&     orange   &        grapes
 red  &  orange color&  purple color
 ```
 
+- `&/f` or `&/f1` gives (align only the first `&`)
+
+```
+apple & orange & grapes            
+red   & orange color & purple color
+```
+
 ###Another toy
 
 ```
@@ -69,7 +76,7 @@ apple = banana==1
 banana = car==0
 car = dog
 ```
-- `=/f` or `=/lf` or `=/l1f` or `=/lf1` or `=/l1f1` gives (only the first delimiter is used)
+- `=/f` or `=/lf` or `=/l1f` or `=/lf1` or `=/l1f1` gives (align only the first `=`)
 
 ```
 apple  = banana==1
