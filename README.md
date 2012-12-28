@@ -30,7 +30,7 @@ apple& orange & grapes
 ```
 
 
-- `&` or `&/l` or `&/l1` gives 
+- `&` or `&/l` or `&/l1` gives
 
 ```
 apple & orange       & grapes
@@ -65,7 +65,7 @@ red  &  orange color&  purple color
 - `&/f` or `&/f1` gives (align only the first `&`)
 
 ```
-apple & orange & grapes            
+apple & orange & grapes
 red   & orange color & purple color
 ```
 
@@ -88,16 +88,32 @@ car    = dog
 
 ```
 apple =  banana==1
-banana = car==0   
-car =    dog           
+banana = car==0
+car =    dog
 ```
+
+Saved patterns
+------------
+To make it easier to remember complex patterns, you can save named patterns in
+a dictionary in the settings file. Use the name as key and the alignment
+expression as value. These patterns are included in the default file:
+
+```
+  "named_patterns": {
+    "first_comma": "(?<=,)\\s/l0l1f1",
+    "first_colon": "(?<=:)\\s/l0l1f1"
+  }
+```
+
+You then just use the name instead of the pattern in the input field.
 
 Keymaps
 ------------
-If you use a particular regex to align frequently, you can put something similar below in your user keyblind file.
+If you use a particular regex to align frequently, you can put something like
+this in your user key bindings file.
 
 ```
-  // latex align key blind
+  // latex align key binding
   {
     "keys": ["super+shift+a"], "command": "align_tab",
     "args" : {"user_input" : "&|\\\\\\\\"},
