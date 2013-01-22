@@ -1,6 +1,4 @@
 {
-    "auto_match_enabled": false,
-
     "named_patterns": {
         "first_comma": "(?<=,)\\s/l0l1f1",
         "first_colon": "(?<=:)\\s/l0l1f1"

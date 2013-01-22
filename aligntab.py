@@ -136,5 +136,5 @@ class HistoryIndexRestorer(sublime_plugin.EventListener):
         # due to views loading asynchronously, do not restore history index
         # .on_activated(), but here instead. otherwise, the .score_selector()
         # call won't yield the desired results.
-        if view.score_selector(0, 'text.autotab') > 0:
+        if view.score_selector(0, 'text.aligntab') > 0:
             CycleAlignTabHistory.INDEX = None
