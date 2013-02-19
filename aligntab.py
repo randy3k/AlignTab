@@ -18,18 +18,25 @@ def fill_spaces(lines_content, option):
     for k in range(len(lines_content)):
         for j in range(len(lines_content[k])):
             to = option[j % len(option)]
+            align = to[0]
             spaceafter = " "*int(to[1:]) if j<len(lines_content[k])-1 else ""
             fill = width[j]-len(lines_content[k][j])
-            if to[0]=='l':
+            if align=='l':
                 lines_content[k][j] = lines_content[k][j] + " "*fill + spaceafter
-            elif to[0] == 'r':
+            elif align == 'r':
                 lines_content[k][j] = " "*fill + lines_content[k][j] + spaceafter
-            elif to[0] == 'c':
+            elif align == 'c':
                 lfill = " "*int(fill/2)
                 rfill = " "*(fill-int(fill/2))
                 lines_content[k][j] = lfill + lines_content[k][j] + rfill + spaceafter
 
     return lines_content
+
+
+def get_named_pattern(self, user_input):
+    patterns = sublime.load_settings('AlignTab.sublime-settings').get('named_patterns', {})
+    user_input = patterns[user_input] if user_input in patterns else user_input
+    return user_input
 
 class AlignTabCommand(sublime_plugin.TextCommand):
 
@@ -80,11 +87,11 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         m = re.match('(.+)/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?$', user_input)
         regex = m.group(1) if m else user_input
         option = m.group(2) if m and m.group(2) else "l1"
-        f = m.group(3) if m and m.group(3) else "f0"
         option = [pat if len(pat)>1 else pat+"1" for pat in re.findall('[rlc][0-9]*', option)]
-        f = "f1" if f == "f" else f
+        f = m.group(3) if m and m.group(3) else "f0"
+        f = 1 if f == "f" else int(f[1:])
         view = self.view
-        print regex,option,f
+
         self.expand_sel(regex)
         view.run_command("split_selection_into_lines")
         lines = []
@@ -92,7 +99,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         for sel in view.sel():
             for line in view.lines(sel):
                 if line in lines: continue
-                content = [s.strip() for s in re.split("("+regex+")",view.substr(line),int(f[1:])) ]
+                content = [s.strip() for s in re.split("("+regex+")",view.substr(line),f) ]
                 if len(content)>1:
                     lines.append(line)
                     lines_content.append(content)
@@ -108,11 +115,6 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
         view.end_edit(edit)
         # print "\n".join(["".join(lc) for lc in lines_content])
-
-    def get_named_pattern(self, user_input):
-        patterns = sublime.load_settings('AlignTab.sublime-settings').get('named_patterns', {})
-        user_input = patterns[user_input] if user_input in patterns else user_input
-        return user_input
 
 
 # VintageEX teaches me the following
