@@ -1,6 +1,6 @@
 Align Tabular
 ==============
-This plugin is a Sublime Text 2 version of the excellent VIM plugin - tabular.
+This is a version of the excellent VIM plugin - tabular.
 
 How does it differ from other alignment plugins?
 ------------
@@ -23,7 +23,30 @@ It means all columns are left-aligned. A space is added for each column. All mat
 
 Examples
 ------------
-###First toy
+###First Example
+```
+apple = 1==0
+banana = 0
+car = 2
+```
+- `=/f` or `=/lf` or `=/l1f` or `=/lf1` or `=/l1f1` gives (align only the first `=`)
+
+```
+apple  = 1==0
+banana = 0
+car    = 2
+```
+
+- `(?<==)\s/l0l1` gives (aligning space)
+
+```
+apple =  1==0
+banana = 0   
+car =    2   
+```
+
+
+###Another Example
 ```
 apple& orange & grapes
    red   & orange color & purple color
@@ -69,28 +92,6 @@ apple & orange & grapes
 red   & orange color & purple color
 ```
 
-###Another toy
-
-```
-apple = banana==1
-banana = car==0
-car = dog
-```
-- `=/f` or `=/lf` or `=/l1f` or `=/lf1` or `=/l1f1` gives (align only the first `=`)
-
-```
-apple  = banana==1
-banana = car==0
-car    = dog
-```
-
-- `(?<==)\s/l0l1` gives (aligning space)
-
-```
-apple =  banana==1
-banana = car==0
-car =    dog
-```
 
 Saved patterns
 ------------
@@ -109,11 +110,11 @@ You then just use the name instead of the pattern in the input field.
 
 Keymaps
 ------------
-If you use a particular regex to align frequently, you can put something like
-this in your user key bindings file.
+If you often use a particular regex to align, you can put something like
+this in your user keyblind file.
 
 ```
-  // latex align key binding
+  // latex align key blind
   {
     "keys": ["super+shift+a"], "command": "align_tab",
     "args" : {"user_input" : "&|\\\\\\\\"},
