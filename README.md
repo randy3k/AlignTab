@@ -41,8 +41,8 @@ car    = 2
 
 ```
 apple =  1==0
-banana = 0   
-car =    2   
+banana = 0
+car =    2
 ```
 
 
@@ -111,10 +111,10 @@ You then just use the name instead of the pattern in the input field.
 Keymaps
 ------------
 If you often use a particular regex to align, you can put something like
-this in your user keyblind file.
+this in your user keybind file.
 
 ```
-  // latex align key blind
+  // latex align key bind
   {
     "keys": ["super+shift+a"], "command": "align_tab",
     "args" : {"user_input" : "&|\\\\\\\\"},
