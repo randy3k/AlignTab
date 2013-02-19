@@ -33,7 +33,7 @@ def fill_spaces(lines_content, option):
     return lines_content
 
 
-def get_named_pattern(self, user_input):
+def get_named_pattern(user_input):
     patterns = sublime.load_settings('AlignTab.sublime-settings').get('named_patterns', {})
     user_input = patterns[user_input] if user_input in patterns else user_input
     return user_input
@@ -82,7 +82,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         if not HIST or user_input!= HIST[-1]: HIST.append(user_input)
         CycleAlignTabHistory.INDEX = None
 
-        user_input = self.get_named_pattern(user_input)
+        user_input = get_named_pattern(user_input)
 
         m = re.match('(.+)/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?$', user_input)
         regex = m.group(1) if m else user_input
