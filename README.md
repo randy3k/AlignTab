@@ -49,7 +49,7 @@ car =    2
 
 ###Another Example
 ```
-apple& orange &grape
+apple& orange &grapes
    one & two& three
 ```
 
@@ -57,36 +57,36 @@ apple& orange &grape
 - `&` or `&/l` or `&/l1` gives
 
 ```
-apple & orange & grape
+apple & orange & grapes
 one   & two    & three
 ```
 
 - `&/c` gives (center aligned)
 
 ```
-apple & orange & grape
+apple & orange & grapes
  one  &  two   & three
 ```
 
 - `&/c0` gives (no space after columns)
 
 ```
-apple&orange&grape
+apple&orange&grapes
  one & two  &three
 ```
 
 - `&/c2l1` or `&/c2l` gives (two spaces after odd columns)
 
 ```
-apple  & orange  & grape
+apple  & orange  & grapes
  one   &  two    & three
 ```
 
 - `&/llclr` gives (each column has its own alignment)
 
 ```
-apple & orange & grape
-one   &  two   & three
+apple & orange & grapes
+one   &  two   &  three
 ```
 
 
