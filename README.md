@@ -27,7 +27,7 @@ Examples
 ```
 apple =   1==0
 banana =0
-car = 2
+ car = 2
 ```
 
 - `=/f` or `=/lf` or `=/l1f` or `=/lf1` or `=/l1f1` gives (align only the first `=`)
@@ -49,44 +49,44 @@ car =    2
 
 ###Another Example
 ```
-apple& orange & grapes
-   red   & orange color & purple color
+apple& orange &grape
+   one & two& three
 ```
 
 
 - `&` or `&/l` or `&/l1` gives
 
 ```
-apple & orange       & grapes
-red   & orange color & purple color
+apple & orange & grape
+one   & two    & three
 ```
 
 - `&/c` gives (center aligned)
 
 ```
-apple &    orange    &    grapes
- red  & orange color & purple color
+apple & orange & grape
+ one  &  two   & three
 ```
 
 - `&/c0` gives (no space after columns)
 
 ```
-apple&   orange   &   grapes
- red &orange color&purple color
+apple&orange&grape
+ one & two  &three
 ```
 
-- `&/c0l1` or `&/c0l` gives (no space after odd columns)
+- `&/c2l1` or `&/c2l` gives (two spaces after odd columns)
 
 ```
-apple&    orange   &    grapes
- red & orange color& purple color
+apple  & orange  & grape
+ one   &  two    & three
 ```
 
-- `&/l0l2c0l2r0` gives (each column has its own alignment)
+- `&/llclr` gives (each column has its own alignment)
 
 ```
-apple&     orange   &        grapes
-red  &  orange color&  purple color
+apple & orange & grape
+one   &  two   & three
 ```
 
 
