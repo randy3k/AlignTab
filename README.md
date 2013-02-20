@@ -25,8 +25,8 @@ Examples
 ------------
 ###First Example
 ```
-apple = 1==0
-banana = 0
+apple =   1==0
+banana =0
 car = 2
 ```
 - `=/f` or `=/lf` or `=/l1f` or `=/lf1` or `=/l1f1` gives (align only the first `=`)
@@ -37,7 +37,7 @@ banana = 0
 car    = 2
 ```
 
-- `(?<==)\s/l0l1` gives (aligning space)
+- `(?<==)\s*./l1r0l0f1` gives (align the first non-space character just after `=`)
 
 ```
 apple =  1==0
@@ -101,8 +101,8 @@ expression as value. These patterns are included in the default file:
 
 ```
   "named_patterns": {
-    "first_comma": "(?<=,)\\s/l0l1f1",
-    "first_colon": "(?<=:)\\s/l0l1f1"
+    "first_comma": "(?<=,)\\s*./l1r0l0f1",
+    "first_colon": "(?<=:)\\s*./l1r0l0f1"
   }
 ```
 

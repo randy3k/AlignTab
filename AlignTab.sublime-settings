@@ -1,6 +1,6 @@
 {
     "named_patterns": {
-        "first_comma": "(?<=,)\\s/l0l1f1",
-        "first_colon": "(?<=:)\\s/l0l1f1"
+        "first_comma": "(?<=,)\\s*./l1r0l0f1",
+        "first_colon": "(?<=:)\\s*./l1r0l0f1"
     }
 }
