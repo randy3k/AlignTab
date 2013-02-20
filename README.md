@@ -12,14 +12,14 @@ Usage
 ------------
 - Type `Align Tabular` in command palette.
 - Enter delimiter in Python regex in the input panel
-- The input format should be in the from of `regex/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?`
+- The input should be in the from of `regex/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?`
 - The option `/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?` controls
- - left/right/center alignment
- - spaces after the columns
- - max number of splits
+ - left/right/center alignment: `r` or `l` or `c`
+ - spaces after the columns: the number after `rlc`
+ - max number of splits: the number after `f`
 - Default option is `l1f0`. <br>
-It means all columns are left-aligned. A space is added for each column. All matched delimiters are used.
-- The option for alignment cycles through the columns. Note that delimiter is also a column.
+It means all columns are left-aligned. A space is added after each column. All matched delimiters are aligned.
+- The option for alignment cycles through the columns and delimiters are also columns.
 
 Examples
 ------------
