@@ -26,7 +26,7 @@ Examples
 ###First Example
 ```
 apple =   1==0
-banana =0
+banana =100
  car = 2
 ```
 
@@ -34,7 +34,7 @@ banana =0
 
 ```
 apple  = 1==0
-banana = 0
+banana = 100
 car    = 2
 ```
 
@@ -42,7 +42,7 @@ car    = 2
 
 ```
 apple =  1==0
-banana = 0
+banana = 100
 car =    2
 ```
 
