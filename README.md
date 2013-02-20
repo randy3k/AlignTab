@@ -29,6 +29,7 @@ apple =   1==0
 banana =0
 car = 2
 ```
+
 - `=/f` or `=/lf` or `=/l1f` or `=/lf1` or `=/l1f1` gives (align only the first `=`)
 
 ```
@@ -66,30 +67,26 @@ red   & orange color & purple color
 apple &    orange    &    grapes
  red  & orange color & purple color
 ```
+
 - `&/c0` gives (no space after columns)
 
 ```
 apple&   orange   &   grapes
  red &orange color&purple color
 ```
+
 - `&/c0l1` or `&/c0l` gives (no space after odd columns)
 
 ```
 apple&    orange   &    grapes
  red & orange color& purple color
 ```
-- `&/l0l2c0l2r0l2` gives (each column has its own alignment)
+
+- `&/l0l2c0l2r0` gives (each column has its own alignment)
 
 ```
 apple&     orange   &        grapes
 red  &  orange color&  purple color
-```
-
-- `&/f` or `&/f1` gives (align only the first `&`)
-
-```
-apple & orange & grapes
-red   & orange color & purple color
 ```
 
 
