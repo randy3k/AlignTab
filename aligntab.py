@@ -110,7 +110,8 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         view.sel().clear()
         edit = view.begin_edit()
         for k in reversed(range(len(lines))):
-            view.replace(edit,lines[k], spacebefore+"".join(lines_content[k]))
+            newcontent = spacebefore+"".join(lines_content[k])
+            view.replace(edit,lines[k], newcontent.rstrip())
             view.sel().add(view.line(lines[k].begin()))
 
         view.end_edit(edit)
