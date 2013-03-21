@@ -12,29 +12,29 @@ Usage
 ------------
 - Type `Align Tabular` in command palette.
 - Enter delimiter in Python regex in the input panel
-- The input format should be in the from of `regex/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?`
+- The input should be in the from of `regex/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?`
 - The option `/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?` controls
- - left/right/center alignment
- - spaces after the columns
- - max number of splits
+ - left/right/center alignment: `r` or `l` or `c`
+ - spaces after the columns: the number after `rlc`
+ - max number of splits: the number after `f`
 - Default option is `l1f0`. <br>
-It means all columns are left-aligned. A space is added for each column. All matched delimiters are used.
-- The option for alignment cycles through the columns. Note that delimiter is also a column.
+It means all columns are left-aligned. A space is added after each column. All matched delimiters are aligned.
+- The option for alignment cycles through the columns and delimiters are also columns.
 
 Examples
 ------------
 ###First Example
 ```
 apple =   1==0
-banana =0
-car = 2
+banana =100
+ car = 2
 ```
 
 - `=/f` or `=/lf` or `=/l1f` or `=/lf1` or `=/l1f1` gives (align only the first `=`)
 
 ```
 apple  = 1==0
-banana = 0
+banana = 100
 car    = 2
 ```
 
@@ -42,51 +42,51 @@ car    = 2
 
 ```
 apple =  1==0
-banana = 0
+banana = 100
 car =    2
 ```
 
 
 ###Another Example
 ```
-apple& orange & grapes
-   red   & orange color & purple color
+apple& orange &grapes
+   one & two& three
 ```
 
 
 - `&` or `&/l` or `&/l1` gives
 
 ```
-apple & orange       & grapes
-red   & orange color & purple color
+apple & orange & grapes
+one   & two    & three
 ```
 
 - `&/c` gives (center aligned)
 
 ```
-apple &    orange    &    grapes
- red  & orange color & purple color
+apple & orange & grapes
+ one  &  two   & three
 ```
 
 - `&/c0` gives (no space after columns)
 
 ```
-apple&   orange   &   grapes
- red &orange color&purple color
+apple&orange&grapes
+ one & two  &three
 ```
 
-- `&/c0l1` or `&/c0l` gives (no space after odd columns)
+- `&/c2l1` or `&/c2l` gives (two spaces after odd columns)
 
 ```
-apple&    orange   &    grapes
- red & orange color& purple color
+apple  & orange  & grapes
+ one   &  two    & three
 ```
 
-- `&/l0l2c0l2r0` gives (each column has its own alignment)
+- `&/llclr` gives (each column has its own alignment)
 
 ```
-apple&     orange   &        grapes
-red  &  orange color&  purple color
+apple & orange & grapes
+one   &  two   &  three
 ```
 
 
