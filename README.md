@@ -7,6 +7,7 @@ How does it differ from other alignment plugins?
 - Flexibility: Align with user defined regular expression
 - Efficiency: Smart line detection for alignment if no lines are selected
 - Multiple cursors support
+- It is not working on both ST 2 and 3.
 
 Usage
 ------------
