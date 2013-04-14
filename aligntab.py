@@ -30,14 +30,24 @@ def fill_spaces(lines_content, option):
                 rfill = " "*(fill-int(fill/2))
                 lines_content[k][j] = lfill + lines_content[k][j] + rfill + spaceafter
 
-
 def get_named_pattern(user_input):
     patterns = sublime.load_settings('AlignTab.sublime-settings').get('named_patterns', {})
     user_input = patterns[user_input] if user_input in patterns else user_input
     return user_input
 
+class AlignTabCommand(sublime_plugin.TextCommand):
 
-class AlignTabCoreCommand(sublime_plugin.TextCommand):
+    def run(self, edit, user_input=None):
+        if not user_input:
+            v = self.view.window().show_input_panel('Align with regex:', '',
+                    lambda x: self.view.run_command("align_tab",{"user_input":x}), None, None)
+            # print os.getcwd()
+            v.set_syntax_file('Packages/AlignTab/AlignTab.tmLanguage')
+            v.settings().set('gutter', False)
+            v.settings().set('rulers', [])
+        else:
+            self.align_tab(edit, user_input)
+
     def expand_sel(self, regex):
         view = self.view
         lastrow = view.rowcol(view.size())[0]
@@ -64,7 +74,8 @@ class AlignTabCoreCommand(sublime_plugin.TextCommand):
         for row in rows:
             view.sel().add(view.line(view.text_point(row,0)))
 
-    def run(self, edit, user_input):
+    def align_tab(self, edit, user_input):
+        # insert history and reset index
         if not HIST or user_input!= HIST[-1]: HIST.append(user_input)
         CycleAlignTabHistory.INDEX = None
 
@@ -89,11 +100,9 @@ class AlignTabCoreCommand(sublime_plugin.TextCommand):
                 if len(content)>1:
                     lines.append(line)
                     lines_content.append(content)
-
         if not lines_content: return
 
         fill_spaces(lines_content, option)
-
         spacebefore = re.match("^(\s*)", view.substr(view.line(lines[0].begin()))).group(1)
         view.sel().clear()
         for k in reversed(range(len(lines))):
@@ -102,19 +111,6 @@ class AlignTabCoreCommand(sublime_plugin.TextCommand):
             view.sel().add(view.line(lines[k].begin()))
 
         # print "\n".join(["".join(lc) for lc in lines_content])
-
-class AlignTabCommand(sublime_plugin.TextCommand):
-    def run(self, _, user_input=None):
-        if not user_input:
-            def align_tab_wrapper(user_input): self.view.run_command("align_tab_core",  {"user_input" :  user_input})
-            v = self.view.window().show_input_panel('Align with regex:', '',
-                    align_tab_wrapper, None, None)
-            # print os.getcwd()
-            v.set_syntax_file('Packages/AlignTab/AlignTab.tmLanguage')
-            v.settings().set('gutter', False)
-            v.settings().set('rulers', [])
-        else:
-            self.view.run_command("align_tab_core", {"user_input" :  user_input})
 
 
 # VintageEX teaches me the following
@@ -132,7 +128,6 @@ class CycleAlignTabHistory(sublime_plugin.TextCommand):
 
         self.view.erase(edit, sublime.Region(0, self.view.size()))
         self.view.insert(edit, 0, HIST[CycleAlignTabHistory.INDEX])
-
 
 class HistoryIndexRestorer(sublime_plugin.EventListener):
     def on_deactivated(self, view):
