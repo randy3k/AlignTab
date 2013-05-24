@@ -1,13 +1,12 @@
 Align Tabular
 ==============
-This is a version of the excellent VIM plugin - tabular.
+An alignment plugin for Sublime Text 2/3 -- ST version of the excellent VIM plugin, tabular.
 
 How does it differ from other alignment plugins?
 ------------
 - Flexibility: Align with user defined regular expression
 - Efficiency: Smart line detection for alignment if no lines are selected
 - Multiple cursors support
-- It is now working on both ST 2 and 3.
 
 Usage
 ------------
@@ -31,7 +30,7 @@ banana =100
  car = 2
 ```
 
-- `=/f` or `=/lf` or `=/l1f` or `=/lf1` or `=/l1f1` gives (align only the first `=`)
+- `=/f` or `=/lf` or `=/l1f` or `=/lf1` or `=/l1f1` aligns only the first `=`
 
 ```
 apple  = 1==0
@@ -39,7 +38,7 @@ banana = 100
 car    = 2
 ```
 
-- `(?<==)\s*./l1r0l0f1` gives (align the first non-space character just after `=`)
+- `(?<==)\s*./l1r0l0f1` aligns the first non-space character just after `=`
 
 ```
 apple =  1==0
@@ -55,35 +54,35 @@ apple& orange &grapes
 ```
 
 
-- `&` or `&/l` or `&/l1` gives
+- `&` or `&/l` or `&/l1` yields
 
 ```
 apple & orange & grapes
 one   & two    & three
 ```
 
-- `&/c` gives (center aligned)
+- `&/c` aligns at center
 
 ```
 apple & orange & grapes
  one  &  two   & three
 ```
 
-- `&/c0` gives (no space after columns)
+- `&/c0` no space after columns
 
 ```
 apple&orange&grapes
  one & two  &three
 ```
 
-- `&/c2l1` or `&/c2l` gives (two spaces after odd columns)
+- `&/c2l1` or `&/c2l` two spaces after odd columns
 
 ```
 apple  & orange  & grapes
  one   &  two    & three
 ```
 
-- `&/llclr` gives (each column has its own alignment)
+- `&/llclr` each column has its own alignment
 
 ```
 apple & orange & grapes
@@ -108,8 +107,7 @@ You then just use the name instead of the pattern in the input field.
 
 Keymaps
 ------------
-If you often use a particular regex to align, you can put something like
-this in your user keybind file.
+For frequent patterns, consider the following keybind.
 
 ```
   // latex align key bind
