@@ -48,7 +48,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         else:
             self.align_tab(edit, user_input)
 
-    def expand_sel(self, regex):
+    def expand_rows(self, regex):
         view = self.view
         lastrow = view.rowcol(view.size())[0]
         rows = []
@@ -70,9 +70,10 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     beginrow = beginrow-1
                     rows.append(beginrow)
                 else: break
-        if not rows: return
-        for row in rows:
-            view.sel().add(view.line(view.text_point(row,0)))
+        # if not rows: return
+        # for row in rows:
+        #     view.sel().add(view.line(view.text_point(row,0)))
+        return sorted(rows)
 
     def align_tab(self, edit, user_input):
         # insert history and reset index
@@ -89,26 +90,27 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         f = 1 if f == "f" else int(f[1:])
         view = self.view
 
-        self.expand_sel(regex)
-        view.run_command("split_selection_into_lines")
+        rows = self.expand_rows(regex)
+        # view.run_command("split_selection_into_lines")
         lines = []
         lines_content = []
-        for sel in view.sel():
-            for line in view.lines(sel):
-                if line in lines: continue
-                content = [s.strip() for s in re.split("("+regex+")",view.substr(line),f) ]
-                if len(content)>1:
-                    lines.append(line)
-                    lines_content.append(content)
+        for row in rows:
+            line = view.line(view.text_point(row,0))
+            if line in lines: continue
+            content = [s.strip() for s in re.split("("+regex+")",view.substr(line),f) ]
+            if len(content)>1:
+                lines.append(line)
+                lines_content.append(content)
         if not lines_content: return
 
         fill_spaces(lines_content, option)
         spacebefore = re.match("^(\s*)", view.substr(view.line(lines[0].begin()))).group(1)
-        view.sel().clear()
+
+        # view.sel().clear()
         for k in reversed(range(len(lines))):
             newcontent = spacebefore+"".join(lines_content[k])
             view.replace(edit,lines[k], newcontent.rstrip())
-            view.sel().add(view.line(lines[k].begin()))
+            # view.sel().add(view.line(lines[k].begin()))
 
         # print "\n".join(["".join(lc) for lc in lines_content])
 
