@@ -94,7 +94,8 @@ Saved patterns
 ------------
 To make it easier to remember complex patterns, you can save named patterns in
 a dictionary in the settings file. Use the name as key and the alignment
-expression as value. These patterns are included in the default file:
+expression as value. 
+These patterns are included in the default file:
 
 ```
   "named_patterns": {
@@ -104,10 +105,11 @@ expression as value. These patterns are included in the default file:
 ```
 
 You then just use the name instead of the pattern in the input field.
+To edit the patterns, go to Perferences -> Package Settings -> Aligh Tabular -> Settings.
 
 Keymaps
 ------------
-For frequent patterns, consider the following keybind.
+For frequent patterns, consider the following keybind in your User KeyBindings.
 
 ```
   // latex align key bind
