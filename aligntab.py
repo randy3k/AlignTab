@@ -53,7 +53,11 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         lastrow = view.rowcol(view.size())[0]
         rows = []
         for sel in view.sel():
-            if sel.begin()!=sel.end(): continue
+            if sel.begin()!=sel.end():
+                for line in view.lines(sel):
+                    thisrow = view.rowcol(line.begin())[0]
+                    if not (thisrow in rows): rows.append(thisrow)
+                continue
             saved_pt =sel.begin()
             row = view.rowcol(saved_pt)[0]
             if row in rows: continue
@@ -73,6 +77,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         # if not rows: return
         # for row in rows:
         #     view.sel().add(view.line(view.text_point(row,0)))
+        # print(rows)
         return sorted(rows)
 
     def align_tab(self, edit, user_input):
