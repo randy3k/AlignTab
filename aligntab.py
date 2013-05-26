@@ -66,6 +66,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
             if sel.begin()==sel.end():
                 thisrow = view.rowcol(sel.begin())[0]
+                if not (thisrow in rows): continue
                 beginrow = endrow = thisrow
                 while endrow+1<=lastrow and not (endrow+1 in rows):
                     content = self.get_line_content(regex, f, endrow+1)
