@@ -21,6 +21,12 @@ Usage
 It means all columns are left-aligned. A space is added after each column. All matched delimiters are aligned.
 - The option for alignment cycles through the columns and delimiters are also columns.
 
+
+Installation
+------------
+[Package Control](http://wbond.net/sublime_packages/package_control)
+
+
 Examples
 ------------
 ###First Example
