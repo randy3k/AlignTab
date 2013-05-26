@@ -5,30 +5,29 @@ import re, string, os
 
 if not 'HIST' in globals(): HIST = []
 
-def colwidth(lines_content):
-    width = [0]*max([len(lc) for lc in lines_content])
-    for lc in lines_content:
-        for i,x in enumerate(lc):
-            if width[i]<len(x): width[i] = len(x)
-    return width
 
-def fill_spaces(lines_content, option):
-    width = colwidth(lines_content)
-    # can make more efficient by pre-computing variable to
-    for k in range(len(lines_content)):
-        for j in range(len(lines_content[k])):
-            to = option[j % len(option)]
-            align = to[0]
-            spaceafter = " "*int(to[1:]) if j<len(lines_content[k])-1 else ""
-            fill = width[j]-len(lines_content[k][j])
-            if align=='l':
-                lines_content[k][j] = lines_content[k][j] + " "*fill + spaceafter
-            elif align == 'r':
-                lines_content[k][j] = " "*fill + lines_content[k][j] + spaceafter
-            elif align == 'c':
-                lfill = " "*int(fill/2)
-                rfill = " "*(fill-int(fill/2))
-                lines_content[k][j] = lfill + lines_content[k][j] + rfill + spaceafter
+def update_colwidth(colwidth, content):
+    thiscolwidth = [len(s) for s in content]
+    for i,w in enumerate(thiscolwidth):
+        if i<len(colwidth):
+            colwidth[i] = max(colwidth[i], w)
+        else:
+            colwidth.append(w)
+
+def fill_spaces(content, colwidth, option):
+    for j in range(len(content)):
+        op = option[j % len(option)]
+        align = op[0]
+        spaceafter = " "*int(op[1:]) if j<len(content)-1 else ""
+        fill = colwidth[j]-len(content[j])
+        if align=='l':
+            content[j] = content[j] + " "*fill + spaceafter
+        elif align == 'r':
+            content[j] = " "*fill + content[j] + spaceafter
+        elif align == 'c':
+            lfill = " "*int(fill/2)
+            rfill = " "*(fill-int(fill/2))
+            content[j] = lfill + content[j] + rfill + spaceafter
 
 def get_named_pattern(user_input):
     patterns = sublime.load_settings('AlignTab.sublime-settings').get('named_patterns', {})
@@ -48,37 +47,46 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         else:
             self.align_tab(edit, user_input)
 
-    def expand_rows(self, regex):
+    def get_line_content(self, regex, f, row):
+        view = self.view
+        line = view.substr(view.line(view.text_point(row,0)))
+        return [s.strip() for s in re.split("("+regex+")",line,f)]
+
+
+    def expand_sel(self, regex, f, rows, colwidth):
         view = self.view
         lastrow = view.rowcol(view.size())[0]
-        rows = []
         for sel in view.sel():
             if sel.begin()!=sel.end():
                 for line in view.lines(sel):
                     thisrow = view.rowcol(line.begin())[0]
-                    if not (thisrow in rows): rows.append(thisrow)
-                continue
-            saved_pt =sel.begin()
-            row = view.rowcol(saved_pt)[0]
-            if row in rows: continue
-            if not re.search(regex, view.substr(view.line(saved_pt))): continue
-            beginrow = endrow = row
-            rows.append(row)
-            while endrow+1<=lastrow and not (endrow+1 in rows):
-                if re.search(regex, view.substr(view.line(view.text_point(endrow+1,0)))):
+                    if (thisrow in rows): continue
+                    content = self.get_line_content(regex, f, thisrow)
+                    if len(content)<=1: continue
+                    update_colwidth(colwidth, content)
+                    rows.append(thisrow)
+            else:
+                thisrow = view.rowcol(sel.begin())[0]
+                if (thisrow in rows): continue
+                content = self.get_line_content(regex, f, thisrow)
+                if len(content)<=1: continue
+                update_colwidth(colwidth, content)
+                rows.append(thisrow)
+
+                beginrow = endrow = thisrow
+                while endrow+1<=lastrow and not (endrow+1 in rows):
+                    content = self.get_line_content(regex, f, endrow+1)
+                    if len(content)<=1: break
+                    update_colwidth(colwidth, content)
                     endrow = endrow+1
                     rows.append(endrow)
-                else: break
-            while beginrow-1>=0 and not (beginrow-1 in rows):
-                if re.search(regex, view.substr(view.line(view.text_point(beginrow-1,0)))):
+                while beginrow-1>=0 and not (beginrow-1 in rows):
+                    content = self.get_line_content(regex, f, beginrow-1)
+                    if len(content)<=1: break
+                    update_colwidth(colwidth, content)
                     beginrow = beginrow-1
                     rows.append(beginrow)
-                else: break
-        # if not rows: return
-        # for row in rows:
-        #     view.sel().add(view.line(view.text_point(row,0)))
-        # print(rows)
-        return sorted(rows)
+
 
     def align_tab(self, edit, user_input):
         # insert history and reset index
@@ -95,29 +103,18 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         f = 1 if f == "f" else int(f[1:])
         view = self.view
 
-        rows = self.expand_rows(regex)
-        # view.run_command("split_selection_into_lines")
-        lines = []
-        lines_content = []
-        for row in rows:
+        rows = []
+        colwidth = []
+        self.expand_sel(regex, f , rows, colwidth)
+        rows = sorted(set(rows))
+        if not rows: return
+
+        spacebefore = re.match("^(\s*)", view.substr(view.line(view.text_point(rows[0],0)))).group(1)
+        for row in reversed(rows):
             line = view.line(view.text_point(row,0))
-            if line in lines: continue
             content = [s.strip() for s in re.split("("+regex+")",view.substr(line),f) ]
-            if len(content)>1:
-                lines.append(line)
-                lines_content.append(content)
-        if not lines_content: return
-
-        fill_spaces(lines_content, option)
-        spacebefore = re.match("^(\s*)", view.substr(view.line(lines[0].begin()))).group(1)
-
-        # view.sel().clear()
-        for k in reversed(range(len(lines))):
-            newcontent = spacebefore+"".join(lines_content[k])
-            view.replace(edit,lines[k], newcontent.rstrip())
-            # view.sel().add(view.line(lines[k].begin()))
-
-        # print "\n".join(["".join(lc) for lc in lines_content])
+            fill_spaces(content, colwidth, option)
+            view.replace(edit,line, (spacebefore+"".join(content)).rstrip())
 
 
 # VintageEX teaches me the following
