@@ -49,30 +49,23 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
     def get_line_content(self, regex, f, row):
         view = self.view
-        line = view.substr(view.line(view.text_point(row,0)))
-        return [s.strip() for s in re.split("("+regex+")",line,f)]
-
+        line = view.line(view.text_point(row,0))
+        return [s.strip() for s in re.split(regex,view.substr(line),f)]
 
     def expand_sel(self, regex, f, rows, colwidth):
         view = self.view
         lastrow = view.rowcol(view.size())[0]
         for sel in view.sel():
-            if sel.begin()!=sel.end():
-                for line in view.lines(sel):
-                    thisrow = view.rowcol(line.begin())[0]
-                    if (thisrow in rows): continue
-                    content = self.get_line_content(regex, f, thisrow)
-                    if len(content)<=1: continue
-                    update_colwidth(colwidth, content)
-                    rows.append(thisrow)
-            else:
-                thisrow = view.rowcol(sel.begin())[0]
+            for line in view.lines(sel):
+                thisrow = view.rowcol(line.begin())[0]
                 if (thisrow in rows): continue
                 content = self.get_line_content(regex, f, thisrow)
                 if len(content)<=1: continue
                 update_colwidth(colwidth, content)
                 rows.append(thisrow)
 
+            if sel.begin()==sel.end():
+                thisrow = view.rowcol(sel.begin())[0]
                 beginrow = endrow = thisrow
                 while endrow+1<=lastrow and not (endrow+1 in rows):
                     content = self.get_line_content(regex, f, endrow+1)
@@ -97,6 +90,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
         m = re.match('(.+)/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?$', user_input)
         regex = m.group(1) if m else user_input
+        regex = "(" + regex + ")"
         option = m.group(2) if m and m.group(2) else "l1"
         option = [pat if len(pat)>1 else pat+"1" for pat in re.findall('[rlc][0-9]*', option)]
         f = m.group(3) if m and m.group(3) else "f0"
@@ -112,7 +106,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         spacebefore = re.match("^(\s*)", view.substr(view.line(view.text_point(rows[0],0)))).group(1)
         for row in reversed(rows):
             line = view.line(view.text_point(row,0))
-            content = [s.strip() for s in re.split("("+regex+")",view.substr(line),f) ]
+            content = [s.strip() for s in re.split(regex,view.substr(line),f) ]
             fill_spaces(content, colwidth, option)
             view.replace(edit,line, (spacebefore+"".join(content)).rstrip())
 
