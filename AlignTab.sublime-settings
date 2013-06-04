@@ -2,5 +2,6 @@
     "named_patterns": {
         "first_comma": "(?<=,)\\s*./l1r0l0f1",
         "first_colon": "(?<=:)\\s*./l1r0l0f1"
-    }
+    },
+    "auto_match_enabled": false
 }
