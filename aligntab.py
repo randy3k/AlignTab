@@ -104,7 +104,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         rows = sorted(set(rows))
         if not rows: return
 
-        spacebefore = re.match("^(\s*)", view.substr(view.line(view.text_point(rows[0],0)))).group(1)
+        spacebefore = min([re.match("^(\s*)", view.substr(view.line(view.text_point(row,0)))).group(1) for row in rows])
         for row in reversed(rows):
             line = view.line(view.text_point(row,0))
             content = [s.strip() for s in re.split(regex,view.substr(line),f) ]
