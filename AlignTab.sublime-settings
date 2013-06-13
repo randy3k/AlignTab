@@ -1,7 +1,8 @@
 {
-    "named_patterns": {
-        "first_comma": "(?<=,)\\s*./l1r0l0f1",
-        "first_colon": "(?<=:)\\s*./l1r0l0f1"
-    },
-    "auto_match_enabled": false
+  "named_patterns": {
+    "first_equal": "=/f",
+    "first_comma": ",/f",
+    "first_colon": ":/f"
+  },
+  "auto_match_enabled": false
 }

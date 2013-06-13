@@ -10,7 +10,8 @@ How does it differ from other alignment plugins?
 
 Usage
 ------------
-- Type `Align Tabular` in command palette.
+- To toogle Align Tabular, go the menu `Selection -> Align Tabular` or type `Align Tabular` in command palette.
+- Predefined Align Patterns can be found under the menu `Selection -> Align By`
 - Enter delimiter in Python regex in the input panel
 - The input should be in the from of `regex/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?`
 - The option `/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?` controls
@@ -59,26 +60,11 @@ apple& orange &grapes
    one & two& three
 ```
 
-
 - `&` or `&/l` or `&/l1` yields
 
 ```
 apple & orange & grapes
 one   & two    & three
-```
-
-- `&/c` aligns at center
-
-```
-apple & orange & grapes
- one  &  two   & three
-```
-
-- `&/c0` no space after columns
-
-```
-apple&orange&grapes
- one & two  &three
 ```
 
 - `&/c2l1` or `&/c2l` two spaces after odd columns
@@ -95,25 +81,7 @@ apple & orange & grapes
 one   &  two   &  three
 ```
 
-
-Saved patterns
-------------
-To make it easier to remember complex patterns, you can save named patterns in
-a dictionary in the settings file. Use the name as key and the alignment
-expression as value. 
-These patterns are included in the default file:
-
-```
-  "named_patterns": {
-    "first_comma": "(?<=,)\\s*./l1r0l0f1",
-    "first_colon": "(?<=:)\\s*./l1r0l0f1"
-  }
-```
-
-You then just use the name instead of the pattern in the input field.
-To edit the patterns, go to Perferences -> Package Settings -> Aligh Tabular -> Settings.
-
-Keymaps
+KeyBinds
 ------------
 For frequent patterns, consider the following keybind in your User KeyBindings.
 
@@ -134,3 +102,22 @@ or
   }
 ```
 
+
+
+Saved patterns
+------------
+To make it easier to remember complex patterns, you can save named patterns in
+a dictionary in the settings file. Use the name as key and the alignment
+expression as value.
+These patterns are included in the default file:
+
+```
+  "named_patterns": {
+    "first_equal": "=/f",
+    "first_comma": ",/f",
+    "first_colon": ":/f"
+  }
+```
+
+You then just use the name instead of the pattern in the input field.
+To edit the patterns, go to Perferences -> Package Settings -> Aligh Tabular -> Settings.

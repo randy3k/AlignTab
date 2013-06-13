@@ -1,4 +1,53 @@
 [
+   {
+        "id": "selection",
+        "children":
+        [
+            {
+                "caption": "Align Tabular",
+                "command": "align_tab"
+
+            },
+              {
+                 "caption": "Align By",
+                "children": [
+                    {
+                    "caption": "First =",
+                    "command": "align_tab",
+                     "args": {"user_input" : "=/f"}
+                    },
+                    {
+                    "caption" : "First ,",
+                    "command" : "align_tab",
+                    "args"    : {"user_input" : ",/f"}
+                    },
+                    {
+                    "caption" : "First :",
+                    "command" : "align_tab",
+                    "args"    : {"user_input" : ":/f"}
+                    },
+                    {
+                    "caption" : "&",
+                    "command" : "align_tab",
+                    "args"    : {"user_input" : "&"}
+                    },
+                    {
+                    "caption" : "|",
+                    "command" : "align_tab",
+                    "args"    : {"user_input" : "|"}
+                    }
+                    ,
+                    {
+                    "caption" : "Spaces",
+                    "command" : "align_tab",
+                    "args"    : {"user_input" : "\\s*"}
+                    }
+                ]
+
+            },
+        ]
+    },
+
     {
         "caption": "Preferences",
         "mnemonic": "n",
@@ -35,5 +84,7 @@
                 ]
             }
         ]
-    }
+    },
+
+
 ]
