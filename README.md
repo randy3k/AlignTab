@@ -10,8 +10,15 @@ How does it differ from other alignment plugins?
 
 Usage
 ------------
-- To toogle Align Tabular, go the menu `Selection -> Align Tabular` or type `Align Tabular` in command palette.
-- Predefined Align Patterns can be found under the menu `Selection -> Align By`
+First time user
+
+- Predefined Alignment can be found under the menu `Selection -> Align By`
+- They are `First =`, `First ,`, `First :`, etc..
+
+
+Advanced user
+
+- Toogle Align Tabular, go the menu `Selection -> Align Tabular` or type `Align Tabular` in command palette.
 - Enter delimiter in Python regex in the input panel
 - The input should be in the from of `regex/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?`
 - The option `/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?` controls
@@ -83,7 +90,7 @@ one   &  two   &  three
 
 KeyBinds
 ------------
-For frequent patterns, consider the following keybind in your User KeyBindings.
+For frequent patterns, consider the following keybind in your user keybinds file. (Remember to change the key and regex.)
 
 ```
  //align =
@@ -92,9 +99,9 @@ For frequent patterns, consider the following keybind in your User KeyBindings.
     "args" : {"user_input" : "=/f"}
   }
 ```
-or
+or syntex specific keybind.
 ```
-  // latex align key bind
+  // latex align keybind
   {
     "keys": ["super+shift+a"], "command": "align_tab",
     "args" : {"user_input" : "&|\\\\\\\\"},
@@ -113,11 +120,11 @@ These patterns are included in the default file:
 
 ```
   "named_patterns": {
-    "first_equal": "=/f",
-    "first_comma": ",/f",
-    "first_colon": ":/f"
+     "first_equal": "=/f",
+     "first_comma": ",/f",
+     "first_colon": ":/f"
   }
 ```
 
 You then just use the name instead of the pattern in the input field.
-To edit the patterns, go to Perferences -> Package Settings -> Aligh Tabular -> Settings.
+To edit the patterns, go to `Perferences -> Package Settings -> Aligh Tabular -> Settings`.
