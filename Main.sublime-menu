@@ -12,17 +12,17 @@
                  "caption": "Align By",
                 "children": [
                     {
-                    "caption": "First =",
+                    "caption": "=",
                     "command": "align_tab",
                      "args": {"user_input" : "=/f"}
                     },
                     {
-                    "caption" : "First ,",
+                    "caption" : ",",
                     "command" : "align_tab",
                     "args"    : {"user_input" : ",/f"}
                     },
                     {
-                    "caption" : "First :",
+                    "caption" : ":",
                     "command" : "align_tab",
                     "args"    : {"user_input" : ":/f"}
                     },
@@ -34,7 +34,7 @@
                     {
                     "caption" : "|",
                     "command" : "align_tab",
-                    "args"    : {"user_input" : "|"}
+                    "args"    : {"user_input" : "\\|"}
                     }
                     ,
                     {
