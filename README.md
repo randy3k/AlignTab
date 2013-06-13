@@ -118,6 +118,14 @@ Keymaps
 For frequent patterns, consider the following keybind in your User KeyBindings.
 
 ```
+ //align =
+  {
+    "keys": ["super+shift+a"], "command": "align_tab",
+    "args" : {"user_input" : "=/f"}
+  }
+```
+or
+```
   // latex align key bind
   {
     "keys": ["super+shift+a"], "command": "align_tab",
@@ -125,3 +133,4 @@ For frequent patterns, consider the following keybind in your User KeyBindings.
     "context":   [ { "key": "selector", "operator": "equal", "operand": "text.tex.latex" } ]
   }
 ```
+
