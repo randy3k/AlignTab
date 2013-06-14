@@ -3,6 +3,7 @@
         "id": "selection",
         "children":
         [
+            { "caption": "-", "id" : "align"},
             {
                 "caption": "Align Tabular",
                 "command": "align_tab"
