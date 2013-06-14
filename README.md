@@ -12,8 +12,8 @@ Usage
 ------------
 First time user
 
-- Predefined Alignment can be found under the menu `Selection -> Align By`
-- They are `First =`, `First ,`, `First :`, etc..
+- Predefined Alignment can be found under the menu `Selection -> Align By`<br>
+ `=`, `,`, `:`, etc..
 
 
 Advanced user
@@ -88,7 +88,7 @@ apple & orange & grapes
 one   &  two   &  three
 ```
 
-KeyBinds
+Keybinds
 ------------
 For frequent patterns, consider the following keybind in your user keybinds file. (Remember to change the key and regex.)
 
@@ -111,7 +111,7 @@ or syntex specific keybind.
 
 
 
-Saved patterns
+Predefined patterns
 ------------
 To make it easier to remember complex patterns, you can save named patterns in
 a dictionary in the settings file. Use the name as key and the alignment
