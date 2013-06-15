@@ -12,19 +12,16 @@ Usage
 ------------
 First time user
 
-- Predefined alignment tools can be found under the top menu `Selection -> Align By`<br>
- or mouse menu `Align By`
+- Predefined alignment tools can be found under the mouse menu `Align By`
 
 <img src="https://github.com/randy3k/AlignTab/raw/master/alignby.png">
 
 Advanced user
 
-- Three ways to toogle Align Tabular:
-
- * 1. go the menu `Selection -> Align Tabular`
- * 2. type `Align Tabular` in command palette
- * 3. mouse menu `Align Tabular`
-
+- Two ways to toogle Align Tabular:
+ * 1. keyboard: type `Align Tabular` in command palette (`C+shift+p`).
+ * 2. mouse: right click -> `Align Tabular`
+>>>>>>> f2710f34face89f00890b41fd4ed6711ba4badfa
 - Enter delimiter in Python regex in the input panel
 - The input should be in the from of `regex/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?`
 - The option `/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?` controls
