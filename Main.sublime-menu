@@ -41,7 +41,7 @@
                     {
                     "caption" : "Spaces",
                     "command" : "align_tab",
-                    "args"    : {"user_input" : "\\s*"}
+                    "args"    : {"user_input" : "\\s*/l1l0"}
                     }
                 ]
             }
