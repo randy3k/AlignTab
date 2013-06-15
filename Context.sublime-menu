@@ -1,6 +1,11 @@
 [
    {"caption" : "-", "id" : "align"},
     {
+        "caption": "Align Tabular",
+        "command": "align_tab"
+
+    },
+    {
        "caption": "Align By",
       "children": [
           {
