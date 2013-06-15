@@ -12,7 +12,7 @@ Usage
 ------------
 First time user
 
-- Predefined Alignment can be found under the menu `Selection -> Align By`<br>
+- Predefined alignment can be found under the menu `Selection -> Align By`<br>
  `=`, `,`, `:`, etc..
 
 
@@ -22,11 +22,11 @@ Advanced user
 - Enter delimiter in Python regex in the input panel
 - The input should be in the from of `regex/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?`
 - The option `/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?` controls
- - left/right/center alignment: `r` or `l` or `c`
+ - left/right/center justification: `r` or `l` or `c`
  - spaces after the columns: the number after `rlc`
  - max number of splits: the number after `f`
 - Default option is `l1f0`. <br>
-It means all columns are left-aligned. A space is added after each column. All matched delimiters are aligned.
+It means all columns are left-justified. A space is added after each column. All matched delimiters are aligned.
 - The option for alignment cycles through the columns and delimiters are also columns.
 
 
@@ -81,7 +81,7 @@ apple  & orange  & grapes
  one   &  two    & three
 ```
 
-- `&/llclr` each column has its own alignment
+- `&/llclr` each column has its own justifications
 
 ```
 apple & orange & grapes
@@ -101,10 +101,10 @@ For frequent patterns, consider the following keybind in your user keybinds file
 ```
 or syntex specific keybind.
 ```
-  // latex align keybind
+  // latex align keybind, to align & and \\, but not \&
   {
     "keys": ["super+shift+a"], "command": "align_tab",
-    "args" : {"user_input" : "&|\\\\\\\\"},
+    "args" : {"user_input" : "(?<!\\\\)&|\\\\\\\\"},
     "context":   [ { "key": "selector", "operator": "equal", "operand": "text.tex.latex" } ]
   }
 ```
@@ -113,9 +113,8 @@ or syntex specific keybind.
 
 Predefined patterns
 ------------
-To make it easier to remember complex patterns, you can save named patterns in
-a dictionary in the settings file. Use the name as key and the alignment
-expression as value.
+To make it easier to remember complex patterns, you can save them in
+a dictionary in the settings file. Use the name as key and the regex as value.
 These patterns are included in the default file:
 
 ```
