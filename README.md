@@ -15,6 +15,7 @@ First time user
 - Predefined alignment can be found under the menu `Selection -> Align By`<br>
  `=`, `,`, `:`, etc..
 
+<img src="https://github.com/randy3k/AlignTab/raw/master/alignby.png">
 
 Advanced user
 
