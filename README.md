@@ -21,22 +21,23 @@ Advanced user
 
 - Three ways to toogle Align Tabular:
 
- * 1. go the menu `Selection -> Align Tabular` 
+ * 1. go the menu `Selection -> Align Tabular`
  * 2. type `Align Tabular` in command palette
  * 3. mouse menu `Align Tabular`
-  
+
 - Enter delimiter in Python regex in the input panel
 - The input should be in the from of `regex/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?`
 - The option `/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?` controls
  - left/right/center justification: `r` or `l` or `c`
  - spaces after the columns: the number after `rlc`
  - max number of splits: the number after `f`
-- Default option is `l1f0`. 
- * All columns are left-justified. 
- * A space is added after each column. 
+- Default option is `l1f0`.
+ * All columns are left-justified.
+ * A space is added after each column.
  * All matched delimiters are aligned.
 - The option for alignment cycles through the columns and delimiters are also columns.
 
+<img src="https://github.com/randy3k/AlignTab/raw/master/aligntab.gif">
 
 Installation
 ------------
