@@ -12,8 +12,8 @@ Usage
 ------------
 First time user
 
-- Predefined alignment can be found under the menu `Selection -> Align By`<br>
- `=`, `,`, `:`, etc..
+- Predefined alignment tools can be found under the top menu `Selection -> Align By`<br>
+ or mouse menu `Align by`
 
 <img src="https://github.com/randy3k/AlignTab/raw/master/alignby.png">
 

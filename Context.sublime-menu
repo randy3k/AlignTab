@@ -1,0 +1,39 @@
+[
+   {"caption" : "-", "id" : "align"},
+    {
+       "caption": "Align By",
+      "children": [
+          {
+          "caption": "First =",
+          "command": "align_tab",
+           "args": {"user_input" : "=/f"}
+          },
+          {
+          "caption" : "First ,",
+          "command" : "align_tab",
+          "args"    : {"user_input" : ",/f"}
+          },
+          {
+          "caption" : "First :",
+          "command" : "align_tab",
+          "args"    : {"user_input" : ":/f"}
+          },
+          {
+          "caption" : "All &",
+          "command" : "align_tab",
+          "args"    : {"user_input" : "&"}
+          },
+          {
+          "caption" : "All |",
+          "command" : "align_tab",
+          "args"    : {"user_input" : "\\|"}
+          }
+          ,
+          {
+          "caption" : "All Spaces",
+          "command" : "align_tab",
+          "args"    : {"user_input" : "\\s*/l1l0"}
+          }
+      ]
+  }
+]
