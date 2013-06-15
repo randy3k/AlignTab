@@ -21,7 +21,6 @@ Advanced user
 - Two ways to toogle Align Tabular:
  * 1. keyboard: type `Align Tabular` in command palette (`C+shift+p`).
  * 2. mouse: right click -> `Align Tabular`
->>>>>>> f2710f34face89f00890b41fd4ed6711ba4badfa
 - Enter delimiter in Python regex in the input panel
 - The input should be in the from of `regex/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?`
 - The option `/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?` controls
