@@ -1,9 +1,43 @@
 import sublime
 import sublime_plugin
-import re, string, os, itertools
+import re, string, os, itertools, sys
+if sys.version >= '3':
+    from .pyparsing.pyparsing2 import *
+else:
+    from pyparsing.pyparsing import *
 
+if not 'hist' in globals(): hist = []
 
-if not 'HIST' in globals(): HIST = []
+def lister(option):
+    output = []
+    for i,x in enumerate(option):
+        if type(x) == list:
+            if i<len(option)-1 and option[i+1].isdigit():
+                output+= lister(x*int(option[i+1]))
+            else:
+                output+= lister(x)
+        elif not x.isdigit():
+            output.append(x)
+    return output
+
+def parser(option):
+    try:
+        digits = Word('0123456789')
+        star = Word('*').setParseAction( replaceWith("") )
+        flag = Combine(Word('lcr',exact=1)+Optional(digits)+Optional('*'+digits)) | Combine(star+digits)
+        nestedParens = nestedExpr('(', ')', content=flag)
+        exp = OneOrMore(OneOrMore(flag) | nestedParens)+stringEnd
+        output = []
+        for item in lister(exp.parseString(option).asList()):
+            m = re.match(r"([lcr][0-9]*)(?:\*([0-9]+))",item)
+            if m:
+                output += [m.group(1)]*int(m.group(2))
+            else:
+                output.append(item)
+
+        return [item if len(item)>1 else item+"1" for item in output]
+    except ParseException:
+        pass
 
 
 def update_colwidth(colwidth, content):
@@ -83,28 +117,30 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
 
     def align_tab(self, edit, user_input):
+        view = self.view
+
         # insert history and reset index
-        if not HIST or user_input!= HIST[-1]: HIST.append(user_input)
-        CycleAlignTabHistory.INDEX = None
+        if not hist or user_input!= hist[-1]: hist.append(user_input)
+        CycleAlignTabHistory.index = None
 
         user_input = get_named_pattern(user_input)
 
-        m = re.match(r'(.+)/((?:[rlc][0-9]*(?:\*[0-9]+)?|\((?:[rlc][0-9]*)+\)(?:\*[0-9]+)?)*)(?:(f[0-9]*))?$', user_input)
+        #  ((?:[rlc][0-9]*(?:\*[0-9]+)?|\((?:[rlc][0-9]*)+\)(?:\*[0-9]+)?)*)
+        m = re.match(r'(.+)/([0-9lcr\*\(\)]*)(?:(f[0-9]*))?$', user_input)
+
         regex = m.group(1) if m and (m.group(2) or m.group(3)) else user_input
         regex = "(" + regex + ")"
-        option = m.group(2) if m and m.group(2) else "l1"
-        # replace (...)*n by repeating (...) n times
-        for tri in re.findall(r'(\(((?:[rlc][0-9]*)+)\)(?:\*([0-9]+))?)', option):
-            option = option.replace(tri[0], tri[1]*(int(tri[2]) if tri[2] else 1), 1)
-        # replace [rlc]*n by repeating n times
-        for tri in re.findall(r'(([rlc][0-9]*)(?:\*([0-9]+))?)', option):
-            option = option.replace(tri[0], tri[1]*(int(tri[2]) if tri[2] else 1), 1)
-        # break the option into list
-        option = [op if len(op)>1 else op+"1" for op in re.findall(r'[rlc][0-9]*', option)]
+
+        option = parser(m.group(2)) if m and m.group(2) else ["l1"]
+        if not option:
+            regex = user_input
+            option = ["l1"]
+
+        # print(option)
 
         f = m.group(3) if m and m.group(3) else "f0"
         f = 1 if f == "f" else int(f[1:])
-        view = self.view
+
 
         rows = []
         colwidth = []
@@ -122,24 +158,21 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
 # VintageEX teaches me the following
 class CycleAlignTabHistory(sublime_plugin.TextCommand):
-    INDEX = None
+    index = None
     def run(self, edit, backwards=False):
-        if CycleAlignTabHistory.INDEX is None:
-            CycleAlignTabHistory.INDEX = -1 if backwards else 0
+        if CycleAlignTabHistory.index is None:
+            CycleAlignTabHistory.index = -1 if backwards else 0
         else:
-            CycleAlignTabHistory.INDEX += -1 if backwards else 1
+            CycleAlignTabHistory.index += -1 if backwards else 1
 
-        if CycleAlignTabHistory.INDEX == len(HIST) or \
-            CycleAlignTabHistory.INDEX < -len(HIST):
-                CycleAlignTabHistory.INDEX = -1 if backwards else 0
+        if CycleAlignTabHistory.index == len(hist) or \
+            CycleAlignTabHistory.index < -len(hist):
+                CycleAlignTabHistory.index = -1 if backwards else 0
 
         self.view.erase(edit, sublime.Region(0, self.view.size()))
-        self.view.insert(edit, 0, HIST[CycleAlignTabHistory.INDEX])
+        self.view.insert(edit, 0, hist[CycleAlignTabHistory.index])
 
 class HistoryIndexRestorer(sublime_plugin.EventListener):
     def on_deactivated(self, view):
-        # due to views loading asynchronously, do not restore history index
-        # .on_activated(), but here instead. otherwise, the .score_selector()
-        # call won't yield the desired results.
         if view.score_selector(0, 'text.aligntab') > 0:
-            CycleAlignTabHistory.INDEX = None
+            CycleAlignTabHistory.index = None
