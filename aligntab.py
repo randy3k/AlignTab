@@ -1,6 +1,6 @@
 import sublime
 import sublime_plugin
-import re, string, os
+import re, string, os, itertools
 
 
 if not 'HIST' in globals(): HIST = []
@@ -89,11 +89,20 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
         user_input = get_named_pattern(user_input)
 
-        m = re.match('(.+)/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?$', user_input)
+        m = re.match(r'(.+)/((?:[rlc][0-9]*(?:\*[0-9]+)?|\((?:[rlc][0-9]*)+\)(?:\*[0-9]+)?)*)(?:(f[0-9]*))?$', user_input)
         regex = m.group(1) if m else user_input
         regex = "(" + regex + ")"
         option = m.group(2) if m and m.group(2) else "l1"
-        option = [pat if len(pat)>1 else pat+"1" for pat in re.findall('[rlc][0-9]*', option)]
+        for tri in re.findall(r'(\(((?:[rlc][0-9]*)+)\)(?:\*([0-9]+))?)', option):
+            option = option.replace(tri[0], tri[1]*(int(tri[2]) if tri[2] else 1), 1)
+        for tri in re.findall(r'(([rlc][0-9]*)(?:\*([0-9]+))?)', option):
+            option = option.replace(tri[0], tri[1]*(int(tri[2]) if tri[2] else 1), 1)
+        # option = list(itertools.chain.from_iterable([[op[0]]*(int(op[1]) if op[1] else 1) for op in option]))
+        option = re.findall(r'[rlc][0-9]*', option)
+
+        option = [op if len(op)>1 else op+"1" for op in option]
+        print(option)
+
         f = m.group(3) if m and m.group(3) else "f0"
         f = 1 if f == "f" else int(f[1:])
         view = self.view

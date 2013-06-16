@@ -22,16 +22,17 @@ Advanced user
  * 1. keyboard: type `Align Tabular` in command palette (`C+shift+p`).
  * 2. mouse: right click -> `Align Tabular`
 - Enter delimiter in Python regex in the input panel
-- The input should be in the from of `regex/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?`
-- The option `/((?:[rlc][0-9]*)+)?(?:(f[0-9]*))?` controls
+- The input should be in the from of `regex/option`
+- The option controls
  - left/right/center justification: `r` or `l` or `c`
- - spaces after the columns: the number after `rlc`
+ - spaces after the columns: the number after `r` or `l` or `c`
  - max number of splits: the number after `f`
+- The option for alignment cycles through the columns and delimiters are also columns.
+  - the symbol `*` repeats the preceeding justification flags, for example `r*3` equals `rrr`, and `(lr1)*2` equals `lr1lr1`.
 - Default option is `l1f0`.
  * All columns are left-justified.
  * A space is added after each column.
  * All matched delimiters are aligned.
-- The option for alignment cycles through the columns and delimiters are also columns.
 
 <img src="https://github.com/randy3k/AlignTab/raw/master/aligntab.gif">
 
@@ -79,7 +80,7 @@ apple & orange & grapes
 one   & two    & three
 ```
 
-- `&/c2l1` or `&/c2l` two spaces after odd columns
+- `&/c2l1` or `&/c2l` or `&/(c2l)*3` two spaces after odd columns
 
 ```
 apple  & orange  & grapes
