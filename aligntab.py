@@ -1,44 +1,36 @@
 import sublime
 import sublime_plugin
-import re, string, os, itertools, sys
+import re, sys
 if sys.version >= '3':
-    from .pyparsing.pyparsing2 import *
+    from .pyparsing import *
 else:
-    from pyparsing.pyparsing import *
+    from pyparsing import *
 
 if not 'hist' in globals(): hist = []
 
-def lister(option):
-    output = []
-    for i,x in enumerate(option):
-        if type(x) == list:
-            if i<len(option)-1 and option[i+1].isdigit():
-                output+= lister(x*int(option[i+1]))
-            else:
-                output+= lister(x)
-        elif not x.isdigit():
-            output.append(x)
-    return output
-
-def parser(option):
+def parser(user_input):
     try:
+        repeater = lambda t: list(t[0])*int(t[1]) if len(t)==2 else t[0]
         digits = Word('0123456789')
-        star = Word('*').setParseAction( replaceWith("") )
-        flag = Combine(Word('lcr',exact=1)+Optional(digits)+Optional('*'+digits)) | Combine(star+digits)
-        nestedParens = nestedExpr('(', ')', content=flag)
-        exp = OneOrMore(OneOrMore(flag) | nestedParens)+stringEnd
-        output = []
-        for item in lister(exp.parseString(option).asList()):
-            m = re.match(r"([lcr][0-9]*)(?:\*([0-9]+))",item)
-            if m:
-                output += [m.group(1)]*int(m.group(2))
-            else:
-                output.append(item)
+        flag = (Word('lcr',exact=1)+Optional(digits)).setParseAction(lambda t: [[t[0],int(t[1])]] if len(t)==2 else [[t[0],1]])
+        flags = (Group(flag)+Optional(Suppress('*')+digits)).setParseAction(repeater)
 
-        return [item if len(item)>1 else item+"1" for item in output]
+        Oparser = Forward()
+        nestedParens = (Suppress('(') + Group(Oparser) + Suppress(')')+Optional(Suppress("*")+digits)).setParseAction(repeater)
+        Oparser << OneOrMore(flags| nestedParens)
+        Oparser = Optional(Oparser)#.setParseAction(lambda t: t if t else [['l',1]])
+
+        Fparser = Optional('f'+Optional(digits)).setParseAction(lambda t: int(t[1]) if len(t)==2 else 1 if len(t)==1 else [None])
+        Inputparser = Regex(".+(?=/)")+Suppress("/")+Group(Oparser)+Fparser+stringEnd
+
+        out = Inputparser.parseString(user_input).asList()
     except ParseException:
-        pass
-
+        out = None
+    # print(out)
+    regex = out[0] if (out and (out[1] or out[2])) else user_input
+    option = out[1] if (out and out[1]) else [['l',1]]
+    f = out[2] if out and out[2] else 0
+    return [regex, option ,f]
 
 def update_colwidth(colwidth, content):
     thiscolwidth = [len(s) for s in content]
@@ -52,7 +44,7 @@ def fill_spaces(content, colwidth, option):
     for j in range(len(content)):
         op = option[j % len(option)]
         align = op[0]
-        spaceafter = " "*int(op[1:]) if j<len(content)-1 else ""
+        spaceafter = " "*op[1] if j<len(content)-1 else ""
         fill = colwidth[j]-len(content[j])
         if align=='l':
             content[j] = content[j] + " "*fill + spaceafter
@@ -74,7 +66,6 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         if not user_input:
             v = self.view.window().show_input_panel('Align with regex:', '',
                     lambda x: self.view.run_command("align_tab",{"user_input":x}), None, None)
-            # print os.getcwd()
             v.set_syntax_file('Packages/AlignTab/AlignTab.tmLanguage')
             v.settings().set('gutter', False)
             v.settings().set('rulers', [])
@@ -125,22 +116,8 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
         user_input = get_named_pattern(user_input)
 
-        #  ((?:[rlc][0-9]*(?:\*[0-9]+)?|\((?:[rlc][0-9]*)+\)(?:\*[0-9]+)?)*)
-        m = re.match(r'(.+)/([0-9lcr\*\(\)]*)(?:(f[0-9]*))?$', user_input)
-
-        regex = m.group(1) if m and (m.group(2) or m.group(3)) else user_input
-        regex = "(" + regex + ")"
-
-        option = parser(m.group(2)) if m and m.group(2) else ["l1"]
-        if not option:
-            regex = user_input
-            option = ["l1"]
-
-        # print(option)
-
-        f = m.group(3) if m and m.group(3) else "f0"
-        f = 1 if f == "f" else int(f[1:])
-
+        [regex, option, f] = parser(user_input)
+        regex = '(' + regex + ')'
 
         rows = []
         colwidth = []
