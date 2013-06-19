@@ -11,17 +11,20 @@ if not 'hist' in globals(): hist = []
 def parser(user_input):
     try:
         repeater = lambda t: list(t[0])*int(t[1]) if len(t)==2 else t[0]
+        complete_jflag = lambda t: [[t[0],int(t[1])]] if len(t)==2 else [[t[0],1]]
+        complete_fflag = lambda t: int(t[1]) if len(t)==2 else 1 if len(t)==1 else [None]
         digits = Word('0123456789')
-        flag = (Word('lcr',exact=1)+Optional(digits)).setParseAction(lambda t: [[t[0],int(t[1])]] if len(t)==2 else [[t[0],1]])
-        flags = (Group(flag)+Optional(Suppress('*')+digits)).setParseAction(repeater)
+        # justication flag
+        jflag = (Word('lcr',exact=1)+Optional(digits)).setParseAction(complete_jflag)
+        jflagr = (Group(jflag)+Optional(Suppress('*')+digits)).setParseAction(repeater)
 
-        Oparser = Forward()
-        nestedParens = (Suppress('(') + Group(Oparser) + Suppress(')')+Optional(Suppress("*")+digits)).setParseAction(repeater)
-        Oparser << OneOrMore(flags| nestedParens)
-        Oparser = Optional(Oparser)#.setParseAction(lambda t: t if t else [['l',1]])
+        oExpr = Forward()
+        nestedParens = (Suppress('(') + Group(oExpr) + Suppress(')')
+                            +Optional(Suppress("*")+digits)).setParseAction(repeater)
+        oExpr << OneOrMore(jflagr| nestedParens)
 
-        Fparser = Optional('f'+Optional(digits)).setParseAction(lambda t: int(t[1]) if len(t)==2 else 1 if len(t)==1 else [None])
-        Inputparser = Regex(".+(?=/)")+Suppress("/")+Group(Oparser)+Fparser+stringEnd
+        fExpr = Optional('f'+Optional(digits)).setParseAction(complete_fflag)
+        Inputparser = Regex(".+(?=/)")+Suppress("/")+Group(Optional(oExpr))+fExpr+stringEnd
 
         out = Inputparser.parseString(user_input).asList()
     except ParseException:
@@ -66,7 +69,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         if not user_input:
             v = self.view.window().show_input_panel('Align with regex:', '',
                     lambda x: self.view.run_command("align_tab",{"user_input":x}), None, None)
-            v.set_syntax_file('Packages/AlignTab/AlignTab.tmLanguage')
+            v.set_syntax_file('Packages/AlignTab/AlignTab.hidden-tmLanguage')
             v.settings().set('gutter', False)
             v.settings().set('rulers', [])
         else:
