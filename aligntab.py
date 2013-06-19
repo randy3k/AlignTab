@@ -1,38 +1,39 @@
 import sublime
 import sublime_plugin
 import re, sys
-if sys.version >= '3':
-    from .pyparsing import *
-else:
-    from pyparsing import *
 
 if not 'hist' in globals(): hist = []
 
-def parser(user_input):
+def input_parser(user_input):
+    m = re.match(r"(.+)/([lcr*()0-9]*)(f[0-9]*)?", user_input)
+
+    if m and (m.group(2) or m.group(3)):
+        regex = m.group(1)
+        option = m.group(2)
+        f = m.group(3)
+    else:
+        [regex, option ,f]= [user_input, [['l', 1]], 0]
+
+    # for option
     try:
-        repeater = lambda t: list(t[0])*int(t[1]) if len(t)==2 else t[0]
-        complete_jflag = lambda t: [[t[0],int(t[1])]] if len(t)==2 else [[t[0],1]]
-        complete_fflag = lambda t: int(t[1]) if len(t)==2 else 1 if len(t)==1 else [None]
-        digits = Word('0123456789')
-        # justication flag
-        jflag = (Word('lcr',exact=1)+Optional(digits)).setParseAction(complete_jflag)
-        jflagr = (Group(jflag)+Optional(Suppress('*')+digits)).setParseAction(repeater)
+        rParan = re.compile(r"\(([^())]*)\)\*([0-9]+)")
+        while True:
+            if not rParan.search(option): break
+            for r in rParan.finditer(option):
+                option = option.replace(r.group(0), r.group(1)*int(r.group(2)),1)
 
-        oExpr = Forward()
-        nestedParens = (Suppress('(') + Group(oExpr) + Suppress(')')
-                            +Optional(Suppress("*")+digits)).setParseAction(repeater)
-        oExpr << OneOrMore(jflagr| nestedParens)
+        for r in re.finditer(r"([lcr][0-9]*)\*([0-9]+)", option):
+            option = option.replace(r.group(0), r.group(1)*int(r.group(2)),1)
 
-        fExpr = Optional('f'+Optional(digits)).setParseAction(complete_fflag)
-        Inputparser = Regex(".+(?=/)")+Suppress("/")+Group(Optional(oExpr))+fExpr+stringEnd
+        option = re.findall(r"[lcr][0-9]*", option)
+        option = list(map(lambda x: [x[0], 1] if len(x)==1 else [x[0], int(x[1:])], option))
+        option = option if option else [['l', 1]]
 
-        out = Inputparser.parseString(user_input).asList()
-    except ParseException:
-        out = None
-    # print(out)
-    regex = out[0] if (out and (out[1] or out[2])) else user_input
-    option = out[1] if (out and out[1]) else [['l',1]]
-    f = out[2] if out and out[2] else 0
+        # for f
+        f = 0 if not f else 1 if len(f)==1 else int(f[1:])
+    except:
+        [regex, option ,f]= [user_input, [['l', 1]], 0]
+
     return [regex, option ,f]
 
 def update_colwidth(colwidth, content):
@@ -119,7 +120,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
         user_input = get_named_pattern(user_input)
 
-        [regex, option, f] = parser(user_input)
+        [regex, option, f] = input_parser(user_input)
         regex = '(' + regex + ')'
 
         rows = []
@@ -128,7 +129,8 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         rows = sorted(set(rows))
         if not rows: return
 
-        spacebefore = min([re.match("^(\s*)", view.substr(view.line(view.text_point(row,0)))).group(1) for row in rows])
+        spacebefore = min([re.match("^(\s*)",
+                view.substr(view.line(view.text_point(row,0)))).group(1) for row in rows])
         for row in reversed(rows):
             line = view.line(view.text_point(row,0))
             content = [s.strip() for s in re.split(regex,view.substr(line),f) ]
