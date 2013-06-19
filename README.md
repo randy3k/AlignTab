@@ -28,7 +28,7 @@ Advanced user
  - spaces after the columns: the number after `r` or `l` or `c`
  - max number of splits: the number after `f`
 - The option for alignment cycles through the columns and delimiters are also columns.
-  - the symbol `*` repeats the preceeding justification flags, for example `r*3` equals `rrr`, and `(lr1)*2` equals `lr1lr1`.
+  - the symbol `*` repeats the preceeding justification flags, for example `r*3` equals `rrr`, and `(cr2)*2` equals `cr2cr2`.
 - Default option is `l1f0`.
  * All columns are left-justified.
  * A space is added after each column.
