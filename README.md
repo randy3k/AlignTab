@@ -33,6 +33,7 @@ Advanced user
  * All columns are left-justified.
  * A space is added after each column.
  * All matched delimiters are aligned.
+- Don't use capturing parenthese, use non-capturing parenthese `(?:regex)`.
 
 <img src="https://github.com/randy3k/AlignTab/raw/master/aligntab.gif">
 
