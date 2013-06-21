@@ -23,17 +23,18 @@ Advanced user
  * 2. mouse: right click -> `Align Tabular`
 - Enter delimiter in Python regex in the input panel
 - The input should be in the from of `regex/option`
-- The option controls
+- For regex, do not use capturing parenthese. Instead, use non-capturing parenthese `(?:regex)`.
+- The option, e.g., `c2r2f1`, controls
  - left/right/center justification: `r` or `l` or `c`
  - spaces after the columns: the number after `r` or `l` or `c`
- - max number of splits: the number after `f`
+ - max number of delimiters: the number after `f`
 - The option for alignment cycles through the columns and delimiters are also columns.
   - the symbol `*` repeats the preceeding justification flags, for example `r*3` equals `rrr`, and `(cr2)*2` equals `cr2cr2`.
 - Default option is `l1f0`.
  * All columns are left-justified.
  * A space is added after each column.
  * All matched delimiters are aligned.
-- Don't use capturing parenthese, use non-capturing parenthese `(?:regex)`.
+
 
 <img src="https://github.com/randy3k/AlignTab/raw/master/aligntab.gif">
 
