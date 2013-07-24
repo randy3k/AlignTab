@@ -12,10 +12,11 @@ def input_parser(user_input):
         option = m.group(2)
         f = m.group(3)
     else:
-        [regex, option ,f]= [user_input, [['l', 1]], 0]
+        print("No options!")
+        return [user_input, [['l', 1]], 0]
 
-    # for option
     try:
+        # for option
         rParan = re.compile(r"\(([^())]*)\)\*([0-9]+)")
         while True:
             if not rParan.search(option): break
