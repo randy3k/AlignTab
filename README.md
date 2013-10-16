@@ -14,7 +14,7 @@ First time user
 
 - Predefined alignment tools can be found under the mouse menu `Align By`
 
-<img src="https://github.com/randy3k/AlignTab/raw/master/alignby.png">
+<img src="https://github.com/randy3k/AlignTab/raw/fig/alignby.png">
 
 Advanced user
 
@@ -36,7 +36,7 @@ Advanced user
  * All matched delimiters are aligned.
 
 
-<img src="https://github.com/randy3k/AlignTab/raw/master/aligntab.gif">
+<img src="https://github.com/randy3k/AlignTab/raw/fig/aligntab.gif">
 
 Installation
 ------------
