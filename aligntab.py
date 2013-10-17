@@ -4,6 +4,17 @@ import re, sys
 
 if not 'hist' in globals(): hist = []
 
+def str_width(string):
+    if not string:
+        return 0
+    slen = 0
+    for c in string:
+        if 19968 < ord(c) < 40869:
+            slen += 2
+        else:
+            slen += 1
+    return slen
+
 def input_parser(user_input):
     m = re.match(r"(.+)/([lcr*()0-9]*)(f[0-9]*)?", user_input)
 
@@ -38,7 +49,7 @@ def input_parser(user_input):
     return [regex, option ,f]
 
 def update_colwidth(colwidth, content):
-    thiscolwidth = [len(s) for s in content]
+    thiscolwidth = [str_width(s) for s in content]
     for i,w in enumerate(thiscolwidth):
         if i<len(colwidth):
             colwidth[i] = max(colwidth[i], w)
@@ -50,7 +61,7 @@ def fill_spaces(content, colwidth, option):
         op = option[j % len(option)]
         align = op[0]
         spaceafter = " "*op[1] if j<len(content)-1 else ""
-        fill = colwidth[j]-len(content[j])
+        fill = colwidth[j]-str_width(content[j])
         if align=='l':
             content[j] = content[j] + " "*fill + spaceafter
         elif align == 'r':
