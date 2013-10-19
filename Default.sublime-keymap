@@ -1,7 +1,7 @@
 [
 
 	{
-		"keys": ["up"], "command": "cycle_align_tab_history",
+		"keys": ["up"], "command": "align_tab_history",
 		"args": {
 			"backwards": true
 		},
@@ -12,7 +12,7 @@
 	},
 
 	{
-		"keys": ["down"], "command": "cycle_align_tab_history",
+		"keys": ["down"], "command": "align_tab_history",
 		"context":
 		[
 			{ "key": "selector", "operator": "equal", "operand": "text.aligntab" }

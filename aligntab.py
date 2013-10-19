@@ -189,7 +189,17 @@ class AlignTabClearMode(sublime_plugin.TextCommand):
             dict[vid]["mode"] = 0
             view.set_status("AlignTab", "")
 
-
+class AlignTabUndo(sublime_plugin.WindowCommand):
+    def run(self):
+        view = self.window.active_view()
+        if view.is_scratch() or view.settings().get('is_widget'): return
+        vid = view.id()
+        global dict
+        if vid in dict:
+            dict[vid]["mode"] = 0
+            view.run_command("undo")
+            view.run_command("undo")
+            dict[vid]["mode"] = 1
 
 class AlignTabUpdater(sublime_plugin.EventListener):
     # Table mode
@@ -198,12 +208,11 @@ class AlignTabUpdater(sublime_plugin.EventListener):
         cmdhist = view.command_history(0)
         if cmdhist[0] not in ["insert", "left_delete", "right_delete", "paste", "cut"]: return
         if cmdhist[0] == "insert" and cmdhist[1] == {'characters': ' '}: return
-
         vid = view.id()
         global dict
         if vid in dict:
             if dict[vid]["mode"] == 1:
-                # print(cmdhist)
+                print("table mode:", view.command_history(0))
                 view.run_command("align_tab", {"user_input": "last_rexp", "mode": True})
 
     def on_query_context(self, view, key, operator, operand, match_all):
