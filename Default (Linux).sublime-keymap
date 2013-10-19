@@ -1,0 +1,8 @@
+[
+	// Table Mode Undo
+	{ "keys": ["ctrl+z"], "command": "align_tab_undo", "context":
+		[
+			{ "key": "align_tab_mode", "operator": "equal", "operand": "true" }
+		]
+	}
+]
