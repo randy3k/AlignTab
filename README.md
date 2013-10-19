@@ -7,16 +7,17 @@ How does it differ from other alignment plugins?
 - Flexibility: Align with user defined regular expression
 - Efficiency: Smart line detection for alignment if no lines are selected
 - Multiple cursors support
+- Table mode: super efficient for editing tables
 
 Usage
 ------------
-First time user
+###First time user
 
 - Predefined alignment tools can be found under the mouse menu `Align By`
 
 <img src="https://github.com/randy3k/AlignTab/raw/fig/alignby.png">
 
-Advanced user
+###Advanced user
 
 - Two ways to toogle Align Tabular:
  * 1. keyboard: type `Align Tabular` in command palette (`C+shift+p`).
@@ -35,8 +36,9 @@ Advanced user
  * A space is added after each column.
  * All matched delimiters are aligned.
 
-
 <img src="https://github.com/randy3k/AlignTab/raw/fig/aligntab.gif">
+
+###Table Mode
 
 Installation
 ------------
@@ -60,11 +62,13 @@ For frequent patterns, consider the following keybind in your user keybinds file
 or syntex specific keybind.
 ```
   // latex align keybind, to align & and \\, but not \&
-  {
-    "keys": ["super+shift+a"], "command": "align_tab",
-    "args" : {"user_input" : "(?<!\\\\)&|\\\\\\\\"},
-    "context":   [ { "key": "selector", "operator": "equal", "operand": "text.tex.latex" } ]
-  }
+    {   
+    	"keys": ["super+shift+a"], "command": "align_tab", 
+        "args" : {"user_input" : "(?<!\\\\)&|\\\\\\\\"}, 
+        "context":[
+            { "key": "selector", "operator": "equal", "operand": "text.tex.latex" }
+        ]
+    }
 ```
 
 

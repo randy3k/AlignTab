@@ -39,6 +39,12 @@
           "command" : "align_tab",
           "args"    : {"user_input" : "\\s*/l1l0"}
           }
+          ,
+          {
+          "caption" : "Last REXP",
+          "command" : "align_tab",
+          "args"    : {"user_input" : "last_rexp"}
+          }
       ]
   }
 ]
