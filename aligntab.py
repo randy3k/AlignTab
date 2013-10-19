@@ -139,9 +139,9 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 op = option[i % len(option)]
                 # lenc = len(c)
                 pt = pt-len(c)
-                sb = len(c) - len(c.lstrip())
                 lenc = len(c.strip())
-                se = len(c)-lenc-sb
+                se = len(c) - len(c.rstrip())
+                sb = len(c)-lenc-se
                 if op[0] == "l":
                     fill = colwidth[i]-lenc+op[1] if i != len(content)-1 else 0
                     oldpt = [min(s.end()-sb,pt+lenc+fill) for s in view.sel() if s.empty() and pt+sb+lenc<=s.end()<=pt+sb+lenc+se]
