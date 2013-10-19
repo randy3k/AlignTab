@@ -39,7 +39,7 @@ def input_parser(user_input):
     return [regex, option ,f]
 
 def update_colwidth(colwidth, content, option):
-    thiscolwidth = [len(s.strip()) for s in content]
+    thiscolwidth = [len(s.strip(" ")) for s in content]
     for i,w in enumerate(thiscolwidth):
         if i<len(colwidth):
             colwidth[i] = max(colwidth[i], w)
@@ -139,8 +139,8 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 op = option[i % len(option)]
                 # lenc = len(c)
                 pt = pt-len(c)
-                lenc = len(c.strip())
-                se = len(c) - len(c.rstrip())
+                lenc = len(c.strip(' '))
+                se = len(c) - len(c.rstrip(' '))
                 sb = len(c)-lenc-se
                 if op[0] == "l":
                     fill = colwidth[i]-lenc+op[1] if i != len(content)-1 else 0
