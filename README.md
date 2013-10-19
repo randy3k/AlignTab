@@ -40,6 +40,9 @@ Usage
 
 ###Table Mode
 
+<img src="https://github.com/randy3k/AlignTab/raw/fig/table.gif">
+
+
 Installation
 ------------
 [Package Control](http://wbond.net/sublime_packages/package_control)
@@ -62,9 +65,9 @@ For frequent patterns, consider the following keybind in your user keybinds file
 or syntex specific keybind.
 ```
   // latex align keybind, to align & and \\, but not \&
-    {   
-    	"keys": ["super+shift+a"], "command": "align_tab", 
-        "args" : {"user_input" : "(?<!\\\\)&|\\\\\\\\"}, 
+    {
+    	"keys": ["super+shift+a"], "command": "align_tab",
+        "args" : {"user_input" : "(?<!\\\\)&|\\\\\\\\"},
         "context":[
             { "key": "selector", "operator": "equal", "operand": "text.tex.latex" }
         ]
