@@ -19,6 +19,7 @@ Usage
 
 ###Advanced user
 
+- Open `Align Tabular` in Command Palette `C+Shift+p`
 - The input should be in the from of `regex/option`
 - Do not use capturing parenthese for regular expression. Instead, use non-capturing parenthese `(?:regex)`.
 - The option, e.g., `c2r2f1`, controls
