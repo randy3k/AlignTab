@@ -22,10 +22,11 @@ Usage
 - The input should be in the from of `regex/option`
 - Do not use capturing parenthese for regular expression. Instead, use non-capturing parenthese `(?:regex)`.
 - The option, e.g., `c2r2f1`, controls
- - left/right/center justification: `r` or `l` or `c`
- - spaces after the columns: the number after `r` or `l` or `c`
+ - left/right/center justification: `r`, `l` or `c`
+ - spaces after the columns: the number after `r`, `l` or `c`
  - max number of delimiters: the number after `f`
-- Delimiters are also columns The option for alignment cycles through the columns.
+- Delimiter are also treated as a column. The option for alignment cycles through the columns. 
+For example, `regex/rl` means odd columns will be right-justified and even columns will be left-justified.
   - the symbol `*` repeats the preceeding justification flags, for example `r*3` equals `rrr`, and `(cr3)*2` equals `cr3cr3`.
 - Default option is `l1f0`.
  * All columns are left-justified.
@@ -49,7 +50,7 @@ Installation
 
 Keybinds
 ------------
-For frequent patterns, consider the following keybind in your user keybinds file. (Remember to change the key and regex.)
+For frequent patterns, put the following keybind in your user keybinds file. (Remember to change the key and regex.)
 
 ```
  //align =
