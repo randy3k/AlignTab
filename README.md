@@ -15,7 +15,7 @@ Usage
 
 - Predefined alignment tools can be found under the mouse menu `Align By`
 
-<img src="https://github.com/randy3k/AlignTab/raw/fig/alignby.png">
+<img width=500 src="https://github.com/randy3k/AlignTab/raw/fig/alignby.png">
 
 ###Advanced user
 
@@ -36,11 +36,11 @@ Usage
  * A space is added after each column.
  * All matched delimiters are aligned.
 
-<img src="https://github.com/randy3k/AlignTab/raw/fig/aligntab.gif">
+<img width=500 src="https://github.com/randy3k/AlignTab/raw/fig/aligntab.gif">
 
 ###Table Mode
 
-<img src="https://github.com/randy3k/AlignTab/raw/fig/table.gif">
+<img width=500 src="https://github.com/randy3k/AlignTab/raw/fig/table.gif">
 
 
 Installation
