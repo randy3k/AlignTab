@@ -2,10 +2,10 @@ Align Tabular
 ==============
 An alignment plugin for Sublime Text 2/3 -- ST version of the excellent VIM plugin, tabular.
 
-How does it differ from other alignment plugins?
+Features
 ------------
 - Flexibility: Align with user defined regular expression
-- Efficiency: Smart line detection for alignment if no lines are selected
+- Efficiency: Smart detection for alignment if no lines are selected
 - Multiple cursors support
 - Table mode: super efficient for editing tables
 
@@ -19,18 +19,14 @@ Usage
 
 ###Advanced user
 
-- Two ways to toogle Align Tabular:
- * 1. keyboard: type `Align Tabular` in command palette (`C+shift+p`).
- * 2. mouse: right click -> `Align Tabular`
-- Enter delimiter in Python regex in the input panel
 - The input should be in the from of `regex/option`
-- For regex, do not use capturing parenthese. Instead, use non-capturing parenthese `(?:regex)`.
+- Do not use capturing parenthese for regular expression. Instead, use non-capturing parenthese `(?:regex)`.
 - The option, e.g., `c2r2f1`, controls
  - left/right/center justification: `r` or `l` or `c`
  - spaces after the columns: the number after `r` or `l` or `c`
  - max number of delimiters: the number after `f`
-- The option for alignment cycles through the columns and delimiters are also columns.
-  - the symbol `*` repeats the preceeding justification flags, for example `r*3` equals `rrr`, and `(cr2)*2` equals `cr2cr2`.
+- Delimiters are also columns The option for alignment cycles through the columns.
+  - the symbol `*` repeats the preceeding justification flags, for example `r*3` equals `rrr`, and `(cr3)*2` equals `cr3cr3`.
 - Default option is `l1f0`.
  * All columns are left-justified.
  * A space is added after each column.
@@ -76,7 +72,7 @@ or syntex specific keybind.
 
 
 
-Predefined patterns
+Named patterns
 ------------
 To make it easier to remember complex patterns, you can save them in
 a dictionary in the settings file. Use the name as key and the regex as value.
