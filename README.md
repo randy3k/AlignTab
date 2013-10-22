@@ -23,8 +23,8 @@ Usage
 - The input should be in the from of `regex/option`
 - Do not use capturing parenthese for regular expression. Instead, use non-capturing parenthese `(?:regex)`.
 - The option, e.g., `c2r2f1`, controls
- - left/right/center justification: `r`, `l` or `c`
- - spaces after the columns: the number after `r`, `l` or `c`
+ - column justification: `r`, `l` or `c`
+ - spaces after each column: the number after `r`, `l` or `c`
  - max number of delimiters: the number after `f`
 - Delimiter are also treated as a column. The option for alignment cycles through the columns. 
 For example, `regex/rl` means odd columns will be right-justified and even columns will be left-justified.
