@@ -129,6 +129,8 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 view.set_status("AlignTab", "")
             return
 
+        # converting leading tabs to spaces
+        view.run_command("expand_tabs", {"set_translate_tabs": True})
         spacebefore = min([re.match("^(\s*)",
                 view.substr(view.line(view.text_point(row,0)))).group(1) for row in rows])
 
@@ -176,8 +178,11 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                         view.sel().subtract(sublime.Region(pt+lfill+lenc, pt+lenc+lfill+rfill))
                         for s in [sublime.Region(b,b) for b in oldpt]: view.sel().add(s)
 
-
             view.insert(edit, view.text_point(row,0), spacebefore)
+
+        # convert leading spaces to tabs if translate_tabs_to_spaces is true
+        if view.settings().get("translate_tabs_to_spaces", False):
+            view.run_command("unexpand_tabs", {"set_translate_tabs": True})
 
 class AlignTabClearMode(sublime_plugin.TextCommand):
     def run(self, edit):
