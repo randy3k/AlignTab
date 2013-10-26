@@ -2,8 +2,8 @@ import sublime
 import sublime_plugin
 import re, sys
 
-if not 'dict' in globals(): dict = {}
-if not 'hist' in globals(): hist = []
+if not 'DICT' in globals(): DICT = {}
+if not 'HIST' in globals(): HIST = []
 
 def input_parser(user_input):
     m = re.match(r"(.+)/([lcr*()0-9]*)(f[0-9]*)?", user_input)
@@ -49,7 +49,7 @@ def update_colwidth(colwidth, content, option):
 def get_named_pattern(user_input):
     patterns = sublime.load_settings('AlignTab.sublime-settings').get('named_patterns', {})
     user_input = patterns[user_input] if user_input in patterns else user_input
-    user_input = hist[-1] if hist and user_input == 'last_rexp' else user_input
+    user_input = HIST[-1] if HIST and user_input == 'last_rexp' else user_input
     return user_input
 
 class AlignTabCommand(sublime_plugin.TextCommand):
@@ -105,7 +105,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         vid = view.id()
 
         # insert history and reset index
-        if not hist or (user_input!= hist[-1] and user_input!= "last_rexp"): hist.append(user_input)
+        if not HIST or (user_input!= HIST[-1] and user_input!= "last_rexp"): HIST.append(user_input)
         AlignTabHistory.index = None
 
         user_input = get_named_pattern(user_input)
@@ -117,15 +117,15 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         colwidth = []
         self.expand_sel(regex, option, f , rows, colwidth)
         rows = sorted(set(rows))
-        global dict
+        global DICT
 
         if rows:
             if mode == True:
-                dict[vid] = {"mode": 1}
+                DICT[vid] = {"mode": 1}
                 view.set_status("AlignTab", "[Table Mode]")
         else:
             if mode == True:
-                dict[vid] = {"mode": 0}
+                DICT[vid] = {"mode": 0}
                 view.set_status("AlignTab", "")
             return
 
@@ -189,10 +189,10 @@ class AlignTabClearMode(sublime_plugin.TextCommand):
         view = self.view
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
-        global dict
+        global DICT
         print("Clear Table Mode!")
-        if vid in dict:
-            dict[vid]["mode"] = 0
+        if vid in DICT:
+            DICT[vid]["mode"] = 0
             view.set_status("AlignTab", "")
 
 class AlignTabUndo(sublime_plugin.WindowCommand):
@@ -200,12 +200,12 @@ class AlignTabUndo(sublime_plugin.WindowCommand):
         view = self.window.active_view()
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
-        global dict
-        if vid in dict:
-            dict[vid]["mode"] = 0
+        global DICT
+        if vid in DICT:
+            DICT[vid]["mode"] = 0
             view.run_command("undo")
             view.run_command("undo")
-            dict[vid]["mode"] = 1
+            DICT[vid]["mode"] = 1
 
 class AlignTabUpdater(sublime_plugin.EventListener):
     # Table mode
@@ -215,9 +215,9 @@ class AlignTabUpdater(sublime_plugin.EventListener):
         if cmdhist[0] not in ["insert", "left_delete", "right_delete", "paste", "cut"]: return
         if cmdhist[0] == "insert" and cmdhist[1] == {'characters': ' '}: return
         vid = view.id()
-        global dict
-        if vid in dict:
-            if dict[vid]["mode"] == 1:
+        global DICT
+        if vid in DICT:
+            if DICT[vid]["mode"] == 1:
                 print("table mode:", view.command_history(0))
                 view.run_command("align_tab", {"user_input": "last_rexp", "mode": True})
 
@@ -225,9 +225,9 @@ class AlignTabUpdater(sublime_plugin.EventListener):
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
         if key == 'align_tab_mode':
-            global dict
-            if vid in dict:
-                return dict[vid]["mode"] == 1
+            global DICT
+            if vid in DICT:
+                return DICT[vid]["mode"] == 1
             else:
                 return False
 
@@ -245,10 +245,10 @@ class AlignTabHistory(sublime_plugin.TextCommand):
         else:
             AlignTabHistory.index += -1 if backwards else 1
 
-        if AlignTabHistory.index == len(hist) or \
-            AlignTabHistory.index < -len(hist):
+        if AlignTabHistory.index == len(HIST) or \
+            AlignTabHistory.index < -len(HIST):
                 AlignTabHistory.index = -1 if backwards else 0
 
         self.view.erase(edit, sublime.Region(0, self.view.size()))
-        self.view.insert(edit, 0, hist[AlignTabHistory.index])
+        self.view.insert(edit, 0, HIST[AlignTabHistory.index])
 
