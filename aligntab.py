@@ -38,8 +38,8 @@ def input_parser(user_input):
 
     return [regex, option ,f]
 
-def update_colwidth(colwidth, content, option):
-    thiscolwidth = [len(s.strip(" ")) for s in content]
+def update_colwidth(colwidth, content, option, strip_char):
+    thiscolwidth = [len(c.strip(strip_char)) if i>0 else len(c.rstrip(strip_char).lstrip()) for i, c in enumerate(content)]
     for i,w in enumerate(thiscolwidth):
         if i<len(colwidth):
             colwidth[i] = max(colwidth[i], w)
@@ -70,16 +70,17 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         line = view.line(view.text_point(row,0))
         return [s for s in re.split(regex,view.substr(line),f)]
 
-    def expand_sel(self, regex, option, f, rows, colwidth):
+    def expand_sel(self, regex, option, f, rows, colwidth, strip_char):
         view = self.view
         lastrow = view.rowcol(view.size())[0]
+
         for sel in view.sel():
             for line in view.lines(sel):
                 thisrow = view.rowcol(line.begin())[0]
                 if (thisrow in rows): continue
                 content = self.get_line_content(regex, f, thisrow)
                 if len(content)<=1: continue
-                update_colwidth(colwidth, content, option)
+                update_colwidth(colwidth, content, option, strip_char)
                 rows.append(thisrow)
 
             if sel.begin()==sel.end():
@@ -89,13 +90,13 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 while endrow+1<=lastrow and not (endrow+1 in rows):
                     content = self.get_line_content(regex, f, endrow+1)
                     if len(content)<=1: break
-                    update_colwidth(colwidth, content, option)
+                    update_colwidth(colwidth, content, option, strip_char)
                     endrow = endrow+1
                     rows.append(endrow)
                 while beginrow-1>=0 and not (beginrow-1 in rows):
                     content = self.get_line_content(regex, f, beginrow-1)
                     if len(content)<=1: break
-                    update_colwidth(colwidth, content, option)
+                    update_colwidth(colwidth, content, option, strip_char)
                     beginrow = beginrow-1
                     rows.append(beginrow)
 
@@ -115,10 +116,10 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
         rows = []
         colwidth = []
-        self.expand_sel(regex, option, f , rows, colwidth)
+        strip_char = ' ' if not view.settings().get("translate_tabs_to_spaces", False) else None
+        self.expand_sel(regex, option, f , rows, colwidth, strip_char)
         rows = sorted(set(rows))
         global DICT
-
         if rows:
             if mode == True:
                 DICT[vid] = {"mode": 1}
@@ -129,60 +130,52 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 view.set_status("AlignTab", "")
             return
 
-        # converting leading tabs to spaces
-        view.run_command("expand_tabs", {"set_translate_tabs": True})
-        spacebefore = min([re.match("^(\s*)",
+        indentation = min([re.match("^(\s*)",
                 view.substr(view.line(view.text_point(row,0)))).group(1) for row in rows])
 
         for row in reversed(rows):
             content = self.get_line_content(regex, f, row)
             # the last col
-            pt = view.line(view.text_point(row, 0)).end()
+            begin = view.line(view.text_point(row, 0)).end()
             for i, c in reversed(list(enumerate(content))):
+                # option cycles through the columns
                 op = option[i % len(option)]
-                # lenc = len(c)
-                pt = pt-len(c)
-                lenc = len(c.strip(' '))
-                se = len(c) - len(c.rstrip(' '))
+                # begin of current cell
+                begin = begin-len(c)
+                lenc = len(c.strip(strip_char)) if i>0 else len(c.rstrip(strip_char).lstrip())
+                se = len(c) - len(c.rstrip(strip_char))
                 sb = len(c)-lenc-se
                 if op[0] == "l":
                     fill = colwidth[i]-lenc+op[1] if i != len(content)-1 else 0
-                    oldpt = [min(s.end()-sb,pt+lenc+fill) for s in view.sel() if s.empty() and pt+sb+lenc<=s.end()<=pt+sb+lenc+se]
-                    view.erase(edit, sublime.Region(pt,pt+sb))
-                    view.erase(edit, sublime.Region(pt+lenc,pt+lenc+se))
-                    view.insert(edit, pt+lenc, " "*(fill))
+                    oldpt = [min(s.end()-sb,begin+lenc+fill) for s in view.sel() if s.empty() and begin+sb+lenc<=s.end()<=begin+sb+lenc+se]
+                    view.erase(edit, sublime.Region(begin,begin+sb))
+                    view.erase(edit, sublime.Region(begin+lenc,begin+lenc+se))
+                    view.insert(edit, begin+lenc, " "*(fill))
                     if oldpt:
-                        view.sel().subtract(sublime.Region(pt+lenc, pt+lenc+fill))
-
+                        view.sel().subtract(sublime.Region(begin+lenc, begin+lenc+fill))
                         for s in [sublime.Region(b,b) for b in oldpt]: view.sel().add(s)
-                        # ST 2 does not support add_all(a list)
-                        # view.sel().add_all([sublime.Region(b,b) for b in oldpt])
 
                 if op[0] == "r":
                     fill = colwidth[i]-lenc
-                    view.erase(edit, sublime.Region(pt,pt+sb))
-                    view.erase(edit, sublime.Region(pt+lenc,pt+lenc+se))
-                    if i != len(content)-1: view.insert(edit, pt+lenc, " "*op[1])
-                    view.insert(edit, pt, " "*fill)
+                    view.erase(edit, sublime.Region(begin,begin+sb))
+                    view.erase(edit, sublime.Region(begin+lenc,begin+lenc+se))
+                    if i != len(content)-1: view.insert(edit, begin+lenc, " "*op[1])
+                    view.insert(edit, begin, " "*fill)
 
                 if op[0] == "c":
-                    fill = colwidth[i]-lenc
-                    lfill = int(fill/2)
-                    rfill = fill-int(fill/2)+op[1] if i != len(content)-1 else 0
-                    oldpt = [min(s.end()-sb+lfill,pt+lenc+lfill+rfill) for s in view.sel() if s.empty() and pt+sb+lenc<=s.end()<=pt+sb+lenc+se]
-                    view.erase(edit, sublime.Region(pt,pt+sb))
-                    view.erase(edit, sublime.Region(pt+lenc,pt+lenc+se))
-                    view.insert(edit, pt, " "*lfill)
-                    view.insert(edit, pt+lfill+lenc, " "*rfill)
+                    lfill = int((colwidth[i]-lenc)/2)
+                    rfill = colwidth[i]-lenc-lfill+op[1] if i != len(content)-1 else 0
+                    oldpt = [min(s.end()-sb+lfill,begin+lenc+lfill+rfill) for s in view.sel() if s.empty() and begin+sb+lenc<=s.end()<=begin+sb+lenc+se]
+                    view.erase(edit, sublime.Region(begin,begin+sb))
+                    view.erase(edit, sublime.Region(begin+lenc,begin+lenc+se))
+                    view.insert(edit, begin, " "*lfill)
+                    view.insert(edit, begin+lfill+lenc, " "*rfill)
                     if oldpt:
-                        view.sel().subtract(sublime.Region(pt+lfill+lenc, pt+lenc+lfill+rfill))
+                        view.sel().subtract(sublime.Region(begin+lfill+lenc, begin+lenc+lfill+rfill))
                         for s in [sublime.Region(b,b) for b in oldpt]: view.sel().add(s)
 
-            view.insert(edit, view.text_point(row,0), spacebefore)
+            view.insert(edit, view.text_point(row,0), indentation)
 
-        # convert leading spaces to tabs if translate_tabs_to_spaces is true
-        if view.settings().get("translate_tabs_to_spaces", False):
-            view.run_command("unexpand_tabs", {"set_translate_tabs": True})
 
 class AlignTabClearMode(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -218,7 +211,6 @@ class AlignTabUpdater(sublime_plugin.EventListener):
         global DICT
         if vid in DICT:
             if DICT[vid]["mode"] == 1:
-                print("table mode:", view.command_history(0))
                 view.run_command("align_tab", {"user_input": "last_rexp", "mode": True})
 
     def on_query_context(self, view, key, operator, operand, match_all):
