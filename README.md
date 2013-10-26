@@ -61,6 +61,7 @@ For frequent patterns, put the following keybind in your user keybinds file. (Re
   }
 ```
 or syntex specific keybind.
+
 ```
   // latex align keybind, to align & and \\, but not \&
     {
@@ -89,4 +90,4 @@ These patterns are included in the default file:
 ```
 
 You then just use the name instead of the pattern in the input field.
-To edit the patterns, go to `Perferences -> Package Settings -> Aligh Tabular -> Settings`.
+To edit the patterns, go to `Perferences -> Package Settings -> AlignTab -> Settings`.
