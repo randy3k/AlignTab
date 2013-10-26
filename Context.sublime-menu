@@ -1,7 +1,7 @@
 [
    {"caption" : "-", "id" : "align"},
     {
-        "caption": "Align Tabular",
+        "caption": "AlignTab",
         "command": "align_tab"
 
     },

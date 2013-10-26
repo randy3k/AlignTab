@@ -5,7 +5,7 @@
         [
             { "caption": "-", "id" : "align"},
             {
-                "caption": "Align Tabular",
+                "caption": "AlignTab",
                 "command": "align_tab"
 
             },
@@ -67,7 +67,7 @@
                 "children":
                 [
                     {
-                        "caption": "Align Tabular",
+                        "caption": "AlignTab",
                         "children":
                         [
                             {

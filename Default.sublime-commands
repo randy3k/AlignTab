@@ -1,10 +1,10 @@
 [
     {
-        "caption": "Align Tabular",
+        "caption": "AlignTab",
         "command": "align_tab"
     },
     {
-        "caption": "Align Tabular: Table Mode",
+        "caption": "AlignTab: Table Mode",
         "command": "align_tab",
         "args": {"mode" : true}
     }
