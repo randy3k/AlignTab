@@ -145,9 +145,13 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 lenc = len(c.strip(strip_char)) if i>0 else len(c.rstrip(strip_char).lstrip())
                 se = len(c) - len(c.rstrip(strip_char))
                 sb = len(c)-lenc-se
+
+                # oldpt is used to reset cursor position
+
                 if op[0] == "l":
                     fill = colwidth[i]-lenc+op[1] if i != len(content)-1 else 0
-                    oldpt = [min(s.end()-sb,begin+lenc+fill) for s in view.sel() if s.empty() and begin+sb+lenc<=s.end()<=begin+sb+lenc+se]
+                    oldpt = [min(s.end()-sb,begin+lenc+fill) if lenc>0 else begin \
+                                for s in view.sel() if s.empty() and begin+sb+lenc<=s.end()<=begin+sb+lenc+se]
                     view.erase(edit, sublime.Region(begin,begin+sb))
                     view.erase(edit, sublime.Region(begin+lenc,begin+lenc+se))
                     view.insert(edit, begin+lenc, " "*(fill))
@@ -157,15 +161,21 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
                 if op[0] == "r":
                     fill = colwidth[i]-lenc
+                    oldpt = [min(s.end()-sb+fill,begin+lenc+fill+op[1]) if lenc>0 else begin \
+                                for s in view.sel() if s.empty() and begin+sb+lenc<=s.end()<=begin+sb+lenc+se]
                     view.erase(edit, sublime.Region(begin,begin+sb))
                     view.erase(edit, sublime.Region(begin+lenc,begin+lenc+se))
                     if i != len(content)-1: view.insert(edit, begin+lenc, " "*op[1])
                     view.insert(edit, begin, " "*fill)
+                    if oldpt:
+                        view.sel().subtract(sublime.Region(begin+fill+lenc, begin+fill+lenc+op[1]))
+                        for s in [sublime.Region(b,b) for b in oldpt]: view.sel().add(s)
 
                 if op[0] == "c":
                     lfill = int((colwidth[i]-lenc)/2)
                     rfill = colwidth[i]-lenc-lfill+op[1] if i != len(content)-1 else 0
-                    oldpt = [min(s.end()-sb+lfill,begin+lenc+lfill+rfill) for s in view.sel() if s.empty() and begin+sb+lenc<=s.end()<=begin+sb+lenc+se]
+                    oldpt = [min(s.end()-sb+lfill,begin+lenc+lfill+rfill) if lenc>0 else begin\
+                                for s in view.sel() if s.empty() and begin+sb+lenc<=s.end()<=begin+sb+lenc+se]
                     view.erase(edit, sublime.Region(begin,begin+sb))
                     view.erase(edit, sublime.Region(begin+lenc,begin+lenc+se))
                     view.insert(edit, begin, " "*lfill)
