@@ -4,8 +4,9 @@ An alignment plugin for Sublime Text 2/3 -- ST version of the excellent VIM plug
 
 Features
 ------------
-- Flexibility: Align with user defined regular expression
-- Efficiency: Smart detection for alignment if no lines are selected
+- Align with user defined regular expression
+- Custom spacing, padding and justification.
+- Smart detection for alignment if no lines are selected
 - Multiple cursors support
 - Table mode: super efficient for editing tables
 
@@ -26,9 +27,12 @@ Usage
  - column justification: `r`, `l` or `c`
  - spaces after each column: the number after `r`, `l` or `c`
  - max number of delimiters: the number after `f`
-- Delimiter are also treated as a column. The option for alignment cycles through the columns. 
+- Delimiter are also treated as a column.
+- The option for alignment cycles through the columns. <br>
 For example, `regex/rl` means odd columns will be right-justified and even columns will be left-justified.
-  - the symbol `*` repeats the preceeding justification flags, for example `r*3` equals `rrr`, and `(cr3)*2` equals `cr3cr3`.
+
+- the symbol `*` repeats the preceeding justification flags. 
+<br>For example `r*3` equals `rrr`, and `(cr3)*2` equals `cr3cr3`.
 - Default option is `l1f0`.
  * All columns are left-justified.
  * A space is added after each column.
