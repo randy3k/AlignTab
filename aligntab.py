@@ -146,7 +146,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 se = len(c) - len(c.rstrip(strip_char))
                 sb = len(c)-lenc-se
 
-                # oldpt is used to reset cursor position
+                # oldpt is used to reset cursor position, since view.insert will change cursor's location
 
                 if op[0] == "l":
                     fill = colwidth[i]-lenc+op[1] if i != len(content)-1 else 0
