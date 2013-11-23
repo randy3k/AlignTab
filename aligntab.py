@@ -2,7 +2,7 @@ import sublime
 import sublime_plugin
 import re, sys
 
-if not 'IS_MODE' in globals(): IS_MODE = {}
+if not 'MODE' in globals(): MODE = {}
 if not 'HIST' in globals(): HIST = []
 
 def input_parser(user_input):
@@ -13,7 +13,7 @@ def input_parser(user_input):
         option = m.group(2)
         f = m.group(3)
     else:
-        print("No options!")
+        # print("No options!")
         return [user_input, [['l', 1]], 0]
 
     try:
@@ -119,14 +119,14 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         strip_char = ' ' if not view.settings().get("translate_tabs_to_spaces", False) else None
         self.expand_sel(regex, option, f , rows, colwidth, strip_char)
         rows = sorted(set(rows))
-        global IS_MODE
+        global MODE
         if rows:
-            if mode == True:
-                IS_MODE[vid] = True
+            if mode:
+                MODE[vid] = True
                 view.set_status("AlignTab", "[Table Mode]")
         else:
-            if mode == True:
-                IS_MODE[vid] = False
+            if mode:
+                MODE[vid] = False
                 view.set_status("AlignTab", "")
             return
 
@@ -192,10 +192,10 @@ class AlignTabClearMode(sublime_plugin.TextCommand):
         view = self.view
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
-        global IS_MODE
+        global MODE
         print("Clear Table Mode!")
-        if vid in IS_MODE:
-            IS_MODE[vid] = False
+        if vid in MODE:
+            MODE[vid] = False
             view.set_status("AlignTab", "")
 
 class AlignTabUndo(sublime_plugin.WindowCommand):
@@ -203,12 +203,12 @@ class AlignTabUndo(sublime_plugin.WindowCommand):
         view = self.window.active_view()
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
-        global IS_MODE
-        if vid in IS_MODE:
-            IS_MODE[vid] = False
+        global MODE
+        if vid in MODE:
+            MODE[vid] = False
             view.run_command("undo")
             view.run_command("undo")
-            IS_MODE[vid]["mode"] = True
+            MODE[vid] = True
 
 class AlignTabUpdater(sublime_plugin.EventListener):
     # Table mode
@@ -218,18 +218,18 @@ class AlignTabUpdater(sublime_plugin.EventListener):
         if cmdhist[0] not in ["insert", "left_delete", "right_delete", "paste", "cut"]: return
         if cmdhist[0] == "insert" and cmdhist[1] == {'characters': ' '}: return
         vid = view.id()
-        global IS_MODE
-        if vid in IS_MODE:
-            if IS_MODE[vid]:
+        global MODE
+        if vid in MODE:
+            if MODE[vid]:
                 view.run_command("align_tab", {"user_input": "last_rexp", "mode": True})
 
     def on_query_context(self, view, key, operator, operand, match_all):
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
         if key == 'align_tab_mode':
-            global IS_MODE
-            if vid in IS_MODE:
-                return IS_MODE[vid]
+            global MODE
+            if vid in MODE:
+                return MODE[vid]
             else:
                 return False
 
@@ -237,6 +237,11 @@ class AlignTabUpdater(sublime_plugin.EventListener):
     def on_deactivated(self, view):
         if view.score_selector(0, 'text.aligntab') > 0:
             AlignTabHistory.index = None
+
+    # remove MODE[vid] if file closes
+    def on_close(self, view):
+        vid = view.id()
+        if vid in MODE: MODE.pop(vid)
 
 # VintageEX teaches me the following
 class AlignTabHistory(sublime_plugin.TextCommand):
