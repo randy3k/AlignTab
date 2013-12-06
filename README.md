@@ -22,21 +22,21 @@ Usage
 
 - Open `AlignTab` in Command Palette `C+Shift+p`
 - The input should be in the from of `regex/option`
-- Do not use capturing parenthese for regular expression. Instead, use non-capturing parenthese `(?:regex)`.
 - The option, e.g., `c2r2f1`, controls
  - column justification: `r`, `l` or `c`
  - spaces after each column: the number after `r`, `l` or `c`
  - max number of delimiters: the number after `f`
-- Delimiter are also treated as a column.
+- Delimiter is also treated as a column.<br>
+For example, `=/rcl` means the the column before `=` will be right-justifed and the column after `=` will be left-justified. And `=` will be centered (however, it doesn't matter as `=` is of length 1).
 - The option for alignment cycles through the columns. <br>
-For example, `regex/rl` means odd columns will be right-justified and even columns will be left-justified.
-
+For example, `regex/rl` means all odd columns will be right-justified and all even columns will be left-justified.
 - the symbol `*` repeats the preceeding justification flags. 
 <br>For example `r*3` equals `rrr`, and `(cr3)*2` equals `cr3cr3`.
 - Default option is `l1f0`.
  * All columns are left-justified.
  * A space is added after each column.
  * All matched delimiters are aligned.
+- Do not use capturing parenthese for regular expression. Instead, use non-capturing parenthese `(?:regex)`.
 
 <img width=500 src="https://github.com/randy3k/AlignTab/raw/fig/aligntab.gif">
 
