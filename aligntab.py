@@ -83,7 +83,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 update_colwidth(colwidth, content, option, strip_char)
                 rows.append(thisrow)
 
-            if sel.begin()==sel.end():
+            if sel.empty():
                 thisrow = view.rowcol(sel.begin())[0]
                 if not (thisrow in rows): continue
                 beginrow = endrow = thisrow
@@ -100,6 +100,23 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     beginrow = beginrow-1
                     rows.append(beginrow)
 
+    def prev_next_match(self, regex, f):
+        # it is used to check whether table mode should be disabled
+        view = self.view
+        lastrow = view.rowcol(view.size())[0]
+        rows = []
+        for sel in view.sel():
+            for line in view.lines(sel):
+                rows.append(view.rowcol(line.begin())[0])
+        rows = list(set(rows))
+        for row in rows:
+            if row-1>=0 and len(self.get_line_content(regex, f, row-1))>1:
+                yield True
+            elif row+1<=lastrow and len(self.get_line_content(regex, f, row+1))>1:
+                yield True
+            else:
+                yield False
+
 
     def align_tab(self, edit, user_input, mode):
         view = self.view
@@ -110,12 +127,12 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         AlignTabHistory.index = None
 
         user_input = get_named_pattern(user_input)
-
         [regex, option, f] = input_parser(user_input)
         regex = '(' + regex + ')'
 
         rows = []
         colwidth = []
+        # do not strip \t if translate_tabs_to_spaces is false (which is the default)
         strip_char = ' ' if not view.settings().get("translate_tabs_to_spaces", False) else None
         self.expand_sel(regex, option, f , rows, colwidth, strip_char)
         rows = sorted(set(rows))
@@ -125,7 +142,8 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 MODE[vid] = True
                 view.set_status("AlignTab", "[Table Mode]")
         else:
-            if mode:
+            # this means no selection was detected to contain the regex, therefore we check previous line and next line for each cursor
+            if mode and not all(list(self.prev_next_match(regex, f))):
                 MODE[vid] = False
                 view.set_status("AlignTab", "")
             return
