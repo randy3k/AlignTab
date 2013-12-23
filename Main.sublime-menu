@@ -5,7 +5,7 @@
         [
             { "caption": "-", "id" : "align"},
             {
-                "caption": "AlignTab",
+                "caption": "Align By RegEx",
                 "command": "align_tab"
 
             },
@@ -45,7 +45,7 @@
                     }
                     ,
                     {
-                    "caption" : "Last REXP",
+                    "caption" : "Last Pattern",
                     "command" : "align_tab",
                     "args"    : {"user_input" : "last_rexp"}
                     }

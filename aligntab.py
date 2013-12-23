@@ -56,7 +56,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
     def run(self, edit, user_input=None, mode=False):
         if not user_input:
-            v = self.view.window().show_input_panel('Align with regex:', '',
+            v = self.view.window().show_input_panel('Align By RegEx:', '',
                     lambda x: self.view.run_command("align_tab",{"user_input":x, "mode":mode}), None, None)
             v.set_syntax_file('Packages/AlignTab/AlignTab.hidden-tmLanguage')
             v.settings().set('is_widget', True)
