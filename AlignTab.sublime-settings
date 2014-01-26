@@ -5,5 +5,9 @@
     "first_colon": ":/f"
   },
   // disable auto_match in the input panel
-  "auto_match_enabled": false
+  "auto_match_enabled": false,
+  // Allow align tab to show changes as you type
+  "live_preview": false,
+  // Limit the number of lines that may be affected by live preview
+  "live_preview_limit": 1000
 }
