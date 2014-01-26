@@ -76,7 +76,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             v.settings().set('rulers', [])
             AlignTabCommand.live_change_made = False
             # Load the live_preview setting
-            AlignTabCommand.live_enabled = self.view.settings().get("aligntab_live_preview", False)
+            AlignTabCommand.live_enabled = sublime.load_settings('AlignTab.sublime-settings').get('live_preview')
         else:
             self.align_tab(edit, user_input, mode, event_type)
 
