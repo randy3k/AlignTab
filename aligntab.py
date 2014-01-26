@@ -59,6 +59,9 @@ class AlignTabCommand(sublime_plugin.TextCommand):
     live_change_made = False
     
     def run(self, edit, user_input=None, mode=False, event_type=False):
+        # Event type needed to prevent infinite loop in show_input_panel()
+        if not event_type and user_input: event_type = "done"
+        
         if not event_type:
             v = self.view.window().show_input_panel('Align By RegEx:', '',
                     # On Done
