@@ -54,34 +54,73 @@ def get_named_pattern(user_input):
 
 class AlignTabCommand(sublime_plugin.TextCommand):
     # Default the live_enabled setting so that if it doesn't get loaded nothing will break
-    live_enabled = False
-    
-    def run(self, edit, user_input=None, mode=False, event_type=False):
-        if not event_type and user_input: 
-            # Set live_change_made to false to prevent problems with context menu
+    live_enabled = sublime.load_settings('AlignTab.sublime-settings').get('live_preview', True)
+    live_change_made = False
+
+    def run(self, edit, user_input=None, mode=False, event_type=None):
+        view = self.view
+        vid = view.id()
+        if not user_input and not event_type:
             self.live_change_made = False
-            # Event type needed to prevent infinite loop in show_input_panel()
-            event_type = "done"
-        
-        if not event_type:
             v = self.view.window().show_input_panel('Align By RegEx:', '',
                     # On Done
-                    lambda x: self.view.run_command("align_tab",{"user_input":x, "mode":mode, "event_type":"done"}), 
+                    lambda x: self.view.run_command("align_tab",{"user_input":x, "mode":mode, "event_type":"done"}),
                     # On Change
                     lambda x: self.on_change(x, mode),
                     # On Canel
-                    lambda: self.on_change("", mode) )
+                    lambda: self.on_change(None, mode) )
             v.set_syntax_file('Packages/AlignTab/AlignTab.hidden-tmLanguage')
             v.settings().set('is_widget', True)
             v.settings().set('gutter', False)
             v.settings().set('rulers', [])
+
+        elif user_input:
+            if not event_type: event_type = "done"
+
+            # clear live status when ready to align
+            if self.live_enabled: self.view.set_status("aligntab-live", "")
+
+            # Don't update history if this is a live change
+            if event_type == "done":
+                # insert history and reset index
+                if not HIST or (user_input!= HIST[-1] and user_input!= "last_rexp"): HIST.append(user_input)
+                AlignTabHistory.index = None
+                # If live is enabled, then don't re-change the text. We're done
+                if self.live_enabled and self.live_change_made:
+                    self.live_change_made = False
+                    return
+            success = self.align_tab(edit, user_input)
+
+            global MODE
+            if success:
+                # If rows were found, then note that we have an undo due
+                if event_type == "change" and self.live_enabled:
+                    self.live_change_made = True
+                    view.set_status("aligntab-live", "")
+                if mode:
+                    MODE[vid] = True
+                    view.set_status("aligntab-table", "[Table Mode]")
+            else:
+                if event_type == "change" and self.live_enabled:
+                    view.set_status("aligntab-live", "[Pattern not Found]")
+
+                # this means no selection was detected to contain the regex,
+                # therefore we check previous line and next line for each cursor
+                if mode and not all(list(self.prev_next_match(user_input))):
+                    MODE[vid] = False
+                    view.set_status("aligntab-table", "")
+
+    def on_change(self, user_input, mode):
+        # Don't do anything if we're not live
+        if not self.live_enabled:
+            return
+        # Undo the previous change if needed
+        if self.live_change_made:
+            self.view.run_command("undo")
             self.live_change_made = False
-            # Load the live_preview setting
-            AlignTabCommand.live_enabled = sublime.load_settings('AlignTab.sublime-settings').get('live_preview')
-            # Find out what the cap is on line count
-            AlignTabCommand.live_preview_limit = sublime.load_settings('AlignTab.sublime-settings').get('live_preview_limit')
-        else:
-            self.align_tab(edit, user_input, mode, event_type)
+        # Run the align command
+        if user_input:
+            self.view.run_command("align_tab",{"user_input":user_input, "mode":mode, "event_type":"change"})
 
     def get_line_content(self, regex, f, row):
         view = self.view
@@ -118,17 +157,11 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     beginrow = beginrow-1
                     rows.append(beginrow)
 
-    def on_change(self, user_input, mode=False):
-        # Don't do anything if we're not live
-        if not AlignTabCommand.live_enabled:
-            return
-        # Undo the previous change if needed
-        if(self.live_change_made):
-            self.view.run_command("undo")
-        # Run the align command
-        self.view.run_command("align_tab",{"user_input":user_input, "mode":mode, "event_type":"change"})        
-        
-    def prev_next_match(self, regex, f):
+    def prev_next_match(self, user_input):
+
+        user_input = get_named_pattern(user_input)
+        [regex, option, f] = input_parser(user_input)
+        regex = '(' + regex + ')'
         # it is used to check whether table mode should be disabled
         view = self.view
         lastrow = view.rowcol(view.size())[0]
@@ -146,18 +179,9 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 yield False
 
 
-    def align_tab(self, edit, user_input, mode, event_type):
+    def align_tab(self, edit, user_input):
         view = self.view
-        vid = view.id()
-        
-        # Don't update history if this is a live change
-        if event_type != "change":
-            # insert history and reset index
-            if not HIST or (user_input!= HIST[-1] and user_input!= "last_rexp"): HIST.append(user_input)
-            AlignTabHistory.index = None
-        # If live is enabled, then don't re-change the text. We're done
-        if (AlignTabCommand.live_enabled) and (self.live_change_made) and (event_type == "done"): return
-        
+
         user_input = get_named_pattern(user_input)
         [regex, option, f] = input_parser(user_input)
         regex = '(' + regex + ')'
@@ -168,21 +192,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         strip_char = ' ' if not view.settings().get("translate_tabs_to_spaces", False) else None
         self.expand_sel(regex, option, f , rows, colwidth, strip_char)
         rows = sorted(set(rows))
-        # Bail if the cap exceeds the number of rows permitted
-        if (event_type == "change") and (len(rows) > AlignTabCommand.live_preview_limit): return
-        # If rows were found, then note that we have an undo due
-        self.live_change_made = not not rows
-        global MODE
-        if rows:
-            if mode:
-                MODE[vid] = True
-                view.set_status("AlignTab", "[Table Mode]")
-        else:
-            # this means no selection was detected to contain the regex, therefore we check previous line and next line for each cursor
-            if mode and not all(list(self.prev_next_match(regex, f))):
-                MODE[vid] = False
-                view.set_status("AlignTab", "")
-            return
+        if not rows: return False
 
         indentation = min([re.match("^(\s*)",
                 view.substr(view.line(view.text_point(row,0)))).group(1) for row in rows])
@@ -240,6 +250,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
             view.insert(edit, view.text_point(row,0), indentation)
 
+        return True
 
 class AlignTabClearMode(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -250,7 +261,7 @@ class AlignTabClearMode(sublime_plugin.TextCommand):
         print("Clear Table Mode!")
         if vid in MODE:
             MODE[vid] = False
-            view.set_status("AlignTab", "")
+            view.set_status("aligntab-table", "")
 
 class AlignTabUndo(sublime_plugin.WindowCommand):
     def run(self):
