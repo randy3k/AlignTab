@@ -1,6 +1,7 @@
 import sublime
 import sublime_plugin
 import re, sys
+import time
 
 def input_parser(user_input):
     m = re.match(r"(.+)/([lcr*()0-9]*)(f[0-9]*)?", user_input)
@@ -88,7 +89,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     self.live_change_made = False
                     return
             success = self.align_tab(edit, user_input)
-
+            print("aligntan returns %d" % success)
             if success:
                 # If rows were found, then note that we have an undo due
                 if event_type == "change" and self.live_enabled:
@@ -259,37 +260,52 @@ class AlignTabClearMode(sublime_plugin.TextCommand):
             AlignTabCommand.MODE[vid] = False
             view.set_status("aligntab-table", "")
 
-class AlignTabUndo(sublime_plugin.WindowCommand):
-    def run(self):
-        view = self.window.active_view()
-        if view.is_scratch() or view.settings().get('is_widget'): return
-        vid = view.id()
-        if vid in AlignTabCommand.MODE:
-            AlignTabCommand.MODE[vid] = False
-            view.run_command("undo")
-            view.run_command("undo")
-            AlignTabCommand.MODE[vid] = True
+# class AlignTabUndo(sublime_plugin.WindowCommand):
+#     def run(self):
+#         view = self.window.active_view()
+#         if view.is_scratch() or view.settings().get('is_widget'): return
+#         print("aligntab undo")
+#         vid = view.id()
+#         if vid in AlignTabCommand.MODE and AlignTabCommand.MODE[vid]:
+#             AlignTabCommand.MODE[vid] = False
+#             view.run_command("undo")
+#             view.run_command("undo")
+#             AlignTabCommand.MODE[vid] = True
 
 class AlignTabUpdater(sublime_plugin.EventListener):
     # Table mode
-    def on_modified(self, view):
-        if view.is_scratch() or view.settings().get('is_widget'): return
-        cmdhist = view.command_history(0)
-        if cmdhist[0] not in ["insert", "left_delete", "right_delete", "paste", "cut"]: return
-        if cmdhist[0] == "insert" and cmdhist[1] == {'characters': ' '}: return
-        vid = view.id()
-        if vid in AlignTabCommand.MODE:
-            if AlignTabCommand.MODE[vid]:
-                view.run_command("align_tab", {"user_input": "last_rexp", "mode": True})
 
-    def on_query_context(self, view, key, operator, operand, match_all):
+    def on_modified_async(self, view):
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
-        if key == 'align_tab_mode':
-            if vid in AlignTabCommand.MODE:
-                return AlignTabCommand.MODE[vid]
-            else:
-                return False
+        print(view.command_history(0))
+        if vid in AlignTabCommand.MODE and AlignTabCommand.MODE[vid]:
+            cmdhist = view.command_history(0)
+            if cmdhist[0] not in ["insert", "left_delete", "right_delete", "paste", "cut"]: return
+            if cmdhist[0] == "insert" and cmdhist[1] == {'characters': ' '}: return
+            AlignTabCommand.MODE[vid] = False
+            time.sleep(0.3)
+            view.run_command("align_tab", {"user_input": "last_rexp", "mode": True})
+            AlignTabCommand.MODE[vid] = True
+
+    def on_text_command(self, view, cmd, args):
+        if view.is_scratch() or view.settings().get('is_widget'): return
+        vid = view.id()
+        if vid in AlignTabCommand.MODE and AlignTabCommand.MODE[vid]:
+            if cmd == "undo":
+                view.run_command("soft_undo")
+                return ("soft_undo", None)
+            return None
+
+
+    # def on_query_context(self, view, key, operator, operand, match_all):
+    #     if view.is_scratch() or view.settings().get('is_widget'): return
+    #     vid = view.id()
+    #     if key == 'align_tab_mode':
+    #         if vid in AlignTabCommand.MODE:
+    #             return AlignTabCommand.MODE[vid]
+    #         else:
+    #             return False
 
     # restore History index
     def on_deactivated(self, view):
