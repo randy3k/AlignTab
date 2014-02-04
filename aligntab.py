@@ -2,6 +2,7 @@ import sublime
 import sublime_plugin
 import re, sys
 import time
+import threading
 
 def input_parser(user_input):
     m = re.match(r"(.+)/([lcr*()0-9]*)(f[0-9]*)?", user_input)
@@ -272,21 +273,45 @@ class AlignTabClearMode(sublime_plugin.TextCommand):
 #             view.run_command("undo")
 #             AlignTabCommand.MODE[vid] = True
 
+# class AlignTabThread(threading.Thread):
+#     shouldstop = False
+
+#     def __init__(self,view):
+#         self.view = view
+#         threading.Thread.__init__(self)
+
+#     def run(self):
+#         time.sleep(0.2)
+#         view = self.view
+#         vid = view.id()
+#         if not self.shouldstop:
+#             print("running align_tab")
+#             AlignTabCommand.MODE[vid] = False
+#             view.run_command("align_tab", {"user_input": "last_rexp", "mode": True})
+#             AlignTabCommand.MODE[vid] = True
+
+#     def stop(self):
+#         self.shouldstop=True
+
+
 class AlignTabUpdater(sublime_plugin.EventListener):
     # Table mode
+    thread = None
 
-    def on_modified_async(self, view):
+    def on_modified(self, view):
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
-        print(view.command_history(0))
         if vid in AlignTabCommand.MODE and AlignTabCommand.MODE[vid]:
             cmdhist = view.command_history(0)
+            print(cmdhist)
             if cmdhist[0] not in ["insert", "left_delete", "right_delete", "paste", "cut"]: return
             if cmdhist[0] == "insert" and cmdhist[1] == {'characters': ' '}: return
-            AlignTabCommand.MODE[vid] = False
-            time.sleep(0.3)
-            view.run_command("align_tab", {"user_input": "last_rexp", "mode": True})
-            AlignTabCommand.MODE[vid] = True
+            if self.thread:
+                self.thread.cancel()
+            self.thread = threading.Timer(0.2, lambda:
+                                view.run_command("align_tab", {"user_input": "last_rexp", "mode": True}))
+            self.thread.start()
+
 
     def on_text_command(self, view, cmd, args):
         if view.is_scratch() or view.settings().get('is_widget'): return
