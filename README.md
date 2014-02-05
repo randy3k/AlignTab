@@ -1,6 +1,7 @@
 AlignTab
 ==============
-An alignment plugin for Sublime Text 2/3 -- ST version of the excellent VIM plugin, tabular.
+An alignment plugin for Sublime Text 2/3 -- ST version of the excellent VIM plugin, tabular.<br>
+Note: ST2 support is deprecated and moved to [st2 branch](https://github.com/randy3k/AlignTab/tree/st2). You are still able to install AlignTab via Package Control, but no update (unless serious bug) will be provided.
 
 Features
 ------------
