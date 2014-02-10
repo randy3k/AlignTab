@@ -304,8 +304,8 @@ class AlignTabUpdater(sublime_plugin.EventListener):
         if vid in AlignTabCommand.MODE and AlignTabCommand.MODE[vid]:
             cmdhist = view.command_history(0)
             print(cmdhist)
-            if cmdhist[0] not in ["insert", "left_delete", "right_delete", "paste", "cut"]: return
-            if cmdhist[0] == "insert" and cmdhist[1] == {'characters': ' '}: return
+            if cmdhist[0] not in ["insert", "left_delete", "right_delete", "delete_word", "paste", "cut"]: return
+            # if cmdhist[0] == "insert" and cmdhist[1] == {'characters': ' '}: return
             if self.thread:
                 self.thread.cancel()
             self.thread = threading.Timer(0.2, lambda:
@@ -323,14 +323,14 @@ class AlignTabUpdater(sublime_plugin.EventListener):
             return None
 
 
-    # def on_query_context(self, view, key, operator, operand, match_all):
-    #     if view.is_scratch() or view.settings().get('is_widget'): return
-    #     vid = view.id()
-    #     if key == 'align_tab_mode':
-    #         if vid in AlignTabCommand.MODE:
-    #             return AlignTabCommand.MODE[vid]
-    #         else:
-    #             return False
+    def on_query_context(self, view, key, operator, operand, match_all):
+        if view.is_scratch() or view.settings().get('is_widget'): return
+        vid = view.id()
+        if key == 'align_tab_mode':
+            if vid in AlignTabCommand.MODE:
+                return AlignTabCommand.MODE[vid]
+            else:
+                return False
 
     # restore History index
     def on_deactivated(self, view):
