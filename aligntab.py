@@ -132,9 +132,13 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         # Run the align command
         if user_input:
             self.view.run_command("align_tab",{"user_input":user_input, "mode":mode, "event_type":"change"})
-        elif mode:
-            AlignTabCommand.MODE[vid] = False
-            view.set_status("aligntab-table", "")
+        elif:
+            if mode:
+                AlignTabCommand.MODE[vid] = False
+                view.set_status("aligntab-table", "")
+            if self.live_enabled:
+                AlignTabCommand.ISLIVE[vid] = False
+                view.set_status("aligntab-live", "")
 
     def get_line_content(self, regex, f, row):
         view = self.view
@@ -327,6 +331,7 @@ class AlignTabUpdater(sublime_plugin.EventListener):
     def on_close(self, view):
         vid = view.id()
         if vid in AlignTabCommand.MODE: AlignTabCommand.MODE.pop(vid)
+        if vid in AlignTabCommand.ISLIVE: AlignTabCommand.ISLIVE.pop(vid)
 
 # VintageEX teaches me the following
 class AlignTabHistory(sublime_plugin.TextCommand):
