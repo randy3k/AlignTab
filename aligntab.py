@@ -118,16 +118,23 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     view.set_status("aligntab-table", "")
 
     def on_change(self, user_input, mode):
+        view = self.view
+        vid = view.id()
+
         # Don't do anything if we're not live
         if not self.live_enabled:
             return
         # Undo the previous change if needed
         if self.live_change_made:
-            self.view.run_command("undo")
+            self.view.run_command("soft_undo")
             self.live_change_made = False
+
         # Run the align command
         if user_input:
             self.view.run_command("align_tab",{"user_input":user_input, "mode":mode, "event_type":"change"})
+        elif mode:
+            AlignTabCommand.MODE[vid] = False
+            view.set_status("aligntab-table", "")
 
     def get_line_content(self, regex, f, row):
         view = self.view
