@@ -52,6 +52,7 @@ def get_named_pattern(user_input):
     return user_input
 
 class AlignTabCommand(sublime_plugin.TextCommand):
+    ISLIVE = {}
     MODE = {}
     # Default the live_enabled setting so that if it doesn't get loaded nothing will break
     live_enabled = sublime.load_settings('AlignTab.sublime-settings').get('live_preview', True)
@@ -82,25 +83,32 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
             # Don't update history if this is a live change
             if event_type == "done":
+
+                AlignTabCommand.ISLIVE[vid] = False
                 # insert history and reset index
                 if not AlignTabHistory.HIST or (user_input!= AlignTabHistory.HIST[-1] and user_input!= "last_rexp"): AlignTabHistory.HIST.append(user_input)
                 AlignTabHistory.index = None
+
                 # If live is enabled, then don't re-change the text. We're done
                 if self.live_enabled and self.live_change_made:
                     self.live_change_made = False
                     return
+
             success = self.align_tab(edit, user_input)
-            print("aligntan returns %d" % success)
+            # print("aligntab returns %d" % success)
             if success:
                 # If rows were found, then note that we have an undo due
                 if event_type == "change" and self.live_enabled:
                     self.live_change_made = True
+                    AlignTabCommand.ISLIVE[vid] = True
                     view.set_status("aligntab-live", "")
                 if mode:
                     AlignTabCommand.MODE[vid] = True
                     view.set_status("aligntab-table", "[Table Mode]")
             else:
                 if event_type == "change" and self.live_enabled:
+                    self.live_change_made = False
+                    AlignTabCommand.ISLIVE[vid] = True
                     view.set_status("aligntab-live", "[Pattern not Found]")
 
                 # this means no selection was detected to contain the regex,
@@ -259,51 +267,22 @@ class AlignTabClearMode(sublime_plugin.TextCommand):
         print("Clear Table Mode!")
         if vid in AlignTabCommand.MODE:
             AlignTabCommand.MODE[vid] = False
-            view.set_status("aligntab-table", "")
-
-# class AlignTabUndo(sublime_plugin.WindowCommand):
-#     def run(self):
-#         view = self.window.active_view()
-#         if view.is_scratch() or view.settings().get('is_widget'): return
-#         print("aligntab undo")
-#         vid = view.id()
-#         if vid in AlignTabCommand.MODE and AlignTabCommand.MODE[vid]:
-#             AlignTabCommand.MODE[vid] = False
-#             view.run_command("undo")
-#             view.run_command("undo")
-#             AlignTabCommand.MODE[vid] = True
-
-# class AlignTabThread(threading.Thread):
-#     shouldstop = False
-
-#     def __init__(self,view):
-#         self.view = view
-#         threading.Thread.__init__(self)
-
-#     def run(self):
-#         time.sleep(0.2)
-#         view = self.view
-#         vid = view.id()
-#         if not self.shouldstop:
-#             print("running align_tab")
-#             AlignTabCommand.MODE[vid] = False
-#             view.run_command("align_tab", {"user_input": "last_rexp", "mode": True})
-#             AlignTabCommand.MODE[vid] = True
-
-#     def stop(self):
-#         self.shouldstop=True
+        view.set_status("aligntab-table", "")
 
 
 class AlignTabUpdater(sublime_plugin.EventListener):
-    # Table mode
+    # aligntab thread
     thread = None
 
+    # table mode trigger
     def on_modified(self, view):
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
+        # don't align when live previewing
+        if vid in AlignTabCommand.ISLIVE and AlignTabCommand.ISLIVE[vid]: return
         if vid in AlignTabCommand.MODE and AlignTabCommand.MODE[vid]:
             cmdhist = view.command_history(0)
-            print(cmdhist)
+            # print(cmdhist)
             if cmdhist[0] not in ["insert", "left_delete", "right_delete", "delete_word", "paste", "cut"]: return
             # if cmdhist[0] == "insert" and cmdhist[1] == {'characters': ' '}: return
             if self.thread:
