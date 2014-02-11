@@ -132,7 +132,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         # Run the align command
         if user_input:
             self.view.run_command("align_tab",{"user_input":user_input, "mode":mode, "event_type":"change"})
-        elif:
+        else:
             if mode:
                 AlignTabCommand.MODE[vid] = False
                 view.set_status("aligntab-table", "")
