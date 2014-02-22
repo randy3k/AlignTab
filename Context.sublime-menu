@@ -1,11 +1,6 @@
 [
    {"caption" : "-"},
     {
-        "caption": "Align By RegEx",
-        "command": "align_tab"
-
-    },
-    {
        "caption": "Align By",
       "children": [
           {

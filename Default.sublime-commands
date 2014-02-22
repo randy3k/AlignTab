@@ -7,5 +7,10 @@
         "caption": "AlignTab: Table Mode",
         "command": "align_tab",
         "args": {"mode" : true}
+    },
+    {
+        "caption": "AlignTab: Live Preview Mode",
+        "command": "align_tab",
+        "args": {"live_preview" : true}
     }
 ]

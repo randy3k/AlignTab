@@ -6,6 +6,4 @@
   },
   // disable auto_match in the input panel
   "auto_match_enabled": false,
-  // Allow align tab to show changes as you type
-  "live_preview": true
 }
