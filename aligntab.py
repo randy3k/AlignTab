@@ -78,11 +78,11 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             self.aligned = False
             v = self.view.window().show_input_panel('Align By RegEx:', '',
                     # On Done
-                    lambda x: self.view.run_command("align_tab",{"user_input":x, "mode":mode, "live_preview":False}) if not live_preview else None,
+                    lambda x: self.on_done(x, mode, live_preview),
                     # On Change
                     lambda x: self.on_change(x) if live_preview else None,
                     # On Cancel
-                    lambda x: self.on_change(None) if live_preview else None )
+                    lambda: self.on_change(None) if live_preview else None )
 
             v.set_syntax_file('Packages/AlignTab/AlignTab.hidden-tmLanguage')
             v.settings().set('is_widget', True)
@@ -91,7 +91,10 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
         else:
             if user_input:
-                self.aligned = self.align_tab(edit, user_input, mode, live_preview)
+                # do not double align in live preview mode
+                if live_preview is not "done":
+                    self.aligned = self.align_tab(edit, user_input, mode, live_preview)
+
                 if self.aligned:
                     if mode:
                         AlignTabCommand.MODE[vid] = True
@@ -106,17 +109,19 @@ class AlignTabCommand(sublime_plugin.TextCommand):
     def on_change(self, user_input):
         view = self.view
         vid = view.id()
-
         # Undo the previous change if needed
         if self.aligned:
             self.view.run_command("soft_undo")
             self.aligned = False
-
-        # Run the align command
         if user_input:
-            self.view.run_command("align_tab",{"user_input":user_input})
-        else:
-            view.set_status("aligntab-live", "")
+            self.view.run_command("align_tab",{"user_input":user_input, "live_preview":True})
+
+    def on_done(self, user_input, mode, live_preview):
+        view = self.view
+        AlignTabHistory.insert(user_input)
+        if not live_preview:
+            self.view.run_command("align_tab",{"user_input":user_input, "mode":mode})
+
 
     def get_line_content(self, regex, f, row):
         view = self.view
@@ -177,12 +182,6 @@ class AlignTabCommand(sublime_plugin.TextCommand):
     def align_tab(self, edit, user_input, mode, live_preview):
         view = self.view
         vid  = view.id()
-
-        # do not update history when live preview
-        if not live_preview:
-            if not AlignTabHistory.HIST or (user_input!= AlignTabHistory.HIST[-1] and user_input!= "last_rexp"):
-                AlignTabHistory.HIST.append(user_input)
-                AlignTabHistory.index = None
 
         user_input = get_named_pattern(user_input)
         [regex, option, f] = input_parser(user_input)
@@ -344,4 +343,10 @@ class AlignTabHistory(sublime_plugin.TextCommand):
 
         self.view.erase(edit, sublime.Region(0, self.view.size()))
         self.view.insert(edit, 0, AlignTabHistory.HIST[AlignTabHistory.index])
+
+    @staticmethod
+    def insert(user_input):
+        if not AlignTabHistory.HIST or (user_input!= AlignTabHistory.HIST[-1] and user_input!= "last_rexp"):
+            AlignTabHistory.HIST.append(user_input)
+            AlignTabHistory.index = None
 
