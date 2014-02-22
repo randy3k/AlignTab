@@ -45,6 +45,22 @@ def update_colwidth(colwidth, content, option, strip_char):
         else:
             colwidth.append(w)
 
+
+def fill_spaces(content, colwidth, option):
+    for j in range(len(content)):
+        op = option[j % len(option)]
+        align = op[0]
+        spaceafter = " "*op[1] if j<len(content)-1 else ""
+        fill = colwidth[j]-len(content[j])
+        if align=='l':
+            content[j] = content[j] + " "*fill + spaceafter
+        elif align == 'r':
+            content[j] = " "*fill + content[j] + spaceafter
+        elif align == 'c':
+            lfill = " "*int(fill/2)
+            rfill = " "*(fill-int(fill/2))
+            content[j] = lfill + content[j] + rfill + spaceafter
+
 def get_named_pattern(user_input):
     patterns = sublime.load_settings('AlignTab.sublime-settings').get('named_patterns', {})
     user_input = patterns[user_input] if user_input in patterns else user_input
@@ -199,7 +215,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
     def align_tab(self, edit, user_input):
         view = self.view
-
+        vid  = view.id()
         user_input = get_named_pattern(user_input)
         [regex, option, f] = input_parser(user_input)
         regex = '(' + regex + ')'
@@ -215,58 +231,67 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         indentation = min([re.match("^(\s*)",
                 view.substr(view.line(view.text_point(row,0)))).group(1) for row in rows])
 
-        for row in reversed(rows):
-            content = self.get_line_content(regex, f, row)
-            # the last col
-            begin = view.line(view.text_point(row, 0)).end()
-            for i, c in reversed(list(enumerate(content))):
-                # option cycles through the columns
-                op = option[i % len(option)]
-                # begin of current cell
-                begin = begin-len(c)
-                lenc = len(c.strip(strip_char)) if i>0 else len(c.rstrip(strip_char).lstrip())
-                se = len(c) - len(c.rstrip(strip_char))
-                sb = len(c)-lenc-se
+        # for table mode, we need to reset the cursor positions
+        if vid in AlignTabCommand.MODE and AlignTabCommand.MODE[vid]:
+            for row in reversed(rows):
+                content = self.get_line_content(regex, f, row)
+                # the last col
+                begin = view.line(view.text_point(row, 0)).end()
+                for i, c in reversed(list(enumerate(content))):
+                    # option cycles through the columns
+                    op = option[i % len(option)]
+                    # begin of current cell
+                    begin = begin-len(c)
+                    lenc = len(c.strip(strip_char)) if i>0 else len(c.rstrip(strip_char).lstrip())
+                    se = len(c) - len(c.rstrip(strip_char))
+                    sb = len(c)-lenc-se
 
-                # oldpt is used to reset cursor position, since view.insert will change cursor's location
+                    # oldpt is used to reset cursor position, since view.insert will change cursor's location
 
-                if op[0] == "l":
-                    fill = colwidth[i]-lenc+op[1] if i != len(content)-1 else 0
-                    oldpt = [min(s.end()-sb,begin+lenc+fill) if lenc>0 else begin \
-                                for s in view.sel() if s.empty() and begin+sb+lenc<=s.end()<=begin+sb+lenc+se]
-                    view.erase(edit, sublime.Region(begin,begin+sb))
-                    view.erase(edit, sublime.Region(begin+lenc,begin+lenc+se))
-                    view.insert(edit, begin+lenc, " "*(fill))
-                    if oldpt:
-                        view.sel().subtract(sublime.Region(begin+lenc, begin+lenc+fill))
-                        for s in [sublime.Region(b,b) for b in oldpt]: view.sel().add(s)
+                    if op[0] == "l":
+                        fill = colwidth[i]-lenc+op[1] if i != len(content)-1 else 0
+                        oldpt = [min(s.end()-sb,begin+lenc+fill) if lenc>0 else begin \
+                                    for s in view.sel() if s.empty() and begin+sb+lenc<=s.end()<=begin+sb+lenc+se]
+                        view.erase(edit, sublime.Region(begin,begin+sb))
+                        view.erase(edit, sublime.Region(begin+lenc,begin+lenc+se))
+                        view.insert(edit, begin+lenc, " "*(fill))
+                        if oldpt:
+                            view.sel().subtract(sublime.Region(begin+lenc, begin+lenc+fill))
+                            for s in [sublime.Region(b,b) for b in oldpt]: view.sel().add(s)
 
-                if op[0] == "r":
-                    fill = colwidth[i]-lenc
-                    oldpt = [min(s.end()-sb+fill,begin+lenc+fill+op[1]) if lenc>0 else begin \
-                                for s in view.sel() if s.empty() and begin+sb+lenc<=s.end()<=begin+sb+lenc+se]
-                    view.erase(edit, sublime.Region(begin,begin+sb))
-                    view.erase(edit, sublime.Region(begin+lenc,begin+lenc+se))
-                    if i != len(content)-1: view.insert(edit, begin+lenc, " "*op[1])
-                    view.insert(edit, begin, " "*fill)
-                    if oldpt:
-                        view.sel().subtract(sublime.Region(begin+fill+lenc, begin+fill+lenc+op[1]))
-                        for s in [sublime.Region(b,b) for b in oldpt]: view.sel().add(s)
+                    if op[0] == "r":
+                        fill = colwidth[i]-lenc
+                        oldpt = [min(s.end()-sb+fill,begin+lenc+fill+op[1]) if lenc>0 else begin \
+                                    for s in view.sel() if s.empty() and begin+sb+lenc<=s.end()<=begin+sb+lenc+se]
+                        view.erase(edit, sublime.Region(begin,begin+sb))
+                        view.erase(edit, sublime.Region(begin+lenc,begin+lenc+se))
+                        if i != len(content)-1: view.insert(edit, begin+lenc, " "*op[1])
+                        view.insert(edit, begin, " "*fill)
+                        if oldpt:
+                            view.sel().subtract(sublime.Region(begin+fill+lenc, begin+fill+lenc+op[1]))
+                            for s in [sublime.Region(b,b) for b in oldpt]: view.sel().add(s)
 
-                if op[0] == "c":
-                    lfill = int((colwidth[i]-lenc)/2)
-                    rfill = colwidth[i]-lenc-lfill+op[1] if i != len(content)-1 else 0
-                    oldpt = [min(s.end()-sb+lfill,begin+lenc+lfill+rfill) if lenc>0 else begin\
-                                for s in view.sel() if s.empty() and begin+sb+lenc<=s.end()<=begin+sb+lenc+se]
-                    view.erase(edit, sublime.Region(begin,begin+sb))
-                    view.erase(edit, sublime.Region(begin+lenc,begin+lenc+se))
-                    view.insert(edit, begin, " "*lfill)
-                    view.insert(edit, begin+lfill+lenc, " "*rfill)
-                    if oldpt:
-                        view.sel().subtract(sublime.Region(begin+lfill+lenc, begin+lenc+lfill+rfill))
-                        for s in [sublime.Region(b,b) for b in oldpt]: view.sel().add(s)
+                    if op[0] == "c":
+                        lfill = int((colwidth[i]-lenc)/2)
+                        rfill = colwidth[i]-lenc-lfill+op[1] if i != len(content)-1 else 0
+                        oldpt = [min(s.end()-sb+lfill,begin+lenc+lfill+rfill) if lenc>0 else begin\
+                                    for s in view.sel() if s.empty() and begin+sb+lenc<=s.end()<=begin+sb+lenc+se]
+                        view.erase(edit, sublime.Region(begin,begin+sb))
+                        view.erase(edit, sublime.Region(begin+lenc,begin+lenc+se))
+                        view.insert(edit, begin, " "*lfill)
+                        view.insert(edit, begin+lfill+lenc, " "*rfill)
+                        if oldpt:
+                            view.sel().subtract(sublime.Region(begin+lfill+lenc, begin+lenc+lfill+rfill))
+                            for s in [sublime.Region(b,b) for b in oldpt]: view.sel().add(s)
 
-            view.insert(edit, view.text_point(row,0), indentation)
+                view.insert(edit, view.text_point(row,0), indentation)
+        else:
+            # fast implementation, but cursor positions will change
+            for row in reversed(rows):
+                line = view.line(view.text_point(row,0))
+                content = [s.strip() for s in re.split(regex,view.substr(line),f) ]
+                fill_spaces(content, colwidth, option)
+                view.replace(edit,line, (indentation + "".join(content)).rstrip())
 
         return True
 
