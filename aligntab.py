@@ -46,9 +46,10 @@ def update_colwidth(colwidth, content, option, strip_char):
             colwidth.append(w)
 
 
-def fill_spaces(content, colwidth, option):
+def fill_spaces(content, colwidth, option, strip_char):
     for j in range(len(content)):
         op = option[j % len(option)]
+        content[j] = content[j].strip(strip_char)
         align = op[0]
         spaceafter = " "*op[1] if j<len(content)-1 else ""
         fill = colwidth[j]-len(content[j])
@@ -68,9 +69,7 @@ def get_named_pattern(user_input):
     return user_input
 
 class AlignTabCommand(sublime_plugin.TextCommand):
-    MODE = {}
-    aligned = False
-
+    Mode = {}
     def run(self, edit, user_input=None, mode=False, live_preview=False):
         view = self.view
         vid = view.id()
@@ -91,20 +90,20 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
         else:
             if user_input:
-                # do not double align in live preview mode
+                # do not double align when done with live preview mode
                 if live_preview is not "done":
-                    self.aligned = self.align_tab(edit, user_input, mode, live_preview)
+                    self.align_tab(edit, user_input, mode, live_preview)
 
                 if self.aligned:
                     if mode:
-                        AlignTabCommand.MODE[vid] = True
-                        view.set_status("aligntab", "[Table Mode]")
-                    sublime.status_message("")
+                        self.toogle_table_mode(True)
+                    else:
+                        sublime.status_message("")
                 else:
                     if mode and not all(list(self.prev_next_match(user_input))):
-                        AlignTabCommand.MODE[vid] = False
-                        view.set_status("aligntab", "")
-                    sublime.status_message("[Pattern not Found]")
+                        self.toogle_table_mode(False)
+                    else:
+                        sublime.status_message("[Pattern not Found]")
 
     def on_change(self, user_input):
         view = self.view
@@ -122,6 +121,15 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         if not live_preview:
             self.view.run_command("align_tab",{"user_input":user_input, "mode":mode})
 
+    def toogle_table_mode(self, on=True):
+        view = self.view
+        vid = view.id()
+        if on:
+            AlignTabCommand.Mode[vid] = True
+            view.set_status("aligntab", "[Table Mode]")
+        else:
+            AlignTabCommand.Mode[vid] = False
+            view.set_status("aligntab", "")
 
     def get_line_content(self, regex, f, row):
         view = self.view
@@ -193,7 +201,11 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         strip_char = ' ' if not view.settings().get("translate_tabs_to_spaces", False) else None
         self.expand_sel(regex, option, f , rows, colwidth, strip_char)
         rows = sorted(set(rows))
-        if not rows: return False
+        if rows:
+            self.aligned = True
+        else:
+            self.aligned = False
+            return
 
         indentation = min([re.match("^(\s*)",
                 view.substr(view.line(view.text_point(row,0)))).group(1) for row in rows])
@@ -260,11 +272,10 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             else:
                 # fast implementation, but cursor positions will change
                 line = view.line(view.text_point(row,0))
-                content = [s.strip(strip_char) for s in re.split(regex,view.substr(line),f) ]
-                fill_spaces(content, colwidth, option)
+                content = self.get_line_content(regex, f, row)
+                fill_spaces(content, colwidth, option, strip_char)
                 view.replace(edit,line, (indentation + "".join(content)).rstrip(strip_char))
 
-        return True
 
 class AlignTabClearMode(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -272,8 +283,8 @@ class AlignTabClearMode(sublime_plugin.TextCommand):
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
         print("Clear Table Mode!")
-        if vid in AlignTabCommand.MODE:
-            AlignTabCommand.MODE[vid] = False
+        if vid in AlignTabCommand.Mode:
+            AlignTabCommand.Mode[vid] = False
         view.set_status("aligntab", "")
 
 
@@ -285,7 +296,7 @@ class AlignTabUpdater(sublime_plugin.EventListener):
     def on_modified(self, view):
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
-        if vid in AlignTabCommand.MODE and AlignTabCommand.MODE[vid]:
+        if vid in AlignTabCommand.Mode and AlignTabCommand.Mode[vid]:
             cmdhist = view.command_history(0)
             # print(cmdhist)
             if cmdhist[0] not in ["insert", "left_delete", "right_delete", "delete_word", "paste", "cut"]: return
@@ -300,7 +311,7 @@ class AlignTabUpdater(sublime_plugin.EventListener):
     def on_text_command(self, view, cmd, args):
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
-        if vid in AlignTabCommand.MODE and AlignTabCommand.MODE[vid]:
+        if vid in AlignTabCommand.Mode and AlignTabCommand.Mode[vid]:
             if cmd == "undo":
                 view.run_command("soft_undo")
                 return ("soft_undo", None)
@@ -311,8 +322,8 @@ class AlignTabUpdater(sublime_plugin.EventListener):
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
         if key == 'align_tab_mode':
-            if vid in AlignTabCommand.MODE:
-                return AlignTabCommand.MODE[vid]
+            if vid in AlignTabCommand.Mode:
+                return AlignTabCommand.Mode[vid]
             else:
                 return False
 
@@ -321,10 +332,10 @@ class AlignTabUpdater(sublime_plugin.EventListener):
         if view.score_selector(0, 'text.aligntab') > 0:
             AlignTabHistory.index = None
 
-    # remove AlignTabCommand.MODE[vid] if file closes
+    # remove AlignTabCommand.Mode[vid] if file closes
     def on_close(self, view):
         vid = view.id()
-        if vid in AlignTabCommand.MODE: AlignTabCommand.MODE.pop(vid)
+        if vid in AlignTabCommand.Mode: AlignTabCommand.Mode.pop(vid)
 
 
 # VintageEX teaches me the following
