@@ -5,11 +5,11 @@ Note: ST2 support is deprecated and moved to [st2 branch](https://github.com/ran
 
 Features
 ------------
-- Align with user defined regular expression
+- Align using regular expression
 - Custom spacing, padding and justification.
 - Smart detection for alignment if no lines are selected
 - Multiple cursors support
-- Table mode: super efficient for editing tables
+- Table mode and Live preview mode
 
 Usage
 ------------
@@ -38,6 +38,9 @@ For example, `regex/rl` means all odd columns will be right-justified and all ev
  * A space is added after each column.
  * All matched delimiters are aligned.
 - Do not use capturing parenthese for regular expression. Instead, use non-capturing parenthese `(?:regex)`.
+
+
+###Live Preview Mode
 
 <img width=500 src="https://github.com/randy3k/AlignTab/raw/fig/aligntab.gif">
 
