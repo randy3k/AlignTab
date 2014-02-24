@@ -195,6 +195,13 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         [regex, option, f] = input_parser(user_input)
         regex = '(' + regex + ')'
 
+        # test validity of regex
+        try:
+            re.compile(regex)
+        except:
+            self.aligned = False
+            return
+
         rows = []
         colwidth = []
         # do not strip \t if translate_tabs_to_spaces is false (which is the default)
