@@ -51,16 +51,16 @@ def fill_spaces(content, colwidth, option, strip_char):
         op = option[j % len(option)]
         content[j] = content[j].strip(strip_char) if j>1 else content[j].lstrip().rstrip(strip_char)
         align = op[0]
-        spaceafter = " "*op[1] if j<len(content)-1 else ""
+        pedding = " "*op[1] if j<len(content)-1 else ""
         fill = colwidth[j]-len(content[j])
         if align=='l':
-            content[j] = content[j] + " "*fill + spaceafter
+            content[j] = content[j] + " "*fill + pedding
         elif align == 'r':
-            content[j] = " "*fill + content[j] + spaceafter
+            content[j] = " "*fill + content[j] + pedding
         elif align == 'c':
             lfill = " "*int(fill/2)
             rfill = " "*(fill-int(fill/2))
-            content[j] = lfill + content[j] + rfill + spaceafter
+            content[j] = lfill + content[j] + rfill + pedding
 
 def get_named_pattern(user_input):
     patterns = sublime.load_settings('AlignTab.sublime-settings').get('named_patterns', {})
