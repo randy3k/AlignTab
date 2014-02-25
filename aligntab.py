@@ -220,7 +220,8 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         # for table mode, we need to reset the cursor positions
         cursor_rows = []
         for s in view.sel():
-            cursor_rows += range(view.rowcol(s.begin())[0],view.rowcol(s.end())[0]+1)
+            if s.empty:
+                cursor_rows += range(view.rowcol(s.begin())[0],view.rowcol(s.end())[0]+1)
         for row in reversed(rows):
             if mode and row in cursor_rows:
                 # if this row contains cursors, then need to reset cursor positions in a complicated way
@@ -275,7 +276,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                                 view.sel().subtract(sublime.Region(begin+lfill+lenc, begin+lenc+lfill+rfill))
                                 for s in [sublime.Region(b,b) for b in oldpt]: view.sel().add(s)
 
-                    view.insert(edit, view.text_point(row,0), indentation)
+                view.insert(edit, view.text_point(row,0), indentation)
             else:
                 # fast implementation, but cursor positions will change
                 line = view.line(view.text_point(row,0))
