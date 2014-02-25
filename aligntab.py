@@ -69,7 +69,6 @@ def get_named_pattern(user_input):
     return user_input
 
 class AlignTabCommand(sublime_plugin.TextCommand):
-    Mode = {}
     def run(self, edit, user_input=None, mode=False, live_preview=False):
         view = self.view
         vid = view.id()
@@ -90,9 +89,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
         else:
             if user_input:
-                # do not double align when done with live preview mode
-                if live_preview is not "done":
-                    self.align_tab(edit, user_input, mode, live_preview)
+                self.align_tab(edit, user_input, mode, live_preview)
 
                 if self.aligned:
                     if mode:
@@ -118,6 +115,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
     def on_done(self, user_input, mode, live_preview):
         view = self.view
         AlignTabHistory.insert(user_input)
+        # do not double align when done with live preview mode
         if not live_preview:
             self.view.run_command("align_tab",{"user_input":user_input, "mode":mode})
 
@@ -125,10 +123,10 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         view = self.view
         vid = view.id()
         if on:
-            AlignTabCommand.Mode[vid] = True
+            AlignTabUpdater.Mode[vid] = True
             view.set_status("aligntab", "[Table Mode]")
         else:
-            AlignTabCommand.Mode[vid] = False
+            AlignTabUpdater.Mode[vid] = False
             view.set_status("aligntab", "")
 
     def get_line_content(self, regex, f, row):
@@ -272,20 +270,21 @@ class AlignTabClearMode(sublime_plugin.TextCommand):
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
         print("Clear Table Mode!")
-        if vid in AlignTabCommand.Mode:
-            AlignTabCommand.Mode[vid] = False
+        if vid in AlignTabUpdater.Mode:
+            AlignTabUpdater.Mode[vid] = False
         view.set_status("aligntab", "")
 
 
 class AlignTabUpdater(sublime_plugin.EventListener):
     # aligntab thread
     thread = None
-
+    # register for table mode
+    Mode = {}
     # table mode trigger
     def on_modified(self, view):
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
-        if vid in AlignTabCommand.Mode and AlignTabCommand.Mode[vid]:
+        if vid in AlignTabUpdater.Mode and AlignTabUpdater.Mode[vid]:
             cmdhist = view.command_history(0)
             # print(cmdhist)
             if cmdhist[0] not in ["insert", "left_delete", "right_delete", "delete_word", "paste", "cut"]: return
@@ -300,7 +299,7 @@ class AlignTabUpdater(sublime_plugin.EventListener):
     def on_text_command(self, view, cmd, args):
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
-        if vid in AlignTabCommand.Mode and AlignTabCommand.Mode[vid]:
+        if vid in AlignTabUpdater.Mode and AlignTabUpdater.Mode[vid]:
             if cmd == "undo":
                 view.run_command("soft_undo")
                 return ("soft_undo", None)
@@ -311,8 +310,8 @@ class AlignTabUpdater(sublime_plugin.EventListener):
         if view.is_scratch() or view.settings().get('is_widget'): return
         vid = view.id()
         if key == 'align_tab_mode':
-            if vid in AlignTabCommand.Mode:
-                return AlignTabCommand.Mode[vid]
+            if vid in AlignTabUpdater.Mode:
+                return AlignTabUpdater.Mode[vid]
             else:
                 return False
 
@@ -321,10 +320,10 @@ class AlignTabUpdater(sublime_plugin.EventListener):
         if view.score_selector(0, 'text.aligntab') > 0:
             AlignTabHistory.index = None
 
-    # remove AlignTabCommand.Mode[vid] if file closes
+    # remove AlignTabUpdater.Mode[vid] if file closes
     def on_close(self, view):
         vid = view.id()
-        if vid in AlignTabCommand.Mode: AlignTabCommand.Mode.pop(vid)
+        if vid in AlignTabUpdater.Mode: AlignTabUpdater.Mode.pop(vid)
 
 
 # VintageEX teaches me the following
