@@ -245,7 +245,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
             content = self.get_line_content(regex, f, row)
             fill_spaces(content, colwidth, option, strip_char)
-            view.replace(edit,line, (indentation + "".join(content)).rstrip(strip_char))
+            view.replace(edit,line, (indentation + "".join(content).lstrip().rstrip(strip_char)))
 
             if mode and row in cursor_rows:
                 newcell = self.get_span(regex, option, f, row, strip_char)
