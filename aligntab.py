@@ -49,7 +49,7 @@ def update_colwidth(colwidth, content, option, strip_char):
 def fill_spaces(content, colwidth, option, strip_char):
     for j in range(len(content)):
         op = option[j % len(option)]
-        content[j] = content[j].strip(strip_char)
+        content[j] = content[j].strip(strip_char) if j>1 else content[j].lstrip().rstrip(strip_char)
         align = op[0]
         spaceafter = " "*op[1] if j<len(content)-1 else ""
         fill = colwidth[j]-len(content[j])
