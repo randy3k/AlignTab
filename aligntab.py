@@ -38,6 +38,7 @@ def input_parser(user_input):
     return [regex, option ,f]
 
 def update_colwidth(colwidth, content, option, strip_char):
+    # take care of the indentation
     thiscolwidth = [len(c.strip(strip_char)) if i>0 else len(c.rstrip(strip_char).lstrip()) for i, c in enumerate(content)]
     for i,w in enumerate(thiscolwidth):
         if i<len(colwidth):
@@ -49,6 +50,7 @@ def update_colwidth(colwidth, content, option, strip_char):
 def fill_spaces(content, colwidth, option, strip_char):
     for j in range(len(content)):
         op = option[j % len(option)]
+        # take care of the indentation
         content[j] = content[j].strip(strip_char) if j>1 else content[j].lstrip().rstrip(strip_char)
         align = op[0]
         pedding = " "*op[1] if j<len(content)-1 else ""
@@ -245,7 +247,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
             content = self.get_line_content(regex, f, row)
             fill_spaces(content, colwidth, option, strip_char)
-            view.replace(edit,line, (indentation + "".join(content).lstrip().rstrip(strip_char)))
+            view.replace(edit,line, (indentation + "".join(content).rstrip(strip_char)))
 
             if mode and row in cursor_rows:
                 newcell = self.get_span(regex, option, f, row, strip_char)
