@@ -3,10 +3,7 @@ import sublime_plugin
 import re, sys
 import time
 import threading
-
-tab_size = 4
-def cjklen(s):
-    return sum([2 if 19968 < ord(c) < 40869 else 1 for c in s])
+from .cjklen import cjklen
 
 def input_parser(user_input):
     m = re.match(r"(.+)/([lcr*()0-9]*)(f[0-9]*)?", user_input)
