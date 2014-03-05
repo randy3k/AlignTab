@@ -105,4 +105,5 @@ CJK Support
 ---
 AlignTab supoorts CJK characters, but you have to choose a correct font face and font size.
 To my knowledge, `MinCho` works on all Chinese, Japanese and Korean.
+
 <img width=300 src="https://github.com/randy3k/AlignTab/raw/fig/cjk.png">
