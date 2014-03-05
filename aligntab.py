@@ -4,6 +4,10 @@ import re, sys
 import time
 import threading
 
+tab_size = 4
+def cjklen(s):
+    return sum([2 if 19968 < ord(c) < 40869 else 1 for c in s])
+
 def input_parser(user_input):
     m = re.match(r"(.+)/([lcr*()0-9]*)(f[0-9]*)?", user_input)
 
@@ -39,7 +43,7 @@ def input_parser(user_input):
 
 def update_colwidth(colwidth, content, option, strip_char):
     # take care of the indentation
-    thiscolwidth = [len(c.strip(strip_char)) if i>0 else len(c.rstrip(strip_char).lstrip()) for i, c in enumerate(content)]
+    thiscolwidth = [cjklen(c.strip(strip_char)) if i>0 else cjklen(c.rstrip(strip_char).lstrip()) for i, c in enumerate(content)]
     for i,w in enumerate(thiscolwidth):
         if i<len(colwidth):
             colwidth[i] = max(colwidth[i], w)
@@ -54,7 +58,7 @@ def fill_spaces(content, colwidth, option, strip_char):
         content[j] = content[j].strip(strip_char) if j>1 else content[j].lstrip().rstrip(strip_char)
         align = op[0]
         pedding = " "*op[1] if j<len(content)-1 else ""
-        fill = colwidth[j]-len(content[j])
+        fill = colwidth[j]-cjklen(content[j])
         if align=='l':
             content[j] = content[j] + " "*fill + pedding
         elif align == 'r':
@@ -142,15 +146,15 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         linecontent = view.substr(line)
         p = [m.span() for m in re.finditer(regex, linecontent)]
         if f>0: p = p[0:f]
-        p += [(len(linecontent),None)]
+        p += [(cjklen(linecontent),None)]
         cell = []
         for i in range(len(p)-1):
             cell += [p[i],(p[i][1],p[i+1][0])]
         cell = [(0,p[0][0])] + cell
         for i,c in enumerate(cell):
             cellcontent = linecontent[c[0]:c[1]]
-            b = cell[i][1]-len(cellcontent)+len(cellcontent.rstrip(strip_char))
-            a = b - len(cellcontent.strip(strip_char))
+            b = cell[i][1]-cjklen(cellcontent)+cjklen(cellcontent.rstrip(strip_char))
+            a = b - cjklen(cellcontent.strip(strip_char))
             cell[i] = (a, b)
         return cell
 
