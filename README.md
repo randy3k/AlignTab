@@ -99,3 +99,9 @@ These patterns are included in the default file:
 
 You then just use the name instead of the pattern in the input field.
 To edit the patterns, go to `Perferences -> Package Settings -> AlignTab -> Settings`.
+
+
+CJK Support
+---
+AlignTab supoorts CJK characters, but you have to choose a correct font face and font size.
+See [here](https://github.com/vkocubinsky/SublimeTableEditor/pull/17#issuecomment-22539305) for details.
