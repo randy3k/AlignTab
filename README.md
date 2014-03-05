@@ -105,5 +105,5 @@ CJK Support
 ---
 AlignTab supoorts CJK characters, but you have to choose a correct font face and font size.
 See [here](https://github.com/vkocubinsky/SublimeTableEditor/pull/17#issuecomment-22539305) for details.
-To the best of my knowledge, `MinCho` works on all Chinese, Japanese and Korean.
-<img width=300 src="https://github.com/randy3k/AlignTab/raw/fig/cjk.gif">
+To the best of my knowledge, `MinCho` with font size 12 works best and it works on all Chinese, Japanese and Korean.
+<img width=300 src="https://github.com/randy3k/AlignTab/raw/fig/cjk.png">
