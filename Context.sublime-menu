@@ -1,7 +1,8 @@
 [
    {"caption" : "-"},
     {
-       "caption": "Align By",
+      "id": "aligntab",
+      "caption": "Align By",
       "children": [
           {
           "caption": "First =",

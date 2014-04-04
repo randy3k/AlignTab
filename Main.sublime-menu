@@ -29,7 +29,14 @@
                                 },
                                 "caption": "Settings – User"
                             },
-                            { "caption": "-" }
+                            { "caption": "-" },
+                            {
+                                "command": "open_file", "args":
+                                {
+                                    "file": "${packages}/User/Context.sublime-menu"
+                                },
+                                "caption": "Context Menu – User"
+                            },
                         ]
                     }
                 ]

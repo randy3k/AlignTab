@@ -91,14 +91,38 @@ These patterns are included in the default file:
 
 ```
   "named_patterns": {
-     "first_equal": "=/f",
-     "first_comma": ",/f",
-     "first_colon": ":/f"
+    "first_equal" : "=/f",
+    "first_comma" : ",/f",
+    "first_colon" : ":/f",
+    "all_and"     : "&",
+    "all_bar"     : "\\|",
+    "all_space"   : "\\s*/l1l0"
   }
 ```
 
 You then just use the name instead of the pattern in the input field.
 To edit the patterns, go to `Perferences -> Package Settings -> AlignTab -> Settings`.
+
+Custom Context Menu
+----
+To define new item in the context menu, go to `Perferences -> Package Settings -> AlignTab -> Context Menu` and add
+
+```
+[
+   {"caption" : "-"},
+    {
+      "id": "aligntab",
+      "caption": "Align By",
+      "children": [
+          {
+          "caption" : "All ?",
+          "command" : "align_tab",
+          "args"    : {"user_input" : "\\?"}
+          }
+      ]
+  }
+]
+```
 
 
 CJK Support
