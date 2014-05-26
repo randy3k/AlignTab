@@ -36,7 +36,7 @@
                                     "file": "${packages}/User/Context.sublime-menu"
                                 },
                                 "caption": "Context Menu – User"
-                            },
+                            }
                         ]
                     }
                 ]
