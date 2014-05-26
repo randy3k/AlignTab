@@ -3,10 +3,8 @@ from unittest import TestCase
 
 version = sublime.version()
 
-if version >= '3000':
-    import AlignTab.aligntab as aligntab
-else:
-    import aligntab
+import AlignTab.aligntab as aligntab
+
 
 class TestHelloWorld(TestCase):
 
