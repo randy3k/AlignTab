@@ -133,3 +133,7 @@ AlignTab supoorts CJK characters, but you have to choose a correct font face and
 To my knowledge, `MinCho` works on all Chinese, Japanese and Korean.
 
 <img width=300 src="https://github.com/randy3k/AlignTab/raw/fig/cjk.png">
+
+### License
+
+AlignTab is licensed under the MIT License.
