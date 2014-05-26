@@ -5,7 +5,7 @@ python:
 
 env:
     global:
-        - PACKAGE="UnitTesting-example"
+        - PACKAGE="AlignTab"
     matrix:
         # - SUBLIME_TEXT_VERSION="2"
         - SUBLIME_TEXT_VERSION="3"
