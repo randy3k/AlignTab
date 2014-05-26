@@ -14,14 +14,14 @@ before_install:
     - curl -OL https://raw.githubusercontent.com/randy3k/UnitTesting/master/sbin/travis.sh
 
 install:
-    - sh sbin/travis.sh bootstrap
+    - sh travis.sh bootstrap
 
 before_script:
     - export DISPLAY=:99.0
     - sh -e /etc/init.d/xvfb start
 
 script:
-    - sh sbin/travis.sh run_tests
+    - sh travis.sh run_tests
 
 notifications:
     email: false
