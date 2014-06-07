@@ -4,39 +4,39 @@ import re
 from .parser import input_parser
 from .wclen import wclen
 from .hist import AlignTabHistory
-from .table import AlignTabModeController
+from .table import toogle_table_mode
 
-def update_colwidth(colwidth, content, option, strip_char):
+def update_colwidth(colwidth, content):
     # take care of the indentation
-    thiscolwidth = [wclen(c.strip(strip_char)) if i>0 else wclen(c.rstrip(strip_char).lstrip()) for i, c in enumerate(content)]
+    thiscolwidth = [wclen(c) for c in content]
     for i,w in enumerate(thiscolwidth):
         if i<len(colwidth):
             colwidth[i] = max(colwidth[i], w)
         else:
             colwidth.append(w)
 
-
-def fill_spaces(content, colwidth, option, strip_char):
-    for j in range(len(content)):
-        op = option[j % len(option)]
+def fill_spaces(content, colwidth, just):
+    for k in range(len(content)):
+        ju = just[k % len(just)]
         # take care of the indentation
-        content[j] = content[j].strip(strip_char) if j>0 else content[j].lstrip().rstrip(strip_char)
-        align = op[0]
-        pedding = " "*op[1] if j<len(content)-1 else ""
-        fill = colwidth[j]-wclen(content[j])
+        align = ju[0]
+        pedding = " "*ju[1] if k<len(content)-1 else ""
+        fill = colwidth[k]-wclen(content[k])
         if align=='l':
-            content[j] = content[j] + " "*fill + pedding
+            content[k] = content[k] + " "*fill + pedding
         elif align == 'r':
-            content[j] = " "*fill + content[j] + pedding
+            content[k] = " "*fill + content[k] + pedding
         elif align == 'c':
             lfill = " "*int(fill/2)
             rfill = " "*(fill-int(fill/2))
-            content[j] = lfill + content[j] + rfill + pedding
+            content[k] = lfill + content[k] + rfill + pedding
 
 def get_named_pattern(user_input):
-    patterns = sublime.load_settings('AlignTab.sublime-settings').get('named_patterns', {})
+    s = sublime.load_settings('AlignTab.sublime-settings')
+    patterns = s.get('named_patterns', {})
     user_input = patterns[user_input] if user_input in patterns else user_input
-    user_input = AlignTabHistory.HIST[-1] if AlignTabHistory.HIST and user_input == 'last_rexp' else user_input
+    user_input = AlignTabHistory.HIST[-1] if AlignTabHistory.HIST and \
+                                    user_input == 'last_rexp' else user_input
     return user_input
 
 class AlignTabCommand(sublime_plugin.TextCommand):
@@ -59,16 +59,25 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             v.settings().set('rulers', [])
 
         elif user_input:
-                self.align_tab(edit, user_input, mode, live_preview)
+                user_input = get_named_pattern(user_input)
+                [regex, just, f] = input_parser(user_input)
+                regex = '(' + regex + ')'
+                # do not strip \t if translate_tabs_to_spaces is false
+                t2s = view.settings().get("translate_tabs_to_spaces", False)
+                strip_char = ' ' if not t2s else None
+                self.opt = [regex, just, f, strip_char]
+
+                # apply align_tab
+                self.align_tab(edit, mode)
 
                 if self.aligned:
                     if mode:
-                        self.toogle_table_mode(True)
+                        toogle_table_mode(vid, True)
                     else:
                         sublime.status_message("")
                 else:
-                    if mode and not all(list(self.prev_next_match(user_input))):
-                        self.toogle_table_mode(False)
+                    if mode and not all(list(self.prev_next_match())):
+                        toogle_table_mode(vid, False)
                     else:
                         sublime.status_message("[Pattern not Found]")
 
@@ -91,40 +100,22 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             self.view.run_command("align_tab",
                 {"user_input":user_input, "mode":mode})
 
-    def toogle_table_mode(self, on=True):
+    def get_line(self, row):
         view = self.view
-        vid = view.id()
-        if on:
-            AlignTabModeController.Mode[vid] = True
-            view.set_status("aligntab", "[Table Mode]")
-        else:
-            AlignTabModeController.Mode[vid] = False
-            view.set_status("aligntab", "")
+        return view.substr(view.line(view.text_point(row,0)))
 
-    def get_line_content(self, regex, f, row):
+    def line_split(self, row):
+        [regex, just, f, strip_char] = self.opt
         view = self.view
-        line = view.line(view.text_point(row,0))
-        return [s for s in re.split(regex,view.substr(line),f)]
+        content = [s for s in re.split(regex, self.get_line(row), f)]
+        # remove indentation
+        if len(content)>1:
+            content[0] = content[0].lstrip()
+        # remove spaces
+        content = [c.strip(strip_char) for c in content]
+        return content
 
-    def get_span(self, regex, option, f, row, strip_char):
-        view = self.view
-        line = view.line(view.text_point(row,0))
-        linecontent = view.substr(line)
-        p = [m.span() for m in re.finditer(regex, linecontent)]
-        if f>0: p = p[0:f]
-        p += [(wclen(linecontent),None)]
-        cell = []
-        for i in range(len(p)-1):
-            cell += [p[i],(p[i][1],p[i+1][0])]
-        cell = [(0,p[0][0])] + cell
-        for i,c in enumerate(cell):
-            cellcontent = linecontent[c[0]:c[1]]
-            b = cell[i][1]-wclen(cellcontent)+wclen(cellcontent.rstrip(strip_char))
-            a = b - wclen(cellcontent.strip(strip_char))
-            cell[i] = (a, b)
-        return cell
-
-    def expand_sel(self, regex, option, f, rows, colwidth, strip_char):
+    def expand_sel(self, rows, colwidth):
         view = self.view
         lastrow = view.rowcol(view.size())[0]
 
@@ -132,9 +123,9 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             for line in view.lines(sel):
                 thisrow = view.rowcol(line.begin())[0]
                 if (thisrow in rows): continue
-                content = self.get_line_content(regex, f, thisrow)
+                content = self.line_split(thisrow)
                 if len(content)<=1: continue
-                update_colwidth(colwidth, content, option, strip_char)
+                update_colwidth(colwidth, content)
                 rows.append(thisrow)
 
             if sel.empty():
@@ -142,46 +133,22 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 if not (thisrow in rows): continue
                 beginrow = endrow = thisrow
                 while endrow+1<=lastrow and not (endrow+1 in rows):
-                    content = self.get_line_content(regex, f, endrow+1)
+                    content = self.line_split(endrow+1)
                     if len(content)<=1: break
-                    update_colwidth(colwidth, content, option, strip_char)
+                    update_colwidth(colwidth, content)
                     endrow = endrow+1
                     rows.append(endrow)
                 while beginrow-1>=0 and not (beginrow-1 in rows):
-                    content = self.get_line_content(regex, f, beginrow-1)
+                    content = self.line_split(beginrow-1)
                     if len(content)<=1: break
-                    update_colwidth(colwidth, content, option, strip_char)
+                    update_colwidth(colwidth, content)
                     beginrow = beginrow-1
                     rows.append(beginrow)
 
-    def prev_next_match(self, user_input):
-        # it is used to check whether table mode should be disabled
-        user_input = get_named_pattern(user_input)
-        [regex, option, f] = input_parser(user_input)
-        regex = '(' + regex + ')'
-        view = self.view
-        lastrow = view.rowcol(view.size())[0]
-        rows = []
-        for sel in view.sel():
-            for line in view.lines(sel):
-                rows.append(view.rowcol(line.begin())[0])
-        rows = list(set(rows))
-        for row in rows:
-            if row-1>=0 and len(self.get_line_content(regex, f, row-1))>1:
-                yield True
-            elif row+1<=lastrow and len(self.get_line_content(regex, f, row+1))>1:
-                yield True
-            else:
-                yield False
-
-
-    def align_tab(self, edit, user_input, mode, live_preview):
+    def align_tab(self, edit, mode):
+        [regex, just, f, strip_char] = self.opt
         view = self.view
         vid  = view.id()
-
-        user_input = get_named_pattern(user_input)
-        [regex, option, f] = input_parser(user_input)
-        regex = '(' + regex + ')'
 
         # test validity of regex
         try:
@@ -192,9 +159,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
         rows = []
         colwidth = []
-        # do not strip \t if translate_tabs_to_spaces is false (which is the default)
-        strip_char = ' ' if not view.settings().get("translate_tabs_to_spaces", False) else None
-        self.expand_sel(regex, option, f , rows, colwidth, strip_char)
+        self.expand_sel(rows, colwidth)
         rows = sorted(set(rows))
         if rows:
             self.aligned = True
@@ -202,8 +167,8 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             self.aligned = False
             return
 
-        indentation = min([re.match("^(\s*)",
-                view.substr(view.line(view.text_point(row,0)))).group(1) for row in rows])
+        indentation = min([re.match("^(\s*)", self.get_line(row)).group(1)
+                            for row in rows])
 
         # for table mode, we need to reset the cursor positions
         cursor_rows = set([view.rowcol(s.end())[0] for s in view.sel() if s.empty])
@@ -211,16 +176,19 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             line = view.line(view.text_point(row,0))
 
             if mode and row in cursor_rows:
-                # if this row contains cursors, then need to reset cursor positions in a complicated way
-                oldcell = self.get_span(regex, option, f, row, strip_char)
-                cursor = [view.rowcol(s.end())[1] for s in view.sel() if s.empty and view.rowcol(s.end())[0]==row]
+                # if this row contains cursors, then need to reset cursor
+                # positions in a complicated way
+                oldcell = self.get_span(row)
+                cursor = [view.rowcol(s.end())[1] for s in view.sel()\
+                                     if s.empty and view.rowcol(s.end())[0]==row]
 
-            content = self.get_line_content(regex, f, row)
-            fill_spaces(content, colwidth, option, strip_char)
-            view.replace(edit,line, (indentation + "".join(content).rstrip(strip_char)))
+            content = self.line_split(row)
+            fill_spaces(content, colwidth, just)
+            view.replace(edit,line,
+                (indentation + "".join(content).rstrip(strip_char)))
 
             if mode and row in cursor_rows:
-                newcell = self.get_span(regex, option, f, row, strip_char)
+                newcell = self.get_span(row)
                 for s in view.sel():
                     if s.empty and view.rowcol(s.end())[0]==row: view.sel().subtract(s)
                 for cur in cursor:
@@ -234,4 +202,39 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     pt = view.text_point(row,newcur)
                     view.sel().add(sublime.Region(pt,pt))
 
+    def get_span(self, row):
+        # it is used to reset cursor for table mode
+        [regex, just, f, strip_char] = self.opt
+        view = self.view
+        line = self.get_line(row)
+        p = [m.span() for m in re.finditer(regex, line)]
+        if f>0: p = p[0:f]
+        p += [(wclen(line),None)]
+        cell = []
+        for i in range(len(p)-1):
+            cell += [p[i],(p[i][1],p[i+1][0])]
+        cell = [(0,p[0][0])] + cell
+        for i,c in enumerate(cell):
+            cellcontent = line[c[0]:c[1]]
+            b = cell[i][1]-wclen(cellcontent)+wclen(cellcontent.rstrip(strip_char))
+            a = b - wclen(cellcontent.strip(strip_char))
+            cell[i] = (a, b)
+        return cell
 
+
+    def prev_next_match(self):
+        # it is used to check whether table mode should be disabled
+        view = self.view
+        lastrow = view.rowcol(view.size())[0]
+        rows = []
+        for sel in view.sel():
+            for line in view.lines(sel):
+                rows.append(view.rowcol(line.begin())[0])
+        rows = list(set(rows))
+        for row in rows:
+            if row-1>=0 and len(self.line_split(row-1))>1:
+                yield True
+            elif row+1<=lastrow and len(self.line_split(row+1))>1:
+                yield True
+            else:
+                yield False

@@ -2,16 +2,14 @@ import sublime
 import sublime_plugin
 import threading
 
-class AlignTabClearMode(sublime_plugin.TextCommand):
-    def run(self, edit):
-        view = self.view
-        if view.is_scratch() or view.settings().get('is_widget'): return
-        vid = view.id()
-        print("Clear Table Mode!")
-        if vid in AlignTabModeController.Mode:
-            AlignTabModeController.Mode[vid] = False
+def toogle_table_mode(vid, on=True):
+    view = sublime.active_window().active_view()
+    if on:
+        AlignTabModeController.Mode[vid] = True
+        view.set_status("aligntab", "[Table Mode]")
+    else:
+        AlignTabModeController.Mode[vid] = False
         view.set_status("aligntab", "")
-
 
 class AlignTabModeController(sublime_plugin.EventListener):
     # aligntab thread
@@ -60,4 +58,9 @@ class AlignTabModeController(sublime_plugin.EventListener):
         vid = view.id()
         if vid in AlignTabModeController.Mode: AlignTabModeController.Mode.pop(vid)
 
-
+class AlignTabClearMode(sublime_plugin.TextCommand):
+    def run(self, edit):
+        view = self.view
+        if view.is_scratch() or view.settings().get('is_widget'): return
+        vid = view.id()
+        toogle_table_mode(vid, False)

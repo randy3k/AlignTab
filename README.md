@@ -56,8 +56,10 @@ Installation
 [Package Control](http://wbond.net/sublime_packages/package_control)
 
 
+Examples
+------------
+Some simple examples. You can also contribute your examples there.
 [Examples](https://github.com/randy3k/AlignTab/wiki/Examples)
------------
 
 Keybinds
 ------------
