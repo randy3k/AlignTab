@@ -35,5 +35,5 @@ def _in_range(c):
     c = ord(c)
     return any([r[0]<=c<=r[1] for r in wide_char_ranges])
 
-def cjklen(s):
+def wclen(s):
     return sum([2 if _in_range(c) else 1 for c in s])

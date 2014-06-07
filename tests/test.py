@@ -32,6 +32,17 @@ class TestHelloWorld(TestCase):
         first_row = self.view.substr(self.view.line(0))
         self.assertEqual(first_row,"apple  = 1==0")
 
+    def test_align_tab(self):
+        string = """a \t b \t   c
+        d \t   e \tf"""
+        self.setText(string)
+        self.view.run_command("align_tab", {"user_input" :"\t"})
+
+        first_row = self.view.substr(self.view.line(self.view.text_point(2,0)))
+        self.assertEqual(first_row,"d \t e \t f")
+
+class TestHelloWorld2(TestCase):
+
     def test_input_parser(self):
         input = "=/l0r*2f3"
         output = aligntab.input_parser(input)

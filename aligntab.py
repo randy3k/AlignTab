@@ -3,7 +3,10 @@ import sublime_plugin
 import re, sys
 import time
 import threading
-from .cjklen import cjklen
+from .wclen import wclen
+from .hist import AlignTabHistory
+from .table import AlignTabModeController
+
 
 def input_parser(user_input):
     m = re.match(r"(.+)/([lcr*()0-9]*)(f[0-9]*)?", user_input)
@@ -28,7 +31,8 @@ def input_parser(user_input):
             option = option.replace(r.group(0), r.group(1)*int(r.group(2)),1)
 
         option = re.findall(r"[lcr][0-9]*", option)
-        option = list(map(lambda x: [x[0], 1] if len(x)==1 else [x[0], int(x[1:])], option))
+        option = list(map(lambda x: [x[0], 1] if len(x)==1 \
+                                    else [x[0], int(x[1:])], option))
         option = option if option else [['l', 1]]
 
         # for f
@@ -40,7 +44,7 @@ def input_parser(user_input):
 
 def update_colwidth(colwidth, content, option, strip_char):
     # take care of the indentation
-    thiscolwidth = [cjklen(c.strip(strip_char)) if i>0 else cjklen(c.rstrip(strip_char).lstrip()) for i, c in enumerate(content)]
+    thiscolwidth = [wclen(c.strip(strip_char)) if i>0 else wclen(c.rstrip(strip_char).lstrip()) for i, c in enumerate(content)]
     for i,w in enumerate(thiscolwidth):
         if i<len(colwidth):
             colwidth[i] = max(colwidth[i], w)
@@ -52,10 +56,10 @@ def fill_spaces(content, colwidth, option, strip_char):
     for j in range(len(content)):
         op = option[j % len(option)]
         # take care of the indentation
-        content[j] = content[j].strip(strip_char) if j>1 else content[j].lstrip().rstrip(strip_char)
+        content[j] = content[j].strip(strip_char) if j>0 else content[j].lstrip().rstrip(strip_char)
         align = op[0]
         pedding = " "*op[1] if j<len(content)-1 else ""
-        fill = colwidth[j]-cjklen(content[j])
+        fill = colwidth[j]-wclen(content[j])
         if align=='l':
             content[j] = content[j] + " "*fill + pedding
         elif align == 'r':
@@ -90,8 +94,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             v.settings().set('gutter', False)
             v.settings().set('rulers', [])
 
-        else:
-            if user_input:
+        elif user_input:
                 self.align_tab(edit, user_input, mode, live_preview)
 
                 if self.aligned:
@@ -113,23 +116,25 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             self.view.run_command("soft_undo")
             self.aligned = False
         if user_input:
-            self.view.run_command("align_tab",{"user_input":user_input, "live_preview":True})
+            self.view.run_command("align_tab",
+                {"user_input":user_input, "live_preview":True})
 
     def on_done(self, user_input, mode, live_preview):
         view = self.view
         AlignTabHistory.insert(user_input)
         # do not double align when done with live preview mode
         if not live_preview:
-            self.view.run_command("align_tab",{"user_input":user_input, "mode":mode})
+            self.view.run_command("align_tab",
+                {"user_input":user_input, "mode":mode})
 
     def toogle_table_mode(self, on=True):
         view = self.view
         vid = view.id()
         if on:
-            AlignTabUpdater.Mode[vid] = True
+            AlignTabModeController.Mode[vid] = True
             view.set_status("aligntab", "[Table Mode]")
         else:
-            AlignTabUpdater.Mode[vid] = False
+            AlignTabModeController.Mode[vid] = False
             view.set_status("aligntab", "")
 
     def get_line_content(self, regex, f, row):
@@ -143,15 +148,15 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         linecontent = view.substr(line)
         p = [m.span() for m in re.finditer(regex, linecontent)]
         if f>0: p = p[0:f]
-        p += [(cjklen(linecontent),None)]
+        p += [(wclen(linecontent),None)]
         cell = []
         for i in range(len(p)-1):
             cell += [p[i],(p[i][1],p[i+1][0])]
         cell = [(0,p[0][0])] + cell
         for i,c in enumerate(cell):
             cellcontent = linecontent[c[0]:c[1]]
-            b = cell[i][1]-cjklen(cellcontent)+cjklen(cellcontent.rstrip(strip_char))
-            a = b - cjklen(cellcontent.strip(strip_char))
+            b = cell[i][1]-wclen(cellcontent)+wclen(cellcontent.rstrip(strip_char))
+            a = b - wclen(cellcontent.strip(strip_char))
             cell[i] = (a, b)
         return cell
 
@@ -265,90 +270,4 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     pt = view.text_point(row,newcur)
                     view.sel().add(sublime.Region(pt,pt))
 
-
-
-class AlignTabClearMode(sublime_plugin.TextCommand):
-    def run(self, edit):
-        view = self.view
-        if view.is_scratch() or view.settings().get('is_widget'): return
-        vid = view.id()
-        print("Clear Table Mode!")
-        if vid in AlignTabUpdater.Mode:
-            AlignTabUpdater.Mode[vid] = False
-        view.set_status("aligntab", "")
-
-
-class AlignTabUpdater(sublime_plugin.EventListener):
-    # aligntab thread
-    thread = None
-    # register for table mode
-    Mode = {}
-    # table mode trigger
-    def on_modified(self, view):
-        if view.is_scratch() or view.settings().get('is_widget'): return
-        vid = view.id()
-        if vid in AlignTabUpdater.Mode and AlignTabUpdater.Mode[vid]:
-            cmdhist = view.command_history(0)
-            # print(cmdhist)
-            if cmdhist[0] not in ["insert", "left_delete", "right_delete", "delete_word", "paste", "cut"]: return
-            # if cmdhist[0] == "insert" and cmdhist[1] == {'characters': ' '}: return
-            if self.thread:
-                self.thread.cancel()
-            self.thread = threading.Timer(0.2, lambda:
-                                view.run_command("align_tab", {"user_input": "last_rexp", "mode": True}))
-            self.thread.start()
-
-
-    def on_text_command(self, view, cmd, args):
-        if view.is_scratch() or view.settings().get('is_widget'): return
-        vid = view.id()
-        if vid in AlignTabUpdater.Mode and AlignTabUpdater.Mode[vid]:
-            if cmd == "undo":
-                view.run_command("soft_undo")
-                return ("soft_undo", None)
-            return None
-
-
-    def on_query_context(self, view, key, operator, operand, match_all):
-        if view.is_scratch() or view.settings().get('is_widget'): return
-        vid = view.id()
-        if key == 'align_tab_mode':
-            if vid in AlignTabUpdater.Mode:
-                return AlignTabUpdater.Mode[vid]
-            else:
-                return False
-
-    # restore History index
-    def on_deactivated(self, view):
-        if view.score_selector(0, 'text.aligntab') > 0:
-            AlignTabHistory.index = None
-
-    # remove AlignTabUpdater.Mode[vid] if file closes
-    def on_close(self, view):
-        vid = view.id()
-        if vid in AlignTabUpdater.Mode: AlignTabUpdater.Mode.pop(vid)
-
-
-# VintageEX teaches me the following
-class AlignTabHistory(sublime_plugin.TextCommand):
-    HIST = []
-    index = None
-    def run(self, edit, backwards=False):
-        if AlignTabHistory.index is None:
-            AlignTabHistory.index = -1 if backwards else 0
-        else:
-            AlignTabHistory.index += -1 if backwards else 1
-
-        if AlignTabHistory.index == len(AlignTabHistory.HIST) or \
-            AlignTabHistory.index < -len(AlignTabHistory.HIST):
-                AlignTabHistory.index = -1 if backwards else 0
-
-        self.view.erase(edit, sublime.Region(0, self.view.size()))
-        self.view.insert(edit, 0, AlignTabHistory.HIST[AlignTabHistory.index])
-
-    @staticmethod
-    def insert(user_input):
-        if not AlignTabHistory.HIST or (user_input!= AlignTabHistory.HIST[-1] and user_input!= "last_rexp"):
-            AlignTabHistory.HIST.append(user_input)
-            AlignTabHistory.index = None
 
