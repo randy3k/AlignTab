@@ -1,5 +1,6 @@
 import sublime
 import sublime_plugin
+import threading
 
 class AlignTabClearMode(sublime_plugin.TextCommand):
     def run(self, edit):
