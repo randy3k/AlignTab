@@ -15,12 +15,12 @@ def update_colwidth(colwidth, content):
         else:
             colwidth.append(w)
 
-def fill_spaces(content, colwidth, just):
+def fill_spaces(content, colwidth, flag):
     for k in range(len(content)):
-        ju = just[k % len(just)]
+        thisf = flag[k % len(flag)]
         # take care of the indentation
-        align = ju[0]
-        pedding = " "*ju[1] if k<len(content)-1 else ""
+        align = thisf[0]
+        pedding = " "*thisf[1] if k<len(content)-1 else ""
         fill = colwidth[k]-wclen(content[k])
         if align=='l':
             content[k] = content[k] + " "*fill + pedding
@@ -60,12 +60,12 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
         elif user_input:
                 user_input = get_named_pattern(user_input)
-                [regex, just, f] = input_parser(user_input)
+                [regex, flag, f] = input_parser(user_input)
                 regex = '(' + regex + ')'
                 # do not strip \t if translate_tabs_to_spaces is false
                 t2s = view.settings().get("translate_tabs_to_spaces", False)
                 strip_char = ' ' if not t2s else None
-                self.opt = [regex, just, f, strip_char]
+                self.opt = [regex, flag, f, strip_char]
 
                 # apply align_tab
                 self.align_tab(edit, mode)
@@ -105,7 +105,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         return view.substr(view.line(view.text_point(row,0)))
 
     def line_split(self, row):
-        [regex, just, f, strip_char] = self.opt
+        [regex, flag, f, strip_char] = self.opt
         view = self.view
         content = [s for s in re.split(regex, self.get_line(row), f)]
         # remove indentation
@@ -146,7 +146,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     rows.append(beginrow)
 
     def align_tab(self, edit, mode):
-        [regex, just, f, strip_char] = self.opt
+        [regex, flag, f, strip_char] = self.opt
         view = self.view
         vid  = view.id()
 
@@ -183,7 +183,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                                      if s.empty and view.rowcol(s.end())[0]==row]
 
             content = self.line_split(row)
-            fill_spaces(content, colwidth, just)
+            fill_spaces(content, colwidth, flag)
             view.replace(edit,line,
                 (indentation + "".join(content).rstrip(strip_char)))
 
@@ -204,7 +204,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
     def get_span(self, row):
         # it is used to reset cursor for table mode
-        [regex, just, f, strip_char] = self.opt
+        [regex, flag, f, strip_char] = self.opt
         view = self.view
         line = self.get_line(row)
         p = [m.span() for m in re.finditer(regex, line)]
