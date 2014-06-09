@@ -7,7 +7,6 @@ from .hist import AlignTabHistory
 from .table import toogle_table_mode
 
 def update_colwidth(colwidth, content):
-    # take care of the indentation
     thiscolwidth = [wclen(c) for c in content]
     for i,w in enumerate(thiscolwidth):
         if i<len(colwidth):
@@ -18,7 +17,6 @@ def update_colwidth(colwidth, content):
 def fill_spaces(content, colwidth, flag):
     for k in range(len(content)):
         thisf = flag[k % len(flag)]
-        # take care of the indentation
         align = thisf[0]
         pedding = " "*thisf[1] if k<len(content)-1 else ""
         fill = colwidth[k]-wclen(content[k])
@@ -76,7 +74,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     else:
                         sublime.status_message("")
                 else:
-                    if mode and not all(list(self.prev_next_match())):
+                    if mode and not self.prev_next_match():
                         toogle_table_mode(vid, False)
                     else:
                         sublime.status_message("[Pattern not Found]")
@@ -173,21 +171,21 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         # for table mode, we need to reset the cursor positions
         cursor_rows = set([view.rowcol(s.end())[0] for s in view.sel() if s.empty])
         for row in reversed(rows):
-            line = view.line(view.text_point(row,0))
 
             if mode and row in cursor_rows:
-                # if this row contains cursors, then need to reset cursor
-                # positions in a complicated way
+                # if this row contains cursors, record their locations
                 oldcell = self.get_span(row)
                 cursor = [view.rowcol(s.end())[1] for s in view.sel()\
                                      if s.empty and view.rowcol(s.end())[0]==row]
 
+            line = view.line(view.text_point(row,0))
             content = self.line_split(row)
             fill_spaces(content, colwidth, flag)
-            view.replace(edit,line,
+            view.replace(edit, line,
                 (indentation + "".join(content).rstrip(strip_char)))
 
             if mode and row in cursor_rows:
+                # reset cursors' location
                 newcell = self.get_span(row)
                 for s in view.sel():
                     if s.empty and view.rowcol(s.end())[0]==row: view.sel().subtract(s)
@@ -203,7 +201,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     view.sel().add(sublime.Region(pt,pt))
 
     def get_span(self, row):
-        # it is used to reset cursor for table mode
+        # it is used to reset cursors in table mode
         [regex, flag, f, strip_char] = self.opt
         view = self.view
         line = self.get_line(row)
@@ -232,9 +230,12 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 rows.append(view.rowcol(line.begin())[0])
         rows = list(set(rows))
         for row in rows:
-            if row-1>=0 and len(self.line_split(row-1))>1:
-                yield True
+            if len(self.line_split(row))>1:
+                continue
+            elif row-1>=0 and len(self.line_split(row-1))>1:
+                continue
             elif row+1<=lastrow and len(self.line_split(row+1))>1:
-                yield True
+                continue
             else:
-                yield False
+                return False
+        return True
