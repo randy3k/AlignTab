@@ -119,9 +119,9 @@ To define new item in the context menu, go to `Perferences -> Package Settings -
       "caption": "Align By",
       "children": [
           {
-          "caption" : "All ?",
+          "caption" : "{",
           "command" : "align_tab",
-          "args"    : {"user_input" : "\\?"}
+          "args"    : {"user_input" : "\\{"}
           }
       ]
   }
