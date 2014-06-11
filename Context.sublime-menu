@@ -20,26 +20,29 @@
           "args"    : {"user_input" : ":/f"}
           },
           {
-          "caption" : "All &",
+          "caption" : "&",
           "command" : "align_tab",
           "args"    : {"user_input" : "&"}
           },
           {
-          "caption" : "All |",
+          "caption" : "|",
           "command" : "align_tab",
           "args"    : {"user_input" : "\\|"}
-          }
-          ,
+          },
           {
-          "caption" : "All Spaces",
+          "caption" : "{",
+          "command" : "align_tab",
+          "args"    : {"user_input" : "\\{"}
+          },          
+          {
+          "caption" : "Spaces",
           "command" : "align_tab",
           "args"    : {"user_input" : "\\s*/l1l0"}
-          }
-          ,
+          },
           {
-          "caption" : "Last Pattern",
+          "caption" : "Last RegExp",
           "command" : "align_tab",
-          "args"    : {"user_input" : "last_rexp"}
+          "args"    : {"user_input" : "last_regex"}
           }
       ]
   }

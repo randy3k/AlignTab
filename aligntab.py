@@ -3,7 +3,7 @@ import sublime_plugin
 import re
 from .parser import input_parser
 from .wclen import wclen
-from .hist import AlignTabHistory
+from .hist import history
 from .table import toogle_table_mode
 
 def update_colwidth(colwidth, content):
@@ -32,15 +32,15 @@ def fill_spaces(content, colwidth, flag):
 def get_named_pattern(user_input):
     s = sublime.load_settings('AlignTab.sublime-settings')
     patterns = s.get('named_patterns', {})
-    user_input = patterns[user_input] if user_input in patterns else user_input
-    user_input = AlignTabHistory.HIST[-1] if AlignTabHistory.HIST and \
-                                    user_input == 'last_rexp' else user_input
+    if user_input in patterns:
+        user_input = patterns[user_input]
+    elif user_input == 'last_regex' and history.last():
+        user_input = history.last()
     return user_input
 
 class AlignTabCommand(sublime_plugin.TextCommand):
     def run(self, edit, user_input=None, mode=False, live_preview=False):
         view = self.view
-        vid = view.id()
         if not user_input:
             self.aligned = False
             v = self.view.window().show_input_panel('Align By RegEx:', '',
@@ -51,10 +51,11 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     # On Cancel
                     lambda: self.on_change(None) if live_preview else None )
 
-            v.set_syntax_file('Packages/AlignTab/AlignTab.hidden-tmLanguage')
             v.settings().set('is_widget', True)
             v.settings().set('gutter', False)
             v.settings().set('rulers', [])
+            v.settings().set('AlignTabInputPanel', True)
+
 
         elif user_input:
                 user_input = get_named_pattern(user_input)
@@ -70,18 +71,17 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
                 if self.aligned:
                     if mode:
-                        toogle_table_mode(vid, True)
+                        toogle_table_mode(view, True)
                     else:
                         sublime.status_message("")
                 else:
                     if mode and not self.prev_next_match():
-                        toogle_table_mode(vid, False)
+                        toogle_table_mode(view, False)
                     else:
                         sublime.status_message("[Pattern not Found]")
 
     def on_change(self, user_input):
         view = self.view
-        vid = view.id()
         # Undo the previous change if needed
         if self.aligned:
             self.view.run_command("soft_undo")
@@ -92,7 +92,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
     def on_done(self, user_input, mode, live_preview):
         view = self.view
-        AlignTabHistory.insert(user_input)
+        history.insert(user_input)
         # do not double align when done with live preview mode
         if not live_preview:
             self.view.run_command("align_tab",
@@ -146,7 +146,6 @@ class AlignTabCommand(sublime_plugin.TextCommand):
     def align_tab(self, edit, mode):
         [regex, flag, f, strip_char] = self.opt
         view = self.view
-        vid  = view.id()
 
         # test validity of regex
         try:
@@ -207,18 +206,20 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         line = self.get_line(row)
         p = [m.span() for m in re.finditer(regex, line)]
         if f>0: p = p[0:f]
-        p += [(wclen(line),None)]
-        cell = []
+        p.append((len(line),None))
+        cell = [(0, p[0][0])]
         for i in range(len(p)-1):
-            cell += [p[i],(p[i][1],p[i+1][0])]
-        cell = [(0,p[0][0])] + cell
-        for i,c in enumerate(cell):
+            cell.append(p[i])
+            cell.append((p[i][1],p[i+1][0]))
+        trimcell = []
+        s = 0
+        for c in cell:
             cellcontent = line[c[0]:c[1]]
-            b = cell[i][1]-wclen(cellcontent)+wclen(cellcontent.rstrip(strip_char))
+            b = s + wclen(cellcontent.rstrip(strip_char))
             a = b - wclen(cellcontent.strip(strip_char))
-            cell[i] = (a, b)
-        return cell
-
+            trimcell.append((a, b))
+            s = s + wclen(cellcontent)
+        return trimcell
 
     def prev_next_match(self):
         # it is used to check whether table mode should be disabled
