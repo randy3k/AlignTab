@@ -2,8 +2,11 @@ AlignTab
 ==============
 [![Build Status](https://travis-ci.org/randy3k/AlignTab.svg?branch=master)](https://travis-ci.org/randy3k/AlignTab)
 
-An alignment plugin for Sublime Text 2/3 -- ST version of the excellent VIM plugin, tabular.<br>
-Note: ST2 support is deprecated and moved to [ST2](https://github.com/randy3k/AlignTab/tree/st2) branch. You are still able to install AlignTab in ST2 via Package Control.
+The most flexible alignment plugin for Sublime Text 2/3<br>
+This plugin is inspired by the excellent VIM plugin, tabular.
+
+Note: ST2 support is deprecated and moved to [ST2](https://github.com/randy3k/AlignTab/tree/st2) branch. 
+However, you are still able to install AlignTab to ST2 via Package Control.
 
 Features
 ------------
@@ -15,38 +18,44 @@ Features
 
 Usage
 ------------
-###First time user
+### Getting start
 
-- Predefined alignment tools can be found under the mouse menu `Align By`
+- Predefined alignment
 
 <img width=500 src="https://github.com/randy3k/AlignTab/raw/fig/alignby.png">
 
-###Advanced user
+### Welcome to the regex world
 
-- Open `AlignTab` in Command Palette `C+Shift+p`
-- The input should be in the from of `regex/option`
-- The option, e.g., `c2r2f1`, controls
- - column justification: `r`, `l` or `c`
- - spaces after each column: the number after `r`, `l` or `c`
- - max number of delimiters: the number after `f`
+- Open `AlignTab` in Command Palette `C+Shift+p` and enter `regex/option` in the input panel
+- The option controls column justification, pedding and maxinum number of splits.
+- For example: `c2r3f1`
+  - first column is centered followed by 2 spaces
+  - second coumn is right-flushed followed by 3 spaces
+  - only the first delimiter is matched
+
+#### More about regex and options
+
+- Use non-capturing parenthese `(?:regex)` instread of capturing parenthese.
+ 
 - Delimiter is also treated as a column.<br>
 For example, `=/rcl` means the the column before `=` will be right-justifed and the column after `=` will be left-justified. And `=` will be centered (however, it doesn't matter as `=` is of length 1).
 - The option for alignment cycles through the columns. <br>
 For example, `regex/rl` means all odd columns will be right-justified and all even columns will be left-justified.
 - the symbol `*` repeats the preceeding justification flags. 
 <br>For example `r*3` equals `rrr`, and `(cr3)*2` equals `cr3cr3`.
+
 - Default option is `l1f0`.
- * All columns are left-justified.
- * A space is added after each column.
- * All matched delimiters are aligned.
-- Do not use capturing parenthese for regular expression. Instead, use non-capturing parenthese `(?:regex)`.
+  - All columns are left-justified.
+  - A space is added after each column.
+  - All matched delimiters are aligned.
 
 
-###Live Preview Mode
+
+### Live Preview Mode
 
 <img width=500 src="https://github.com/randy3k/AlignTab/raw/fig/aligntab.gif">
 
-###Table Mode
+### Table Mode
 
 <img width=500 src="https://github.com/randy3k/AlignTab/raw/fig/table.gif">
 
