@@ -27,10 +27,10 @@ Usage
 ### Welcome to the regex world
 
 - Open `AlignTab` in Command Palette `C+Shift+p` and enter `regex/option` in the input panel
-- The option controls column justification, pedding and maxinum number of splits.
+- The option controls column justification, padding and maximum number of splits.
 - For example: `c2r3f1`
   - first column is centered followed by 2 spaces
-  - second coumn is right-flushed followed by 3 spaces
+  - second column is right-flushed followed by 3 spaces
   - only the first delimiter is matched
 
 #### More about regex and options
@@ -114,11 +114,11 @@ These patterns are included in the default file:
 ```
 
 You then just use the name instead of the pattern in the input field.
-To edit the patterns, go to `Perferences -> Package Settings -> AlignTab -> Settings`.
+To edit the patterns, go to `Preferences -> Package Settings -> AlignTab -> Settings`.
 
 Custom Context Menu
 ----
-To define new item in the context menu, go to `Perferences -> Package Settings -> AlignTab -> Context Menu` and add
+To define new item in the context menu, go to `Preferences -> Package Settings -> AlignTab -> Context Menu` and add
 
 ```
 [
