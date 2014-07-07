@@ -8,6 +8,8 @@ This plugin is inspired by the excellent VIM plugin, tabular.
 Note: ST2 support is deprecated and moved to [ST2](https://github.com/randy3k/AlignTab/tree/st2) branch. 
 However, you are still able to install AlignTab to ST2 via Package Control.
 
+If you like it and would like to tip me for some snacks, click [gittip](https://www.gittip.com/randy3k).
+
 Features
 ------------
 - Align using regular expression
