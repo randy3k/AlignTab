@@ -29,8 +29,8 @@ Usage
 ### Welcome to the regex world
 
 - Open `AlignTab` in Command Palette `C+Shift+p` and enter `regex/option` in the input panel
-- The option controls column justification, padding and maximum number of splits.
-- For example: `c2r3f1`
+- To learn more about regular expression, visit [here](http://www.regular-expressions.info) and [here](https://docs.python.org/2/library/re.html).
+- The option controls column justification, padding and maximum number of splits. For example, `c2r3f1` means
   - first column is centered followed by 2 spaces
   - second column is right-flushed followed by 3 spaces
   - only the first delimiter is matched
