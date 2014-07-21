@@ -69,12 +69,11 @@ Installation
 
 Examples
 ------------
-Some simple examples. You can also contribute your examples there.
-[Examples](https://github.com/randy3k/AlignTab/wiki/Examples)
+Some simple examples. You can also contribute your examples [there](https://github.com/randy3k/AlignTab/wiki/Examples).
 
 Keybinds
 ------------
-For frequent patterns, put the following keybind in your user keybinds file. (Remember to change the key and regex.)
+Keybinds for frequent patterns, put the following in your user keybinds file. (Remember to change the key and regex.)
 
 ```
  //align =
