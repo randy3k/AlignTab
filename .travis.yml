@@ -11,7 +11,7 @@ env:
         # a stable version of UnitTesting, TAG=x.x.x
         # - TAG=x.x.x
     matrix:
-        - SUBLIME_TEXT_VERSION="2"
+        # - SUBLIME_TEXT_VERSION="2"
         - SUBLIME_TEXT_VERSION="3"
 
 before_install:
