@@ -1,24 +1,26 @@
-language: python
-python:
-    - "2.7"
-    # - "3.3"
+# send an email to support@travis-ci.com to enable multiple os support
+# http://blog.travis-ci.com/2014-05-13-multi-os-feature-available/
+os:
+  - linux
+  - osx
 
 env:
     global:
+        # Your package name
         - PACKAGE="AlignTab"
+        # a stable version of UnitTesting, TAG=x.x.x
+        # - TAG=x.x.x
     matrix:
-        # - SUBLIME_TEXT_VERSION="2"
+        - SUBLIME_TEXT_VERSION="2"
         - SUBLIME_TEXT_VERSION="3"
 
 before_install:
+    # a stable version of UnitTesting
+    # - curl -OL https://raw.githubusercontent.com/randy3k/UnitTesting/$TAG/sbin/travis.sh
     - curl -OL https://raw.githubusercontent.com/randy3k/UnitTesting/master/sbin/travis.sh
 
 install:
     - sh travis.sh bootstrap
-
-before_script:
-    - export DISPLAY=:99.0
-    - sh -e /etc/init.d/xvfb start
 
 script:
     - sh travis.sh run_tests
