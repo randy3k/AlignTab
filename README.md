@@ -24,7 +24,7 @@ Usage
 
 - Predefined alignment
 
-<img width=500 src="https://github.com/randy3k/AlignTab/raw/fig/alignby.png">
+<img width=650 src="https://github.com/randy3k/AlignTab/raw/fig/alignby.png">
 
 ### Welcome to the regex world
 
@@ -55,11 +55,11 @@ For example, `regex/rl` means all odd columns will be right-justified and all ev
 
 ### Live Preview Mode
 
-<img width=500 src="https://github.com/randy3k/AlignTab/raw/fig/aligntab.gif">
+<img width=650 src="https://github.com/randy3k/AlignTab/raw/fig/aligntab.gif">
 
 ### Table Mode
 
-<img width=500 src="https://github.com/randy3k/AlignTab/raw/fig/table.gif">
+<img width=650 src="https://github.com/randy3k/AlignTab/raw/fig/table.gif">
 
 
 Installation
