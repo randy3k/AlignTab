@@ -2,7 +2,7 @@ AlignTab
 ==============
 **Plaform** | **Status**
 ------------|------------
-Linux | [![Build Status](https://travis-ci.org/randy3k/AlignTab.svg?branch=master)](https://travis-ci.org/randy3k/AlignTab)
+Linux & OSX | [![Build Status](https://travis-ci.org/randy3k/AlignTab.svg?branch=master)](https://travis-ci.org/randy3k/AlignTab)
 Windows | [![Build status](https://ci.appveyor.com/api/projects/status/cwgpoqu0yial03w5/branch/master)](https://ci.appveyor.com/project/randy3k/aligntab/branch/master)
 
 The most flexible alignment plugin for Sublime Text 2/3<br>
