@@ -2,14 +2,17 @@ environment:
     global:
         # Your package name
         PACKAGE: "AlignTab"
+        # a stable version of UnitTesting, TAG="x.x.x"
+        TAG: "master"
     matrix:
         - SUBLIME_TEXT_VERSION : "2"
         - SUBLIME_TEXT_VERSION : "3"
 
 install:
-    - ps: .\sbin\appveyor.ps1 "bootstrap"
+    - ps: start-filedownload "https://raw.githubusercontent.com/randy3k/UnitTesting/${env:TAG}/sbin/appveyor.ps1"
+    - ps: .\appveyor.ps1 "bootstrap"
 
 build: off
 
 test_script:
-    - ps: .\sbin\appveyor.ps1 "run_tests"
+    - ps: .\appveyor.ps1 "run_tests"
