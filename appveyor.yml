@@ -1,0 +1,15 @@
+environment:
+    global:
+        # Your package name
+        PACKAGE: "AlignTab"
+    matrix:
+        - SUBLIME_TEXT_VERSION : "2"
+        - SUBLIME_TEXT_VERSION : "3"
+
+install:
+    - ps: .\sbin\appveyor.ps1 "bootstrap"
+
+build: off
+
+test_script:
+    - ps: .\sbin\appveyor.ps1 "run_tests"
