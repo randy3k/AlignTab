@@ -5,7 +5,6 @@ environment:
         # a stable version of UnitTesting, TAG="x.x.x"
         TAG: "master"
     matrix:
-        - SUBLIME_TEXT_VERSION : "2"
         - SUBLIME_TEXT_VERSION : "3"
 
 install:
