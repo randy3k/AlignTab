@@ -16,6 +16,7 @@ def update_colwidth(colwidth, content):
 
 def fill_spaces(content, colwidth, flag):
     for k in range(len(content)):
+        if colwidth[k] == 0: continue
         thisf = flag[k % len(flag)]
         align = thisf[0]
         pedding = " "*thisf[1] if k<len(content)-1 else ""
