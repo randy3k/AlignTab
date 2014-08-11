@@ -49,6 +49,7 @@ def update_colwidth(colwidth, content, option, strip_char):
 
 def fill_spaces(content, colwidth, option, strip_char):
     for j in range(len(content)):
+        if colwidth[j] == 0: continue
         op = option[j % len(option)]
         # take care of the indentation
         content[j] = content[j].strip(strip_char) if j>1 else content[j].lstrip().rstrip(strip_char)
