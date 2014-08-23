@@ -122,7 +122,7 @@ class Aligner:
                 return False
         return True
 
-    def reset_cursor(self, old_span, cursor):
+    def reset_cursor(self, row, old_span, cursor):
         view = self.view
         # reset cursors' location
         new_span = self.get_span(row)
@@ -157,7 +157,7 @@ class Aligner:
             view.replace(edit, line, (indentation + "".join(content).rstrip(self.strip_char)))
 
             if mode and row in cursor_rows:
-                self.reset_cursor(span, cursor)
+                self.reset_cursor(row, span, cursor)
 
     def run(self, edit, mode=False):
         # check if regex is valid

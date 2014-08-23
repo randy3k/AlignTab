@@ -6,7 +6,7 @@ version = sublime.version()
 import AlignTab.aligntab as aligntab
 
 
-class TestHelloWorld(TestCase):
+class TestAlignTab(TestCase):
 
     def setUp(self):
         self.view = sublime.active_window().new_file()
