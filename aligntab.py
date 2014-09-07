@@ -32,24 +32,24 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
 
         elif user_input:
-                user_input = get_named_pattern(user_input)
-                [regex, flag, f] = input_parser(user_input)
-                regex = '(' + regex + ')'
+            user_input = get_named_pattern(user_input)
+            [regex, flag, f] = input_parser(user_input)
+            regex = '(' + regex + ')'
 
-                # apply align_tab
-                aligner = Aligner(view, regex, flag, f)
-                self.aligned = aligner.run(edit, mode)
+            # apply align_tab
+            aligner = Aligner(view, regex, flag, f)
+            self.aligned = aligner.run(edit, mode)
 
-                if self.aligned:
-                    if mode:
-                        toogle_table_mode(view, True)
-                    else:
-                        sublime.status_message("")
+            if self.aligned:
+                if mode:
+                    toogle_table_mode(view, True)
                 else:
-                    if mode and not aligner.prev_next_match():
-                        toogle_table_mode(view, False)
-                    else:
-                        sublime.status_message("[Pattern not Found]")
+                    sublime.status_message("")
+            else:
+                if mode and not aligner.prev_next_match():
+                    toogle_table_mode(view, False)
+                else:
+                    sublime.status_message("[Pattern not Found]")
 
     def on_change(self, user_input):
         view = self.view

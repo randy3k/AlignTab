@@ -14,4 +14,4 @@ install:
 build: off
 
 test_script:
-    - ps: .\appveyor.ps1 "run_tests"
+    - ps: .\appveyor.ps1 "run_tests"  -deferred
