@@ -2,8 +2,6 @@ environment:
     global:
         # Your package name
         PACKAGE: "AlignTab"
-        # a stable version of UnitTesting, TAG="x.x.x"
-        TAG: "master"
     matrix:
         - SUBLIME_TEXT_VERSION : "3"
 

@@ -8,15 +8,11 @@ env:
     global:
         # Your package name
         - PACKAGE="AlignTab"
-        # a stable version of UnitTesting, TAG=x.x.x
-        # - TAG=x.x.x
     matrix:
         # - SUBLIME_TEXT_VERSION="2"
         - SUBLIME_TEXT_VERSION="3"
 
 before_install:
-    # a stable version of UnitTesting
-    # - curl -OL https://raw.githubusercontent.com/randy3k/UnitTesting/$TAG/sbin/travis.sh
     - curl -OL https://raw.githubusercontent.com/randy3k/UnitTesting/master/sbin/travis.sh
 
 install:
