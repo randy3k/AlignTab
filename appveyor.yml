@@ -6,7 +6,7 @@ environment:
         - SUBLIME_TEXT_VERSION : "3"
 
 install:
-    - ps: start-filedownload "https://raw.githubusercontent.com/randy3k/UnitTesting/${env:TAG}/sbin/appveyor.ps1"
+    - ps: start-filedownload "https://raw.githubusercontent.com/randy3k/UnitTesting/master/sbin/appveyor.ps1"
     - ps: .\appveyor.ps1 "bootstrap"
 
 build: off
