@@ -4,11 +4,9 @@ Linux & OSX | Windows
 ------------|------------
  [![Build Status](http://img.shields.io/travis/randy3k/AlignTab/master.svg)](https://travis-ci.org/randy3k/AlignTab) | [![Build status](http://img.shields.io/appveyor/ci/randy3k/AlignTab/branch/master.svg)](https://ci.appveyor.com/project/randy3k/AlignTab/branch/master)
 
-The most flexible alignment plugin for Sublime Text 2/3<br>
-This plugin is inspired by the excellent VIM plugin, tabular.
+The most flexible alignment plugin for Sublime Text 2/3. This plugin is inspired by the excellent VIM plugin, [tabular](https://github.com/godlygeek/tabular).
 
-Note: ST2 support is deprecated and moved to [ST2](https://github.com/randy3k/AlignTab/tree/st2) branch. 
-However, you are still able to install AlignTab to ST2 via Package Control.
+ST2 support is deprecated but however, it is still possible to install AlignTab on ST2 via Package Control.
 
 If you like it, you could send me some tips via [![](http://img.shields.io/gittip/randy3k.svg)](https://www.gittip.com/randy3k).
 
@@ -24,18 +22,26 @@ Usage
 ------------
 ### Getting start
 
-- Predefined alignment
+- If you only want simple and quick alignment, the predefined alignment will help.
 
 <img width=650 src="https://github.com/randy3k/AlignTab/raw/fig/alignby.png">
 
-### Welcome to the regex world
+### For more complication usage, welcome to the regex world
 
-- Open `AlignTab` in Command Palette `C+Shift+p` and enter `regex/option` in the input panel
+- Open `AlignTab` in Command Palette `C+Shift+p` and enter the input in the from of `<regexp>/<option>`.
 - To learn more about regular expression, visit [here](http://www.regular-expressions.info) and [here](https://docs.python.org/2/library/re.html).
-- The option controls column justification, padding and maximum number of splits. For example, `c2r3f1` means
+- The option controls column justification, padding and maximum number of splits. A general syntax of options is `([rlc][0-9]*)*(f[0-9]*)?`.
+- For example, `c2r3f1` means
   - first column is centered followed by 2 spaces
   - second column is right-flushed followed by 3 spaces
-  - only the first delimiter is matched
+  - only the first delimiter is matched, the number after f controls how many delimiter is used.
+- If the number after `[rlc]` is omitted, 1 space will be added after the corresponding column.
+- If the number after `f` is omitted, only the first delimiter will be matched.
+- The entire option could be omitted (i.e., input only the regular expression). In that case, default option, `l1f0` will be used.
+  - All columns are left-justified.
+  - A space is added after each column.
+  - All matched delimiters are aligned.
+
 
 #### More about regex and options
 
@@ -47,13 +53,6 @@ For example, `=/rcl` means the the column before `=` will be right-justifed and 
 For example, `regex/rl` means all odd columns will be right-justified and all even columns will be left-justified.
 - the symbol `*` repeats the preceeding justification flags. 
 <br>For example `r*3` equals `rrr`, and `(cr3)*2` equals `cr3cr3`.
-
-- Default option is `l1f0`.
-  - All columns are left-justified.
-  - A space is added after each column.
-  - All matched delimiters are aligned.
-
-
 
 ### Live Preview Mode
 
@@ -75,7 +74,7 @@ Some simple examples. You can also contribute your examples [there](https://gith
 
 Keybinds
 ------------
-Keybinds for frequent patterns, put the following in your user keybinds file. (Remember to change the key and regex.)
+Keybinds for frequent patterns,you can consider the following in your user keybinds file. Change the keybind and the `user_input` for your purpose.
 
 ```
  //align =
@@ -101,8 +100,7 @@ or syntex specific keybind.
 
 Named patterns
 ------------
-To make it easier to remember complex patterns, you can save them in
-a dictionary in the settings file. Use the name as key and the regex as value.
+To make it easier to remember complex patterns, you can save them in a dictionary in the settings file. To edit the patterns, go to `Preferences -> Package Settings -> AlignTab -> Settings`. Use the name as key and the regex as value.
 These patterns are included in the default file:
 
 ```
@@ -117,11 +115,10 @@ These patterns are included in the default file:
 ```
 
 You then just use the name instead of the pattern in the input field.
-To edit the patterns, go to `Preferences -> Package Settings -> AlignTab -> Settings`.
 
 Custom Context Menu
 ----
-To define new item in the context menu, go to `Preferences -> Package Settings -> AlignTab -> Context Menu` and add
+To define new item in the context menu, go to `Preferences -> Package Settings -> AlignTab -> Context Menu` and add, for example
 
 ```
 [
