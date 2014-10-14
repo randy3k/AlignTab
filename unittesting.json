@@ -1,0 +1,5 @@
+{
+    "tests_dir" : "tests",
+    "async": false,
+    "deferred": true
+}
