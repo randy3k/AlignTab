@@ -74,7 +74,16 @@ Some simple examples. You can also contribute your examples [there](https://gith
 
 Keybinds
 ------------
-Keybinds for frequent patterns,you can consider the following in your user keybinds file. Change the keybind and the `user_input` for your purpose.
+If you are interested in getting a keybind for live preview mode, add the following in your user keybinds file.
+```
+ {
+   "keys": ["super+shift+a"], "command": "align_tab",
+   "args" : {"live_preview" : true}
+ }
+```
+
+
+For frequent patterns, you can consider the following in your user keybinds file. Change the keybind and the `user_input` for your purpose.
 
 ```
  //align =
@@ -83,6 +92,7 @@ Keybinds for frequent patterns,you can consider the following in your user keybi
     "args" : {"user_input" : "=/f"}
   }
 ```
+
 or syntex specific keybind.
 
 ```
