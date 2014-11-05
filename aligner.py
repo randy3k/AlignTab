@@ -22,7 +22,11 @@ class Aligner:
         content = [s for s in re.split(self.regex, self.get_line(row), self.f)]
         # remove indentation
         if len(content)>1:
-            content[0] = content[0].lstrip()
+            if content[0] == "":
+                content[1] = content[1].lstrip()
+            else:
+                content[0] = content[0].lstrip()
+
         # remove spaces
         content = [c.strip(self.strip_char) for c in content]
         return content
