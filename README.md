@@ -31,10 +31,11 @@ Usage
 - Open `AlignTab` in Command Palette `C+Shift+p` and enter the input in the from of `<regexp>/<option>`.
 - To learn more about regular expression, visit [here](http://www.regular-expressions.info) and [here](https://docs.python.org/2/library/re.html).
 - The option controls column justification, padding and maximum number of splits. A general syntax of options is `([rlc][0-9]*)*(f[0-9]*)?`.
+- The numbers after `r`, `c` or `l` determine how many spaces will be added after columns and the number after `f` controls how many matches will be made based `<regex>`.
 - For example, `c2r3f1` means
   - first column is centered followed by 2 spaces
   - second column is right-flushed followed by 3 spaces
-  - only the first delimiter is matched, the number after f controls how many delimiter is used.
+  - only the first delimiter is matched.
 - If the number after `[rlc]` is omitted, 1 space will be added after the corresponding column.
 - If the number after `f` is omitted, only the first delimiter will be matched.
 - The entire option could be omitted (i.e., input only the regular expression). In that case, default option, `l1f0` will be used.
