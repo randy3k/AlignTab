@@ -22,7 +22,7 @@ class TestTable(DeferrableTestCase):
         self.view.run_command("insert", {"characters": string})
 
     def getRow(self, row):
-        return self.view.substr(self.view.line(self.view.text_point(row,0)))
+        return self.view.substr(self.view.line(self.view.text_point(row-1,0)))
 
     def test_table_mode(self):
         string = """a | b |   c
@@ -34,5 +34,5 @@ class TestTable(DeferrableTestCase):
         self.view.sel().add(sublime.Region(1,1))
         self.setText("pple")
         yield 400
-        second_row = self.getRow(1)
+        second_row = self.getRow(2)
         self.assertEqual(second_row,"d     | e | f")

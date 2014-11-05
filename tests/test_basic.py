@@ -22,7 +22,7 @@ class TestAlignTab(TestCase):
         self.view.run_command("insert", {"characters": string})
 
     def getRow(self, row):
-        return self.view.substr(self.view.line(self.view.text_point(row,0)))
+        return self.view.substr(self.view.line(self.view.text_point(row-1,0)))
 
     def test_align_equal(self):
         string = """apple =  1==0
@@ -31,7 +31,7 @@ class TestAlignTab(TestCase):
         self.setText(string)
         self.view.run_command("align_tab", {"user_input" :"=/f"})
 
-        first_row = self.getRow(0)
+        first_row = self.getRow(1)
         self.assertEqual(first_row,"apple  = 1==0")
 
     def test_align_tab(self):
@@ -41,7 +41,7 @@ class TestAlignTab(TestCase):
         self.setText(string)
         self.view.run_command("align_tab", {"user_input" :"\t"})
 
-        second_row = self.getRow(1)
+        second_row = self.getRow(2)
         self.assertEqual(second_row,"d \t e \t f")
 
 
