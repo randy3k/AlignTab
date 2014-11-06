@@ -2,6 +2,7 @@ import sublime
 import sublime_plugin
 import re
 from .wclen import wclen
+from .table import get_table_rows, set_table_rows
 
 class Aligner:
     def __init__(self, view, regex, flag, f):
@@ -39,7 +40,7 @@ class Aligner:
             else:
                 self.colwidth.append(w)
 
-    def include_line(self, row):
+    def update_rows(self, row):
         content = self.get_cells(row)
         if len(content)<=1: return False
         self.update_colwidth(content)
@@ -54,17 +55,17 @@ class Aligner:
             for line in view.lines(sel):
                 thisrow = view.rowcol(line.begin())[0]
                 if thisrow in self.rows: continue
-                if not self.include_line(thisrow): continue
+                if not self.update_rows(thisrow): continue
 
             if sel.empty():
                 thisrow = view.rowcol(sel.begin())[0]
                 if thisrow not in self.rows: continue
                 beginrow = endrow = thisrow
                 while endrow+1<=lastrow and not (endrow+1 in self.rows):
-                    if not self.include_line(endrow+1): break
+                    if not self.update_rows(endrow+1): break
                     endrow = endrow+1
                 while beginrow-1>=0 and not (beginrow-1 in self.rows):
-                    if not self.include_line(beginrow-1): break
+                    if not self.update_rows(beginrow-1): break
                     beginrow = beginrow-1
 
         self.rows = sorted(set(self.rows))
@@ -169,9 +170,18 @@ class Aligner:
             re.compile(self.regex)
         except:
             return False
-        self.expand_selections()
+
+        if mode:
+            for row in get_table_rows(self.view):
+                self.update_rows(row)
+
+        if not self.rows:
+            self.expand_selections()
 
         if not self.rows: return False
+
+        if mode:
+            set_table_rows(self.view, self.rows)
 
         self.replace_selections(edit, mode)
         return True

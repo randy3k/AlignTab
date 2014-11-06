@@ -8,7 +8,27 @@ def toogle_table_mode(view, on=True):
         view.set_status("aligntab", "[Table Mode]")
     else:
         view.settings().erase("AlignTabTableMode")
+        erase_table_rows(view)
         view.set_status("aligntab", "")
+
+def get_table_rows(view):
+    R = view.get_regions("AlignTabTableRegion")
+    rows = []
+    for s in R:
+        for l in view.lines(s):
+            rows.append(view.rowcol(l.begin())[0])
+    return rows
+
+def set_table_rows(view, rows):
+    R = []
+    for row in rows:
+            R.append(view.line(view.text_point(row,0)))
+
+    view.add_regions("AlignTabTableRegion", R)
+
+def erase_table_rows(view):
+    view.erase_regions("AlignTabTableRegion")
+
 
 class AlignTabModeController(sublime_plugin.EventListener):
     # aligntab thread
