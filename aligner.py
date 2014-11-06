@@ -68,8 +68,6 @@ class Aligner:
                     if not self.update_rows(beginrow-1): break
                     beginrow = beginrow-1
 
-        self.rows = sorted(set(self.rows))
-
     def fill_spaces(self, content):
         for k in range(len(content)):
             if self.colwidth[k] == 0: continue
@@ -171,12 +169,13 @@ class Aligner:
         except:
             return False
 
+        self.expand_selections()
+
         if mode:
             for row in get_table_rows(self.view):
                 self.update_rows(row)
 
-        if not self.rows:
-            self.expand_selections()
+        self.rows = sorted(set(self.rows))
 
         if not self.rows: return False
 
