@@ -38,7 +38,7 @@ class TestTable(DeferrableTestCase):
         self.assertEqual(second_row,"d     | e | f")
 
     def test_latex_table(self):
-        string = """  \letter{S} \\ \hline
+        string = r"""  \letter{S} \\ \hline
     Some text                      & the second column & short \\ \hline
     Some more text that is aligned & the second column & longer than short \\ \hline
   \letter{T} \\ \hline
@@ -56,4 +56,4 @@ class TestTable(DeferrableTestCase):
         self.setText("abc")
         yield 400
         second_row = self.getRow(6)
-        self.assertEqual(second_row,"      Totally related text              & that is aligned differently, unfortunately & blah \ \hline")
+        self.assertEqual(second_row,r"      Totally related text              & that is aligned differently, unfortunately & blah \\ \hline")
