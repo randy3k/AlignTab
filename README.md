@@ -2,7 +2,7 @@ AlignTab
 ==============
 Linux & OSX | Windows
 ------------|------------
- [![Build Status](http://img.shields.io/travis/randy3k/AlignTab/master.svg)](https://travis-ci.org/randy3k/AlignTab) | [![Build status](http://img.shields.io/appveyor/ci/randy3k/AlignTab/branch/master.svg)](https://ci.appveyor.com/project/randy3k/AlignTab/branch/master)
+ [![Build Status](http://img.shields.io/travis/randy3k/AlignTab/master.svg)](https://travis-ci.org/randy3k/AlignTab) | [![Build status](https://img.shields.io/appveyor/ci/randy3k/AlignTab/master.svg)](https://ci.appveyor.com/project/randy3k/AlignTab/branch/master)
 
 The most flexible alignment plugin for Sublime Text 2/3. This plugin is inspired by the excellent VIM plugin, [tabular](https://github.com/godlygeek/tabular).
 
