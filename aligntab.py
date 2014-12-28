@@ -6,6 +6,7 @@ from .hist import history
 from .table import toogle_table_mode
 from .aligner import Aligner
 
+
 def get_named_pattern(user_input):
     s = sublime.load_settings('AlignTab.sublime-settings')
     patterns = s.get('named_patterns', {})
@@ -15,21 +16,21 @@ def get_named_pattern(user_input):
         user_input = history.last()
     return user_input
 
+
 class AlignTabCommand(sublime_plugin.TextCommand):
     def run(self, edit, user_input=None, mode=False, live_preview=False):
         view = self.view
         if not user_input:
             self.aligned = False
             v = self.view.window().show_input_panel('Align By RegEx:', '',
-                    # On Done
-                    lambda x: self.on_done(x, mode, live_preview),
-                    # On Change
-                    lambda x: self.on_change(x) if live_preview else None,
-                    # On Cancel
-                    lambda: self.on_change(None) if live_preview else None )
+                # On Done
+                lambda x: self.on_done(x, mode, live_preview),
+                # On Change
+                lambda x: self.on_change(x) if live_preview else None,
+                # On Cancel
+                lambda: self.on_change(None) if live_preview else None)
 
             v.settings().set('AlignTabInputPanel', True)
-
 
         elif user_input:
             user_input = get_named_pattern(user_input)
@@ -58,11 +59,11 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             self.view.run_command("soft_undo")
             self.aligned = False
         if user_input:
-            self.view.run_command("align_tab", {"user_input":user_input, "live_preview":True})
+            self.view.run_command("align_tab", {"user_input": user_input, "live_preview": True})
 
     def on_done(self, user_input, mode, live_preview):
         view = self.view
         history.insert(user_input)
         # do not double align when done with live preview mode
         if not live_preview:
-            self.view.run_command("align_tab", {"user_input":user_input, "mode":mode})
+            self.view.run_command("align_tab", {"user_input": user_input, "mode": mode})

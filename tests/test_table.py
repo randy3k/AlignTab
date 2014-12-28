@@ -15,14 +15,15 @@ class TestTable(DeferrableTestCase):
         if self.view:
             self.view.set_scratch(True)
             # don't close the last tab in osx platform
-            if len(self.view.window().views()) == 1 and sublime.platform() == "osx": return
+            if len(self.view.window().views()) == 1 and sublime.platform() == "osx":
+                return
             self.view.window().run_command("close_file")
 
     def setText(self, string):
         self.view.run_command("insert", {"characters": string})
 
     def getRow(self, row):
-        return self.view.substr(self.view.line(self.view.text_point(row-1,0)))
+        return self.view.substr(self.view.line(self.view.text_point(row-1, 0)))
 
     def test_table_mode(self):
         string = """a | b |   c
@@ -31,11 +32,11 @@ class TestTable(DeferrableTestCase):
         self.view.run_command("align_tab", {"user_input" :"\\|", "mode" : True})
         history.insert("\\|")
         self.view.sel().clear()
-        self.view.sel().add(sublime.Region(1,1))
+        self.view.sel().add(sublime.Region(1, 1))
         self.setText("pple")
         yield 400
         second_row = self.getRow(2)
-        self.assertEqual(second_row,"d     | e | f")
+        self.assertEqual(second_row, "d     | e | f")
 
     def test_latex_table(self):
         string = r"""  \letter{S} \\ \hline

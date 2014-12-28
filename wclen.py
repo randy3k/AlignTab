@@ -1,6 +1,6 @@
 # import from https://github.com/vkocubinsky/SublimeTableEditor/blob/master/widechar_support.py
 wide_char_ranges = [
-    #http://en.wikipedia.org/wiki/Han_unification
+    # http://en.wikipedia.org/wiki/Han_unification
     (0x4E00, 0x9FFF),
     (0x3400, 0x4DBF),
     (0xF900, 0xFAFF),
@@ -31,9 +31,11 @@ wide_char_ranges = [
     (0xFF00, 0xFFEF),
 ]
 
+
 def _in_range(c):
     c = ord(c)
-    return any([r[0]<=c<=r[1] for r in wide_char_ranges])
+    return any([r[0] <= c <= r[1] for r in wide_char_ranges])
+
 
 def wclen(s):
     return sum([2 if _in_range(c) else 1 for c in s])

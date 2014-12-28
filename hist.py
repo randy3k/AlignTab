@@ -1,12 +1,14 @@
 import sublime
 import sublime_plugin
 
+
 class History:
     hist = []
     index = None
+
     def insert(self, user_input):
-        if not self.hist or (user_input!= self.last() \
-                and user_input!= "last_regex"):
+        if not self.hist or (user_input != self.last()
+                             and user_input != "last_regex"):
             self.hist.append(user_input)
             self.index = None
 
@@ -16,15 +18,15 @@ class History:
         else:
             self.index += -1 if backwards else 1
 
-        if self.index == len(self.hist) or \
-            self.index < -len(self.hist):
+        if self.index == len(self.hist) or self.index < -len(self.hist):
                 self.index = -1 if backwards else 0
 
     def last(self):
         return self.hist[-1] if self.hist else None
 
     def get(self, index=None):
-        if not index: index=self.index
+        if not index:
+            index = self.index
         return self.hist[index] if self.hist else None
 
     def reset_index(self):
@@ -32,6 +34,7 @@ class History:
 
 if 'history' not in globals():
     history = History()
+
 
 class AlignTabHistory(sublime_plugin.TextCommand):
     def run(self, edit, backwards=False):
