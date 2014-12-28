@@ -1,5 +1,4 @@
 import sublime
-import sublime_plugin
 import re
 from .wclen import wclen
 from .table import get_table_rows, set_table_rows
@@ -21,7 +20,6 @@ class Aligner:
         return view.substr(view.line(view.text_point(row, 0)))
 
     def get_cells(self, row):
-        view = self.view
         content = [s for s in re.split(self.regex, self.get_line(row), self.f)]
         # remove indentation
         if len(content) > 1:
@@ -95,7 +93,6 @@ class Aligner:
 
     def get_span(self, row):
         # it is used to reset cursors in table mode
-        view = self.view
         line = self.get_line(row)
         p = [m.span() for m in re.finditer(self.regex, line)]
         if self.f > 0:

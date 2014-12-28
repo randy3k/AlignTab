@@ -1,6 +1,5 @@
 import sublime
 import sublime_plugin
-import re
 from .parser import input_parser
 from .hist import history
 from .table import toogle_table_mode
@@ -22,13 +21,15 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         view = self.view
         if not user_input:
             self.aligned = False
-            v = self.view.window().show_input_panel('Align By RegEx:', '',
+            v = self.view.window().show_input_panel(
+                'Align By RegEx:', '',
                 # On Done
                 lambda x: self.on_done(x, mode, live_preview),
                 # On Change
                 lambda x: self.on_change(x) if live_preview else None,
                 # On Cancel
-                lambda: self.on_change(None) if live_preview else None)
+                lambda: self.on_change(None) if live_preview else None
+            )
 
             v.settings().set('AlignTabInputPanel', True)
 
@@ -53,7 +54,6 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     sublime.status_message("[Pattern not Found]")
 
     def on_change(self, user_input):
-        view = self.view
         # Undo the previous change if needed
         if self.aligned:
             self.view.run_command("soft_undo")
@@ -62,7 +62,6 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             self.view.run_command("align_tab", {"user_input": user_input, "live_preview": True})
 
     def on_done(self, user_input, mode, live_preview):
-        view = self.view
         history.insert(user_input)
         # do not double align when done with live preview mode
         if not live_preview:

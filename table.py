@@ -1,4 +1,3 @@
-import sublime
 import sublime_plugin
 import threading
 
@@ -44,7 +43,6 @@ class AlignTabModeController(sublime_plugin.EventListener):
     def on_modified(self, view):
         if view.is_scratch() or view.settings().get('is_widget'):
             return
-        vid = view.id()
         if self.table_mode(view):
             cmdhist = view.command_history(0)
             # print(cmdhist)
@@ -52,15 +50,16 @@ class AlignTabModeController(sublime_plugin.EventListener):
                 return
             if self.thread:
                 self.thread.cancel()
-            self.thread = threading.Timer(0.2, lambda:
-                    view.run_command("align_tab",
-                                     {"user_input": "last_regex", "mode": True}))
+            self.thread = threading.Timer(
+                0.2, lambda:
+                view.run_command("align_tab",
+                                 {"user_input": "last_regex", "mode": True})
+            )
             self.thread.start()
 
     def on_text_command(self, view, cmd, args):
         if view.is_scratch() or view.settings().get('is_widget'):
             return
-        vid = view.id()
         if self.table_mode(view):
             if cmd == "undo":
                 view.run_command("soft_undo")
