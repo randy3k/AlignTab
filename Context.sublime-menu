@@ -5,35 +5,35 @@
       "caption": "Align By",
       "children": [
           {
-          "caption": "First =",
+          "caption": "First Equal ( = )",
           "command": "align_tab",
            "args": {"user_input" : "=/f"}
           },
           {
-          "caption" : "First ,",
+          "caption" : "First Comma ( , )",
           "command" : "align_tab",
           "args"    : {"user_input" : ",/f"}
           },
           {
-          "caption" : "First :",
+          "caption" : "First Colon ( : )",
           "command" : "align_tab",
           "args"    : {"user_input" : ":/f"}
           },
           {
-          "caption" : "&",
+          "caption" : "Ampersands ( & )",
           "command" : "align_tab",
           "args"    : {"user_input" : "&"}
           },
           {
-          "caption" : "|",
+          "caption" : "Vertial Bars ( | )",
           "command" : "align_tab",
           "args"    : {"user_input" : "\\|"}
           },
           {
-          "caption" : "{",
+          "caption" : "Open Curly Braces ( { )",
           "command" : "align_tab",
           "args"    : {"user_input" : "\\{"}
-          },          
+          },
           {
           "caption" : "Spaces",
           "command" : "align_tab",
