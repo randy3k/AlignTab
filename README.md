@@ -28,7 +28,7 @@ Usage
 
 ### For more complication usage, welcome to the regex world
 
-- Open `AlignTab` in Command Palette `C+Shift+p` and enter the input in the from of `<regexp>/<option>`.
+- Open `AlignTab` in Command Palette `C+Shift+p` and enter the input in the from of `<regex>/<option>`.
 - To learn more about regular expression, visit [here](http://www.regular-expressions.info) and [here](https://docs.python.org/2/library/re.html).
 - The option controls column justification, padding and maximum number of splits. A general syntax of options is `([rlc][0-9]*)*(f[0-9]*)?`.
 - The numbers after `r`, `c` or `l` determine how many spaces will be added after columns and the number after `f` controls how many matches will be made based `<regex>`.
