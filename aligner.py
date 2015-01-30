@@ -112,7 +112,7 @@ class Aligner:
             s = s + wclen(cellcontent)
         return trimcell
 
-    def prev_next_match(self):
+    def adjacent_lines_match(self):
         # it is used to check whether table mode should be disabled
         view = self.view
         lastrow = view.rowcol(view.size())[0]

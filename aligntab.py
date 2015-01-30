@@ -48,7 +48,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 else:
                     sublime.status_message("")
             else:
-                if mode and not aligner.prev_next_match():
+                if mode and not aligner.adjacent_lines_match():
                     toogle_table_mode(view, False)
                 else:
                     sublime.status_message("[Pattern not Found]")
