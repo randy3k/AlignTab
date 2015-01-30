@@ -5,7 +5,7 @@ from .table import get_table_rows, set_table_rows
 
 
 class Aligner:
-    def __init__(self, view, regex, flag, f):
+    def __init__(self, view, regex, flag, f, mode=False):
         self.view = view
         self.regex = regex
         self.flag = flag
@@ -14,6 +14,10 @@ class Aligner:
             else None
         self.rows = []
         self.colwidth = []
+        self.mode = mode
+
+    def get_flag(self, col):
+        return self.flag[col % len(self.flag)]
 
     def get_line(self, row):
         view = self.view
@@ -22,20 +26,21 @@ class Aligner:
     def get_cells(self, row):
         content = [s for s in re.split(self.regex, self.get_line(row), self.f)]
 
+        # remove indentation
         if len(content) > 1:
             if content[0] == "":
-                if self.flag[1 % len(self.flag)][0] != "u":
+                if self.get_flag(1)[0] != "u":
                     content[1] = content[1].lstrip()
             else:
-                if self.flag[0][0] != "u":
+                if self.get_flag(0)[0] != "u":
                     content[0] = content[0].lstrip()
 
         # remove spaces
         for k in range(len(content)):
-            if self.flag[k % len(self.flag)][0] != "u":
-                content[k] = content[k].strip(self.strip_char)
-            else:
+            if self.get_flag(k)[0] == "u":
                 content[k] = content[k].rstrip(self.strip_char)
+            else:
+                content[k] = content[k].strip(self.strip_char)
         return content
 
     def update_colwidth(self, content):
@@ -46,7 +51,7 @@ class Aligner:
             else:
                 self.colwidth.append(w)
 
-    def update_rows(self, row):
+    def add_rows(self, row):
         content = self.get_cells(row)
         if len(content) <= 1:
             return False
@@ -54,7 +59,7 @@ class Aligner:
         self.rows.append(row)
         return True
 
-    def expand_selections(self):
+    def checking(self):
         view = self.view
         lastrow = view.rowcol(view.size())[0]
 
@@ -63,7 +68,7 @@ class Aligner:
                 thisrow = view.rowcol(line.begin())[0]
                 if thisrow in self.rows:
                     continue
-                if not self.update_rows(thisrow):
+                if not self.add_rows(thisrow):
                     continue
 
             if sel.empty():
@@ -72,11 +77,11 @@ class Aligner:
                     continue
                 beginrow = endrow = thisrow
                 while endrow+1 <= lastrow and not (endrow+1 in self.rows):
-                    if not self.update_rows(endrow+1):
+                    if not self.add_rows(endrow+1):
                         break
                     endrow = endrow+1
                 while beginrow-1 >= 0 and not (beginrow-1 in self.rows):
-                    if not self.update_rows(beginrow-1):
+                    if not self.add_rows(beginrow-1):
                         break
                     beginrow = beginrow-1
 
@@ -86,9 +91,10 @@ class Aligner:
                 continue
             thisf = self.flag[k % len(self.flag)]
             align = thisf[0]
-            pedding = " "*thisf[1] if k < len(content)-1 else ""
-            if self.flag[(k+1) % len(self.flag)][0] == 'u':
+            if k == len(content)-1 or self.get_flag(k+1)[0] == 'u':
                 pedding = ""
+            else:
+                pedding = " "*thisf[1]
             fill = self.colwidth[k]-wclen(content[k])
             if align == 'l' or align == 'u':
                 content[k] = content[k] + " "*fill + pedding
@@ -140,7 +146,7 @@ class Aligner:
                 return False
         return True
 
-    def reset_cursor(self, row, old_span, cursor):
+    def reset_cursors(self, row, old_span, cursor):
         view = self.view
         # reset cursors' location
         new_span = self.get_span(row)
@@ -158,7 +164,7 @@ class Aligner:
             pt = view.text_point(row, newcur)
             view.sel().add(sublime.Region(pt, pt))
 
-    def replace_selections(self, edit, mode):
+    def replace(self, edit):
         view = self.view
 
         if self.flag[0][0] != "u":
@@ -169,7 +175,7 @@ class Aligner:
         cursor_rows = set([view.rowcol(s.end())[0] for s in view.sel() if s.empty])
 
         for row in reversed(self.rows):
-            if mode and row in cursor_rows:
+            if self.mode and row in cursor_rows:
                 # if this row contains cursors, record their locations
                 span = self.get_span(row)
                 cursor = [view.rowcol(s.end())[1] for s in view.sel()
@@ -180,29 +186,29 @@ class Aligner:
             line = view.line(view.text_point(row, 0))
             view.replace(edit, line, (indentation + "".join(content).rstrip(self.strip_char)))
 
-            if mode and row in cursor_rows:
-                self.reset_cursor(row, span, cursor)
+            if self.mode and row in cursor_rows:
+                self.reset_cursors(row, span, cursor)
 
-    def run(self, edit, mode=False):
+    def run(self, edit):
         # check if regex is valid
         try:
             re.compile(self.regex)
         except:
             return False
 
-        self.expand_selections()
+        self.checking()
 
-        if mode:
+        if self.mode:
             for row in get_table_rows(self.view):
-                self.update_rows(row)
+                self.add_rows(row)
 
         self.rows = sorted(set(self.rows))
 
         if not self.rows:
             return False
 
-        if mode:
+        if self.mode:
             set_table_rows(self.view, self.rows)
 
-        self.replace_selections(edit, mode)
+        self.replace(edit)
         return True

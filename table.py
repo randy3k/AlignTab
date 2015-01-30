@@ -51,9 +51,9 @@ class AlignTabModeController(sublime_plugin.EventListener):
             if self.thread:
                 self.thread.cancel()
             self.thread = threading.Timer(
-                0.2, lambda:
-                view.run_command("align_tab",
-                                 {"user_input": "last_regex", "mode": True})
+                0.2,
+                lambda: view.run_command("align_tab",
+                                         {"user_input": "last_regex", "mode": True})
             )
             self.thread.start()
 
