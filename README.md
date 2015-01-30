@@ -28,17 +28,17 @@ Usage
 
 ### For more complication usage, welcome to the regex world
 
-- Open `AlignTab` in Command Palette `C+Shift+p` and enter the input in the from of `<regex>/<option>`.
+- Open `AlignTab` in Command Palette `C+Shift+p` and enter the input in the form of `<regex>/<option>`.
 - To learn more about regular expression, visit [here](http://www.regular-expressions.info) and [here](https://docs.python.org/2/library/re.html).
 - The option controls column justification, padding and maximum number of splits. A general syntax of options is `([rlc][0-9]*)*(f[0-9]*)?`.
 - The numbers after `r`, `c` or `l` determine how many spaces will be added after columns and the number after `f` controls how many matches will be made based `<regex>`.
 - For example, `c2r3f1` means
   - first column is centered followed by 2 spaces
   - second column is right-flushed followed by 3 spaces
-  - only the first delimiter is matched.
+  - only the first match is used
 - If the number after `[rlc]` is omitted, 1 space will be added after the corresponding column.
-- If the number after `f` is omitted, only the first delimiter will be matched.
-- The entire option could be omitted (i.e., input only the regular expression). In that case, default option, `l1f0` will be used.
+- If the number after `f` is omitted, only the first match will be used.
+- The entire option could be omitted (i.e., input only the regular expression). In that case, default option, `l1f0` will be used. It means:
   - All columns are left-justified.
   - A space is added after each column.
   - All matched delimiters are aligned.
@@ -47,13 +47,13 @@ Usage
 #### More about regex and options
 
 - Use non-capturing parenthese `(?:regex)` instread of capturing parenthese.
- 
-- Delimiter is also treated as a column.<br>
-For example, `=/rcl` means the the column before `=` will be right-justifed and the column after `=` will be left-justified. And `=` will be centered (however, it doesn't matter as `=` is of length 1).
+- Delimiter is also treated as a column.
+  - For example, `=/rcl` means the the column before `=` will be right-justifed and the column after `=` will be left-justified. And `=` will be centered (however, it doesn't matter as `=` is of length 1).
 - The option for alignment cycles through the columns. <br>
-For example, `regex/rl` means all odd columns will be right-justified and all even columns will be left-justified.
-- the symbol `*` repeats the preceeding justification flags. 
-<br>For example `r*3` equals `rrr`, and `(cr3)*2` equals `cr3cr3`.
+  - For example, `regex/rl` means all odd columns will be right-justified and all even columns will be left-justified.
+- The symbol `*` repeats the preceeding justification flags. 
+  - For example `r*3` equals `rrr`, and `(cr3)*2` equals `cr3cr3`.
+- (Experimental) Besides `r`, `c` and `l`, there is a new `u` flag which stands for "unjustified".
 
 ### Live Preview Mode
 
