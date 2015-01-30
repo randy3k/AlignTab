@@ -2,7 +2,7 @@ import re
 
 
 def input_parser(user_input):
-    m = re.match(r"(.+)/([lcr*()0-9]*)(f[0-9]*)?", user_input)
+    m = re.match(r"(.+)/([lcru*()0-9]*)(f[0-9]*)?", user_input)
 
     if m and (m.group(2) or m.group(3)):
         regex = m.group(1)
@@ -21,10 +21,10 @@ def input_parser(user_input):
             for r in rParan.finditer(flag):
                 flag = flag.replace(r.group(0), r.group(1)*int(r.group(2)), 1)
 
-        for r in re.finditer(r"([lcr][0-9]*)\*([0-9]+)", flag):
+        for r in re.finditer(r"([lcru][0-9]*)\*([0-9]+)", flag):
             flag = flag.replace(r.group(0), r.group(1)*int(r.group(2)), 1)
 
-        flag = re.findall(r"[lcr][0-9]*", flag)
+        flag = re.findall(r"[lcru][0-9]*", flag)
         flag = list(map(lambda x: [x[0], 1] if len(x) == 1
                     else [x[0], int(x[1:])], flag))
         flag = flag if flag else [['l', 1]]

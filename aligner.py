@@ -21,15 +21,21 @@ class Aligner:
 
     def get_cells(self, row):
         content = [s for s in re.split(self.regex, self.get_line(row), self.f)]
-        # remove indentation
+
         if len(content) > 1:
             if content[0] == "":
-                content[1] = content[1].lstrip()
+                if self.flag[1 % len(self.flag)][0] != "u":
+                    content[1] = content[1].lstrip()
             else:
-                content[0] = content[0].lstrip()
+                if self.flag[0][0] != "u":
+                    content[0] = content[0].lstrip()
 
         # remove spaces
-        content = [c.strip(self.strip_char) for c in content]
+        for k in range(len(content)):
+            if self.flag[k % len(self.flag)][0] != "u":
+                content[k] = content[k].strip(self.strip_char)
+            else:
+                content[k] = content[k].rstrip(self.strip_char)
         return content
 
     def update_colwidth(self, content):
@@ -81,8 +87,10 @@ class Aligner:
             thisf = self.flag[k % len(self.flag)]
             align = thisf[0]
             pedding = " "*thisf[1] if k < len(content)-1 else ""
+            if self.flag[(k+1) % len(self.flag)][0] == 'u':
+                pedding = ""
             fill = self.colwidth[k]-wclen(content[k])
-            if align == 'l':
+            if align == 'l' or align == 'u':
                 content[k] = content[k] + " "*fill + pedding
             elif align == 'r':
                 content[k] = " "*fill + content[k] + pedding
@@ -153,7 +161,11 @@ class Aligner:
     def replace_selections(self, edit, mode):
         view = self.view
 
-        indentation = min([re.match("^(\s*)", self.get_line(row)).group(1) for row in self.rows])
+        if self.flag[0][0] != "u":
+            indentation = min([re.match("^(\s*)",
+                              self.get_line(row)).group(1) for row in self.rows])
+        else:
+            indentation = ""
         cursor_rows = set([view.rowcol(s.end())[0] for s in view.sel() if s.empty])
 
         for row in reversed(self.rows):
