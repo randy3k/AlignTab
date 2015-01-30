@@ -1,7 +1,8 @@
-import sublime, sys
+import sublime
 from unittest import TestCase
 
 version = sublime.version()
+
 
 class TestJSExamples(TestCase):
 
@@ -12,7 +13,8 @@ class TestJSExamples(TestCase):
         if self.view:
             self.view.set_scratch(True)
             # don't close the last tab in osx platform
-            if len(self.view.window().views()) == 1 and sublime.platform() == "osx": return
+            if len(self.view.window().views()) == 1 and sublime.platform() == "osx":
+                return
             self.view.window().run_command("close_file")
 
     def setText(self, string):
@@ -22,7 +24,7 @@ class TestJSExamples(TestCase):
         self.view.run_command("goto_line", {"line": line})
 
     def getRow(self, row):
-        return self.view.substr(self.view.line(self.view.text_point(row-1,0)))
+        return self.view.substr(self.view.line(self.view.text_point(row-1, 0)))
 
     def test_align_js1(self):
         string = """var x = {
@@ -32,7 +34,7 @@ class TestJSExamples(TestCase):
 };"""
         self.setText(string)
         self.goToLine(4)
-        self.view.run_command("align_tab", {"user_input" :"(?<=:) /l0l1f"})
+        self.view.run_command("align_tab", {"user_input": "(?<=:) /l0l1f"})
 
         row = self.getRow(4)
         self.assertEqual(row, "    x:           { x: 12, y: 13 }")
@@ -44,7 +46,6 @@ path = require('path'),
 jadebrowser = require('jade-browser');"""
         self.setText(string)
         self.goToLine(4)
-        self.view.run_command("align_tab", {"user_input" :r"^\s*(?:var)?\s*\S|=/lr0llf2"})
-
+        self.view.run_command("align_tab", {"user_input": r"^\s*(?:var)?\s*\S|=/lr0llf2"})
         row = self.getRow(4)
         self.assertEqual(row, "    jadebrowser = require('jade-browser');")
