@@ -7,8 +7,7 @@ class History:
     index = None
 
     def insert(self, user_input):
-        if not self.hist or (user_input != self.last()
-                             and user_input != "last_regex"):
+        if not self.hist or (user_input != self.last() and user_input != "last_regex"):
             self.hist.append(user_input)
             self.index = None
 
