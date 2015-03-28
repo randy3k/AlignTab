@@ -3,7 +3,7 @@ from unittest import TestCase
 
 version = sublime.version()
 
-import AlignTab.aligntab as aligntab
+import AlignTab.aligner as aligner
 
 
 class TestAlignTab(TestCase):
@@ -50,5 +50,5 @@ class TestHelloWorld2(TestCase):
 
     def test_input_parser(self):
         input = "=/l0r*2f3"
-        output = aligntab.input_parser(input)
+        output = aligner.input_parser(input)
         self.assertEqual(output, ['=', [['l', 0], ['r', 1], ['r', 1]], 3])

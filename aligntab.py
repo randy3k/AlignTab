@@ -1,6 +1,5 @@
 import sublime
 import sublime_plugin
-from .parser import input_parser
 from .hist import history
 from .table import toogle_table_mode
 from .aligner import Aligner
@@ -34,11 +33,8 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             v.settings().set('AlignTabInputPanel', True)
         else:
             user_input = get_named_pattern(user_input)
-            [regex, flag, f] = input_parser(user_input)
-            regex = '(' + regex + ')'
-
             # apply align_tab
-            aligner = Aligner(view, regex, flag, f, mode)
+            aligner = Aligner(view, user_input, mode)
             self.aligned = aligner.run(edit)
 
             if self.aligned:

@@ -1,17 +1,22 @@
 import sublime
 import re
+from .parser import input_parser
 from .wclen import wclen
 from .table import get_table_rows, set_table_rows
 
 
 class Aligner:
-    def __init__(self, view, regex, flag, f, mode=False):
+    def __init__(self, view, user_input, mode=False):
+        [regex, flag, f] = input_parser(user_input)
+        regex = '(' + regex + ')'
         self.view = view
         self.regex = regex
         self.flag = flag
         self.f = f
-        self.strip_char = ' ' if not view.settings().get("translate_tabs_to_spaces", False) \
-            else None
+        if view.settings().get("translate_tabs_to_spaces", False):
+            self.strip_char = None
+        else:
+            self.strip_char = ' '
         self.rows = []
         self.colwidth = []
         self.mode = mode
@@ -59,7 +64,7 @@ class Aligner:
         self.rows.append(row)
         return True
 
-    def checking(self):
+    def detect_rows(self):
         view = self.view
         lastrow = view.rowcol(view.size())[0]
 
@@ -196,7 +201,7 @@ class Aligner:
         except:
             return False
 
-        self.checking()
+        self.detect_rows()
 
         if self.mode:
             for row in get_table_rows(self.view):
