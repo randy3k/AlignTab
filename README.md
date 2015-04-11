@@ -26,7 +26,7 @@ Usage
 
 <img width=650 src="https://github.com/randy3k/AlignTab/raw/fig/alignby.png">
 
-### For more complication usage, welcome to the regex world
+### For more complicated usage, welcome to the regex world
 
 - Open `AlignTab` in Command Palette `C+Shift+p` and enter the input in the form of `<regex>/<option>`.
 - To learn more about regular expression, visit [here](http://www.regular-expressions.info) and [here](https://docs.python.org/2/library/re.html).
