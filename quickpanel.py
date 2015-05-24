@@ -106,9 +106,13 @@ class AlignTabQuickPanel ( sublime_plugin.TextCommand ):
 
 	def quickpanel_On_Done ( self, index ):
 
+		active_view            = AlignTabQuickPanel.run.active_view
 		i_quickpanel_selection = index
 
 		if i_quickpanel_selection > 0:
+
+			active_view.run_command ( "expand_selection_to_paragraph" )
+
 			return
 
 		elif i_quickpanel_selection <= 0:
