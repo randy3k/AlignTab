@@ -8,7 +8,7 @@ The most flexible alignment plugin for Sublime Text 2/3. This plugin is inspired
 
 ST2 support is deprecated but however, it is still possible to install AlignTab on ST2 via Package Control.
 
-If you like it, you could send me some tips via [![](http://img.shields.io/gratipay/randy3k.svg)](https://gratipay.com/randy3k/).
+If you like it, you could send me some tips via [paypal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=YAPVT8VB6RR9C&lc=US&item_name=tips&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted) or [gratipay](https://gratipay.com/~randy3k/).
 
 Features
 ------------
