@@ -8,11 +8,23 @@ from .aligner import Aligner
 def get_named_pattern(user_input):
     s = sublime.load_settings('AlignTab.sublime-settings')
     patterns = s.get('named_patterns', {})
-    if user_input in patterns:
-        user_input = patterns[user_input]
-    elif user_input == 'last_regex' and history.last():
-        user_input = history.last()
-    return user_input
+    regex = []
+    for item in user_input:
+        if item in patterns:
+            if isinstance(patterns[item], str):
+                item = [patterns[item]]
+            else:
+                item = patterns[item]
+            regex.extend(item)
+        elif item == 'last_regex' and history.last():
+            if isinstance(history.last(), str):
+                item = [history.last()]
+            else:
+                item = history.last()
+            regex.extend(item)
+        elif item != 'last_regex':
+            regex.append(item)
+    return regex
 
 
 class AlignTabCommand(sublime_plugin.TextCommand):
@@ -32,9 +44,9 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
             v.settings().set('AlignTabInputPanel', True)
         else:
-            user_input = get_named_pattern(user_input)
             if isinstance(user_input, str):
                 user_input = [user_input]
+            user_input = get_named_pattern(user_input)
             error = []
             for regex in user_input:
                 # apply align_tab
