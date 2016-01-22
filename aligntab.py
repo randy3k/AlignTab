@@ -32,7 +32,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
             v.settings().set('AlignTabInputPanel', True)
         else:
-            regex = get_named_pattern(regex)
+            user_input = get_named_pattern(user_input)
             if isinstance(user_input, str):
                 user_input = [user_input]
             error = []
