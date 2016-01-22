@@ -16,7 +16,7 @@ def get_named_pattern(user_input):
 
 
 class AlignTabCommand(sublime_plugin.TextCommand):
-    def run(self, edit, user_input=None, mode=False, live_preview=False):
+    def run(self, edit, user_input=None, mode=False, live_preview=False, match_all=False):
         view = self.view
         if not user_input:
             self.aligned = False
@@ -46,6 +46,9 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                         toogle_table_mode(view, True)
                     else:
                         sublime.status_message("")
+                    
+                    if not match_all:
+                        break
                 else:
                     if mode and not aligner.adjacent_lines_match():
                         toogle_table_mode(view, False)
