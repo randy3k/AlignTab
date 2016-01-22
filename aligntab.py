@@ -8,15 +8,27 @@ from .aligner import Aligner
 def get_named_pattern(user_input):
     s = sublime.load_settings('AlignTab.sublime-settings')
     patterns = s.get('named_patterns', {})
-    if user_input in patterns:
-        user_input = patterns[user_input]
-    elif user_input == 'last_regex' and history.last():
-        user_input = history.last()
-    return user_input
+    regex = []
+    for item in user_input:
+        if item in patterns:
+            if isinstance(patterns[item], str):
+                item = [patterns[item]]
+            else:
+                item = patterns[item]
+            regex.extend(item)
+        elif item == 'last_regex' and history.last():
+            if isinstance(history.last(), str):
+                item = [history.last()]
+            else:
+                item = history.last()
+            regex.extend(item)
+        elif item != 'last_regex':
+            regex.append(item)
+    return regex
 
 
 class AlignTabCommand(sublime_plugin.TextCommand):
-    def run(self, edit, user_input=None, mode=False, live_preview=False):
+    def run(self, edit, user_input=None, mode=False, live_preview=False, match_all=False):
         view = self.view
         if not user_input:
             self.aligned = False
@@ -32,21 +44,31 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
             v.settings().set('AlignTabInputPanel', True)
         else:
+            if isinstance(user_input, str):
+                user_input = [user_input]
             user_input = get_named_pattern(user_input)
-            # apply align_tab
-            aligner = Aligner(view, user_input, mode)
-            self.aligned = aligner.run(edit)
-
-            if self.aligned:
-                if mode:
-                    toogle_table_mode(view, True)
+            error = []
+            for regex in user_input:
+                # apply align_tab
+                aligner = Aligner(view, regex, mode)
+                self.aligned = aligner.run(edit)
+    
+                if self.aligned:
+                    if mode:
+                        toogle_table_mode(view, True)
+                    else:
+                        sublime.status_message("")
+                    
+                    if not match_all:
+                        break
                 else:
-                    sublime.status_message("")
-            else:
-                if mode and not aligner.adjacent_lines_match():
-                    toogle_table_mode(view, False)
-                else:
-                    sublime.status_message("[Pattern not Found]")
+                    if mode and not aligner.adjacent_lines_match():
+                        toogle_table_mode(view, False)
+                    else:
+                        error.append(regex)
+            if error:
+                errors = '    '.join(error)
+                sublime.status_message("[Patterns not Found:   " + errors + "   ]")
 
     def on_change(self, user_input):
         # Undo the previous change if needed
