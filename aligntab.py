@@ -40,7 +40,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 # apply align_tab
                 aligner = Aligner(view, regex, mode)
                 self.aligned = aligner.run(edit)
-    
+
                 if self.aligned:
                     if mode:
                         toogle_table_mode(view, True)
