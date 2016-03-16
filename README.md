@@ -111,18 +111,14 @@ or syntex specific keybind.
 
 Named patterns
 ------------
-To make it easier to remember complex patterns, you can save them in a dictionary in the settings file. To edit the patterns, go to `Preferences -> Package Settings -> AlignTab -> Settings`. Use the name as key and the regex as value.
-These patterns are included in the default file:
+To make it easier to remember complex patterns, you can save them in a dictionary in the settings file. To edit the patterns, go to `Preferences -> Package Settings -> AlignTab -> Settings`. Use the name as key and the regex as value. For examples,
 
 ```
-  "named_patterns": {
-    "first_equal" : "=/f",
-    "first_comma" : ",/f",
-    "first_colon" : ":/f",
-    "all_and"     : "&",
-    "all_bar"     : "\\|",
-    "all_space"   : "\\s*/l1l0"
-  }
+"named_patterns": {
+    "eq" : "=/f",
+    // right hand side could also be an array of inputs
+    "ifthen" : ["=/f", "\\?/f", ":/f"]
+}
 ```
 
 You then just use the name instead of the pattern in the input field.

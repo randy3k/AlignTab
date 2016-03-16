@@ -5,44 +5,34 @@
       "caption": "Align By",
       "children": [
           {
-          "caption": "First Equal ( = )",
+          "caption": "First Equal =",
           "command": "align_tab",
            "args": {"user_input" : "=/f"}
           },
           {
-          "caption" : "First Comma ( , )",
-          "command" : "align_tab",
-          "args"    : {"user_input" : ",/f"}
-          },
-          {
-          "caption" : "First Colon ( : )",
+          "caption" : "First Colon :",
           "command" : "align_tab",
           "args"    : {"user_input" : ":/f"}
           },
           {
-          "caption" : "Ampersands ( & )",
+          "caption": "Fat Arrow =>",
+          "command": "align_tab",
+           "args": {"user_input" : "=>"}
+          },
+          {
+          "caption" : "Ampersands &",
           "command" : "align_tab",
           "args"    : {"user_input" : "&"}
           },
           {
-          "caption" : "Vertical Bars ( | )",
+          "caption" : "Vertical Bars |",
           "command" : "align_tab",
           "args"    : {"user_input" : "\\|"}
-          },
-          {
-          "caption" : "Open Curly Braces ( { )",
-          "command" : "align_tab",
-          "args"    : {"user_input" : "\\{"}
           },
           {
           "caption" : "Spaces",
           "command" : "align_tab",
           "args"    : {"user_input" : "\\s*/l1l0"}
-          },
-          {
-          "caption" : "Last RegExp",
-          "command" : "align_tab",
-          "args"    : {"user_input" : "last_regex"}
           }
       ]
   }

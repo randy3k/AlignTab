@@ -1,10 +1,8 @@
 {
+  //   define your own patterns
   "named_patterns": {
-    "first_equal" : "=/f",
-    "first_comma" : ",/f",
-    "first_colon" : ":/f",
-    "all_and"     : "&",
-    "all_bar"     : "\\|",
-    "all_space"   : "\\s*/l1l0"
+  //   "eq" : "=/f",
+  //   right hand side could also be an array of inputs
+  //   "ifthen" : ["=/f", "\\?/f", ":/f"]
   }
 }
