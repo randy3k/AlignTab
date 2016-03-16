@@ -5,13 +5,16 @@ from .table import toogle_table_mode
 from .aligner import Aligner
 
 
-def get_named_pattern(user_input):
-    s = sublime.load_settings('AlignTab.sublime-settings')
-    patterns = s.get('named_patterns', {})
-    if user_input in patterns:
-        user_input = patterns[user_input]
-    elif user_input == 'last_regex' and history.last():
-        user_input = history.last()
+def resolve_input(user_input):
+    if isinstance(user_input, str):
+        s = sublime.load_settings('AlignTab.sublime-settings')
+        patterns = s.get('named_patterns', {})
+        if user_input in patterns:
+            user_input = patterns[user_input]
+        elif user_input == 'last_regex' and history.last():
+            user_input = history.last()
+    if isinstance(user_input, str):
+        user_input = [user_input]
     return user_input
 
 
@@ -32,14 +35,11 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
             v.settings().set('AlignTabInputPanel', True)
         else:
-            if isinstance(user_input, str):
-                user_input = get_named_pattern(user_input)
-            if isinstance(user_input, str):
-                user_input = [user_input]
+            user_input = resolve_input(user_input)
             error = []
-            for regex in user_input:
+            for uinput in user_input:
                 # apply align_tab
-                aligner = Aligner(view, regex, mode)
+                aligner = Aligner(view, uinput, mode)
                 self.aligned = aligner.run(edit)
 
                 if self.aligned:
@@ -51,7 +51,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     if mode and not aligner.adjacent_lines_match():
                         toogle_table_mode(view, False)
                     else:
-                        error.append(regex)
+                        error.append(uinput)
             if error:
                 errors = '    '.join(error)
                 sublime.status_message("[Patterns not Found:   " + errors + "   ]")
