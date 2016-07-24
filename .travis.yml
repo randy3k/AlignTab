@@ -9,7 +9,7 @@ before_install:
     - curl -OL https://raw.githubusercontent.com/randy3k/UnitTesting/master/sbin/travis.sh
 
 install:
-    - pip install python-coveralls
+    - sudo pip install python-coveralls
     - sh travis.sh bootstrap
 
 script:
