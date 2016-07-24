@@ -1,14 +1,17 @@
 AlignTab
 ==============
-Linux & OSX | Windows
-------------|------------
-[![Build Status](https://travis-ci.org/randy3k/AlignTab.svg?branch=master)](https://travis-ci.org/randy3k/AlignTab) | [![Build status](https://img.shields.io/appveyor/ci/randy3k/AlignTab/master.svg)](https://ci.appveyor.com/project/randy3k/aligntab/branch/master)
+
+[![Build Status](https://travis-ci.org/randy3k/AlignTab.svg?branch=master)](https://travis-ci.org/randy3k/AlignTab)
+[![Build status](https://img.shields.io/appveyor/ci/randy3k/AlignTab/master.svg)](https://ci.appveyor.com/project/randy3k/aligntab/branch/master)
+[![Coverage Status](https://coveralls.io/repos/github/randy3k/AlignTab/badge.svg?branch=master)](https://coveralls.io/github/randy3k/AlignTab?branch=master)
+<a href="https://packagecontrol.io/packages/AlignTab"><img src="https://packagecontrol.herokuapp.com/downloads/AlignTab.svg"></a>
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=Randy%2ecs%2elai%40gmail%2ecom&amp;lc=US&amp;item_name=Package&amp;currency_code=USD&amp;bn=PP%2dDonationsBF%3apaypal%2ddonate%2dyellow%2esvg%3aNonHosted" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
+<a href="https://gratipay.com/~randy3k/" title="Donate to this project using Gratipay"><img src="https://img.shields.io/badge/gratipay-donate-yellow.svg" /></a>
 
 The most flexible alignment plugin for Sublime Text 2/3. This plugin is inspired by the excellent VIM plugin, [tabular](https://github.com/godlygeek/tabular).
 
 ST2 support is deprecated but however, it is still possible to install AlignTab on ST2 via Package Control.
 
-If you like it, you could send me some tips via [paypal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=YAPVT8VB6RR9C&lc=US&item_name=tips&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted) or [gratipay](https://gratipay.com/~randy3k/).
 
 Features
 ------------
