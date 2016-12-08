@@ -123,9 +123,11 @@ class Aligner:
             cell.append((p[i][1], p[i+1][0]))
         trimcell = []
         s = 0
-        for c in cell:
+        for i, c in enumerate(cell):
             cellcontent = line[c[0]:c[1]]
             b = s + wclen(cellcontent.rstrip(self.strip_char))
+            afterspace = sum(s == " " for s in line[b:(b+self.get_flag(i)[1])])
+            b = b + afterspace
             a = b - wclen(cellcontent.strip(self.strip_char))
             trimcell.append((a, b))
             s = s + wclen(cellcontent)
