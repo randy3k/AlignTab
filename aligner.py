@@ -126,8 +126,6 @@ class Aligner:
         for i, c in enumerate(cell):
             cellcontent = line[c[0]:c[1]]
             b = s + wclen(cellcontent.rstrip(self.strip_char))
-            afterspace = sum(s == " " for s in line[b:(b+self.get_flag(i)[1])])
-            b = b + afterspace
             a = b - wclen(cellcontent.strip(self.strip_char))
             trimcell.append((a, b))
             s = s + wclen(cellcontent)
@@ -157,16 +155,19 @@ class Aligner:
         view = self.view
         # reset cursors' location
         new_span = self.get_span(row)
+        if len(new_span) != len(old_span):
+            return
         for s in view.sel():
             if s.empty and view.rowcol(s.end())[0] == row:
                 view.sel().subtract(s)
         for cur in cursor:
             for i, c in reversed(list(enumerate(old_span))):
-                if c[0] <= cur:
+                newcur = 0
+                if c[0] < cur:
                     if cur <= c[1]:
                         newcur = cur-c[0]+new_span[i][0]
                     else:
-                        newcur = c[1]-c[0]+new_span[i][0]
+                        newcur = new_span[i][1]+self.get_flag(len(old_span)-i)[1]
                     break
             pt = view.text_point(row, newcur)
             view.sel().add(sublime.Region(pt, pt))
