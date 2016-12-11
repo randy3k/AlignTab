@@ -183,7 +183,7 @@ class Aligner:
         cursor_rows = set([view.rowcol(s.end())[0] for s in view.sel() if s.empty])
 
         for row in reversed(self.rows):
-            if self.mode and row in cursor_rows:
+            if row in cursor_rows:
                 # if this row contains cursors, record their locations
                 span = self.get_span(row)
                 cursor = [view.rowcol(s.end())[1] for s in view.sel()
@@ -194,7 +194,7 @@ class Aligner:
             line = view.line(view.text_point(row, 0))
             view.replace(edit, line, (indentation + "".join(content).rstrip(self.strip_char)))
 
-            if self.mode and row in cursor_rows:
+            if row in cursor_rows:
                 self.reset_cursors(row, span, cursor)
 
     def run(self, edit):
