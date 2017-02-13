@@ -44,6 +44,8 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
                 if self.aligned:
                     if mode:
+                        # to allow keybinds/commands for tablemode
+                        history.insert(uinput)
                         toogle_table_mode(view, True)
                     else:
                         sublime.status_message("")
