@@ -9,10 +9,10 @@ def resolve_input(user_input):
     if isinstance(user_input, str):
         s = sublime.load_settings('AlignTab.sublime-settings')
         patterns = s.get('named_patterns', {})
+        if user_input == 'last_regex' and history.last():
+            user_input = history.last()
         if user_input in patterns:
             user_input = patterns[user_input]
-        elif user_input == 'last_regex' and history.last():
-            user_input = history.last()
     if isinstance(user_input, str):
         user_input = [user_input]
     return user_input
@@ -44,6 +44,8 @@ class AlignTabCommand(sublime_plugin.TextCommand):
 
                 if self.aligned:
                     if mode:
+                        # to allow keybinds/commands for tablemode
+                        history.insert(uinput)
                         toogle_table_mode(view, True)
                     else:
                         sublime.status_message("")
