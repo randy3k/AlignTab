@@ -27,7 +27,7 @@ Usage
 
 - If you only want simple and quick alignment, the predefined alignment will help.
 
-<img width=650 src="https://github.com/randy3k/AlignTab/raw/fig/alignby.png">
+<img width=650 src="https://cloud.githubusercontent.com/assets/1690993/23576651/3b907ba6-0079-11e7-9670-4e455333a05b.png">
 
 ### For more complicated usage, welcome to the regex world
 
@@ -60,11 +60,11 @@ Usage
 
 ### Live Preview Mode
 
-<img width=650 src="https://github.com/randy3k/AlignTab/raw/fig/aligntab.gif">
+<img width=650 src="https://cloud.githubusercontent.com/assets/1690993/23576654/4d4fe048-0079-11e7-9fed-ece0850b1312.gif">
 
 ### Table Mode
 
-<img width=650 src="https://github.com/randy3k/AlignTab/raw/fig/table.gif">
+<img width=650 src="https://cloud.githubusercontent.com/assets/1690993/23576656/567bacec-0079-11e7-86ce-deaab5907acb.gif">
 
 
 Installation
@@ -153,7 +153,7 @@ CJK Support
 AlignTab supoorts CJK characters, but you have to choose a correct font face and font size.
 To my knowledge, `MinCho` works on all Chinese, Japanese and Korean.
 
-<img width=300 src="https://github.com/randy3k/AlignTab/raw/fig/cjk.png">
+<img width=300 src="https://cloud.githubusercontent.com/assets/1690993/23576648/13fb5020-0079-11e7-9ffa-a10d5443192d.png">
 
 ### License
 
