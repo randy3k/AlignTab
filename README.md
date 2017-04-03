@@ -5,7 +5,7 @@ AlignTab
 [![Build status](https://ci.appveyor.com/api/projects/status/cwgpoqu0yial03w5?svg=true)](https://ci.appveyor.com/project/randy3k/aligntab)
 [![Coverage Status](https://coveralls.io/repos/github/randy3k/AlignTab/badge.svg?branch=master)](https://coveralls.io/github/randy3k/AlignTab?branch=master)
 <a href="https://packagecontrol.io/packages/AlignTab"><img src="https://packagecontrol.herokuapp.com/downloads/AlignTab.svg"></a>
-<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=Randy%2ecs%2elai%40gmail%2ecom&amp;lc=US&amp;item_name=Package&amp;currency_code=USD&amp;bn=PP%2dDonationsBF%3apaypal%2ddonate%2dyellow%2esvg%3aNonHosted" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
+<a href="https://www.paypal.me/randy3k/5usd" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
 <a href="https://gratipay.com/~randy3k/" title="Donate to this project using Gratipay"><img src="https://img.shields.io/badge/gratipay-donate-yellow.svg" /></a>
 
 The most flexible alignment plugin for Sublime Text 2/3. This plugin is inspired by the excellent VIM plugin, [tabular](https://github.com/godlygeek/tabular).
