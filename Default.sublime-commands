@@ -12,5 +12,14 @@
         "caption": "AlignTab: Live Preview Mode",
         "command": "align_tab",
         "args": {"live_preview" : true}
+    },
+    {
+        "caption": "Preferences: AlignTab Settings",
+        "command": "edit_settings",
+        "args":
+        {
+            "base_file": "${packages}/AlignTab/AlignTab.sublime-settings",
+            "default": "{\n\t$0\n}\n"
+        }
     }
 ]
