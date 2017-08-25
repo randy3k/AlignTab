@@ -45,5 +45,5 @@ class AlignTabHistory(sublime_plugin.TextCommand):
 class AlignTabHistoryListener(sublime_plugin.EventListener):
     # restore History index
     def on_deactivated(self, view):
-        if view.score_selector(0, 'text.aligntab') > 0:
+        if view.settings().get("AlignTabInputPanel"):
             history.reset_index()
