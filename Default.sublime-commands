@@ -25,5 +25,15 @@
             "base_file": "${packages}/AlignTab/AlignTab.sublime-settings",
             "default": "{\n\t$0\n}\n"
         }
+    },
+    {
+        "caption": "Preferences: AlignTab Context Menu",
+        "command": "edit_settings",
+        "args":
+        {
+            "user_file": "${packages}/User/AlignTab/Context.sublime-menu",
+            "base_file": "${packages}/AlignTab/Context.sublime-menu",
+            "default": "[\n\t$0\n]\n"
+        }
     }
 ]
