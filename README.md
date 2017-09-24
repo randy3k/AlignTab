@@ -19,7 +19,7 @@ ST2 support is deprecated but however, it is still possible to install AlignTab 
 - Multiple cursors support
 - Table mode and Live preview mode
 
-## Getting start
+## Getting started
 
 - If you only want simple and quick alignment, the predefined alignment will help.
 
@@ -35,7 +35,7 @@ ST2 support is deprecated but however, it is still possible to install AlignTab 
   - first column is centered followed by 2 spaces
   - second column is right-flushed followed by 3 spaces
   - only the first match is used
-- If the number after `[rlc]` is omitted, 1 space will be added after the corresponding column.
+- If the number after `[rlc]` is omitted, 1 space will be added after each column.
 - If the number after `f` is omitted, only the first match will be used.
 - The entire option could be omitted (i.e., input only the regular expression). In that case, default option, `l1f0` will be used. It means:
   - All columns are left-justified.
