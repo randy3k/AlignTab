@@ -133,7 +133,7 @@ To define new item in the context menu, go to `Preferences -> Package Settings -
    {"caption" : "-"},
     {
       "id": "aligntab",
-      "caption": "Align By",
+      "caption": "AlignTab",
       "children": [
           {
           "caption" : "{",
