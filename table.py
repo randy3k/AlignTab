@@ -79,3 +79,9 @@ class AlignTabClearMode(sublime_plugin.TextCommand):
         if view.is_scratch() or view.settings().get('is_widget'):
             return
         toogle_table_mode(view, False)
+
+    def is_enabled(self):
+        return self.view.settings().get("AlignTabTableMode")
+
+    def is_visible(self):
+        return self.view.settings().get("AlignTabTableMode")

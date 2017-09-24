@@ -1,5 +1,4 @@
-AlignTab
-==============
+# AlignTab
 
 [![Build Status](https://travis-ci.org/randy3k/AlignTab.svg?branch=master)](https://travis-ci.org/randy3k/AlignTab)
 [![Build status](https://ci.appveyor.com/api/projects/status/cwgpoqu0yial03w5?svg=true)](https://ci.appveyor.com/project/randy3k/aligntab)
@@ -8,28 +7,25 @@ AlignTab
 <a href="https://www.paypal.me/randy3k/5usd" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
 <a href="https://gratipay.com/~randy3k/" title="Donate to this project using Gratipay"><img src="https://img.shields.io/badge/gratipay-donate-yellow.svg" /></a>
 
-The most flexible alignment plugin for Sublime Text 2/3. This plugin is inspired by the excellent VIM plugin, [tabular](https://github.com/godlygeek/tabular).
+The most flexible alignment plugin for Sublime Text 3. This plugin is inspired by the excellent VIM plugin, [tabular](https://github.com/godlygeek/tabular).
 
 ST2 support is deprecated but however, it is still possible to install AlignTab on ST2 via Package Control.
 
 
-Features
-------------
+## Features
 - Align using regular expression
 - Custom spacing, padding and justification.
 - Smart detection for alignment if no lines are selected
 - Multiple cursors support
 - Table mode and Live preview mode
 
-Usage
-------------
-### Getting start
+## Getting start
 
 - If you only want simple and quick alignment, the predefined alignment will help.
 
-<img width=650 src="https://cloud.githubusercontent.com/assets/1690993/23576651/3b907ba6-0079-11e7-9670-4e455333a05b.png">
+<img width=650 src="https://user-images.githubusercontent.com/1690993/30779107-029a5934-a0b5-11e7-8523-7a3bb657b8f2.png">
 
-### For more complicated usage, welcome to the regex world
+## More complicated usage
 
 - Open `AlignTab` in Command Palette `C+Shift+p` and enter the input in the form of `<regex>/<option>`.
 - To learn more about regular expression, visit [here](http://www.regular-expressions.info) and [here](https://docs.python.org/2/library/re.html).
@@ -47,7 +43,7 @@ Usage
   - All matched delimiters are aligned.
 
 
-#### More about regex and options
+## More about regex and options
 
 - Use non-capturing parenthese `(?:regex)` instread of capturing parenthese.
 - Delimiter is also treated as a column.
@@ -58,26 +54,28 @@ Usage
   - For example `r*3` equals `rrr`, and `(cr3)*2` equals `cr3cr3`.
 - (Experimental) Besides `r`, `c` and `l`, there is a new `u` flag which stands for "unjustified".
 
-### Live Preview Mode
+## Live Preview Mode
 
 <img width=650 src="https://cloud.githubusercontent.com/assets/1690993/23576654/4d4fe048-0079-11e7-9fed-ece0850b1312.gif">
 
-### Table Mode
+## Table Mode
 
 <img width=650 src="https://cloud.githubusercontent.com/assets/1690993/23576656/567bacec-0079-11e7-86ce-deaab5907acb.gif">
 
+Hit <kbd>ESC</kbd> or use the command `AlignTab: Exit Table Mode` to exit table mode.
 
-Installation
-------------
+
+## Installation
+
 [Package Control](http://wbond.net/sublime_packages/package_control)
 
 
-Examples
-------------
+## Examples
+
 Some simple examples. You can also contribute your examples [there](https://github.com/randy3k/AlignTab/wiki/Examples).
 
-Keybinds
-------------
+## Keybinds
+
 If you are interested in getting a keybind for live preview mode, add the following in your user keybinds file.
 ```
  {
@@ -112,8 +110,8 @@ or syntex specific keybind.
 
 
 
-Named patterns
-------------
+## Named patterns
+
 To make it easier to remember complex patterns, you can save them in a dictionary in the settings file. To edit the patterns, go to `Preferences -> Package Settings -> AlignTab -> Settings`. Use the name as key and the regex as value. For examples,
 
 ```
@@ -126,8 +124,8 @@ To make it easier to remember complex patterns, you can save them in a dictionar
 
 You then just use the name instead of the pattern in the input field.
 
-Custom Context Menu
-----
+## Custom Context Menu
+
 To define new item in the context menu, go to `Preferences -> Package Settings -> AlignTab -> Context Menu` and add, for example
 
 ```
@@ -148,13 +146,13 @@ To define new item in the context menu, go to `Preferences -> Package Settings -
 ```
 
 
-CJK Support
----
+## CJK Support
+
 AlignTab supoorts CJK characters, but you have to choose a correct font face and font size.
 To my knowledge, `MinCho` works on all Chinese, Japanese and Korean.
 
 <img width=300 src="https://cloud.githubusercontent.com/assets/1690993/23576648/13fb5020-0079-11e7-9ffa-a10d5443192d.png">
 
-### License
+## License
 
 AlignTab is licensed under the MIT License.
