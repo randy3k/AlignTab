@@ -112,7 +112,7 @@ or syntex specific keybind.
 
 ## Named patterns
 
-To make it easier to remember complex patterns, you can save them in a dictionary in the settings file. To edit the patterns, go to `Preferences -> Package Settings -> AlignTab -> Settings`. Use the name as key and the regex as value. For examples,
+To make it easier to remember complex patterns, you can save them in a dictionary in the settings file. To edit the patterns, launch `Preferences: AlignTab Settings`. Use the name as key and the regex as value. For examples,
 
 ```
 "named_patterns": {
@@ -126,7 +126,7 @@ You then just use the name instead of the pattern in the input field.
 
 ## Custom Context Menu
 
-To define new item in the context menu, go to `Preferences -> Package Settings -> AlignTab -> Context Menu` and add, for example
+To define new item in the context menu, launch `Preferences: AlignTab Context Menu` and add, for example
 
 ```
 [
