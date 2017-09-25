@@ -81,7 +81,7 @@ class AlignTabClearMode(sublime_plugin.TextCommand):
         toogle_table_mode(view, False)
 
     def is_enabled(self):
-        return self.view.settings().get("AlignTabTableMode")
+        return self.view.settings().get("AlignTabTableMode", False)
 
     def is_visible(self):
-        return self.view.settings().get("AlignTabTableMode")
+        return self.view.settings().get("AlignTabTableMode", False)
