@@ -24,7 +24,7 @@
                             },
                             {
                                 "caption": "Context Menu",
-                                "command": "edit_settings",
+                                "command": "align_tab_edit_settings",
                                 "args":
                                 {
                                     "user_file": "${packages}/User/AlignTab/Context.sublime-menu",
