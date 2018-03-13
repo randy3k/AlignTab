@@ -5,6 +5,9 @@ from .table import toogle_table_mode
 from .aligner import Aligner
 
 
+g_last_input = ''
+
+
 def resolve_input(user_input):
     if isinstance(user_input, str):
         s = sublime.load_settings('AlignTab.sublime-settings')
@@ -24,7 +27,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         if not user_input:
             self.aligned = False
             v = self.view.window().show_input_panel(
-                'Align By RegEx:', '',
+                'Align By RegEx:', g_last_input,
                 # On Done
                 lambda x: self.on_done(x, mode, live_preview),
                 # On Change
@@ -67,6 +70,9 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             self.view.run_command("align_tab", {"user_input": user_input, "live_preview": True})
 
     def on_done(self, user_input, mode, live_preview):
+        global g_last_input
+        g_last_input = user_input
+
         history.insert(user_input)
         # do not double align when done with live preview mode
         if not live_preview:
