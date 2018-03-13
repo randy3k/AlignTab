@@ -1,5 +1,8 @@
 {
-  //   define your own patterns
+  // To make it easier to remember complex patterns, you can save them in a
+  //   dictionary in the settings file. To edit the patterns, launch
+  //   Preferences: AlignTab Settings. Use the name as key and the regex as
+  //   value. define your own patterns
   "named_patterns": {
   //   "eq" : "=/f",
   //   right hand side could also be an array of inputs
