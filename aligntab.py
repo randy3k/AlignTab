@@ -23,8 +23,10 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         view = self.view
         if not user_input:
             self.aligned = False
+            history.roll(backwards=True)
+            last = history.get()
             v = self.view.window().show_input_panel(
-                'Align By RegEx:', history.last(),
+                'Align By RegEx:', last or "",
                 # On Done
                 lambda x: self.on_done(x, mode, live_preview),
                 # On Change
@@ -32,7 +34,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                 # On Cancel
                 lambda: self.on_change(None) if live_preview else None
             )
-
+            v.run_command("select_all")
             v.settings().set('AlignTabInputPanel', True)
         else:
             user_input = resolve_input(user_input)
