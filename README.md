@@ -1,7 +1,7 @@
 # AlignTab
 
 [![Build Status](https://travis-ci.org/randy3k/AlignTab.svg?branch=master)](https://travis-ci.org/randy3k/AlignTab)
-[![Build status](https://ci.appveyor.com/api/projects/status/cwgpoqu0yial03w5?svg=true)](https://ci.appveyor.com/project/randy3k/aligntab)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/randy3k/AlignTab?branch=master&svg=true)](https://ci.appveyor.com/project/randy3k/AlignTab)
 [![Coverage Status](https://coveralls.io/repos/github/randy3k/AlignTab/badge.svg?branch=master)](https://coveralls.io/github/randy3k/AlignTab?branch=master)
 <a href="https://packagecontrol.io/packages/AlignTab"><img src="https://packagecontrol.herokuapp.com/downloads/AlignTab.svg"></a>
 <a href="https://www.paypal.me/randy3k/5usd" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
@@ -50,7 +50,7 @@ ST2 support is deprecated but however, it is still possible to install AlignTab 
   - For example, `=/rcl` means the the column before `=` will be right-justifed and the column after `=` will be left-justified. And `=` will be centered (however, it doesn't matter as `=` is of length 1).
 - The option for alignment cycles through the columns. <br>
   - For example, `regex/rl` means all odd columns will be right-justified and all even columns will be left-justified.
-- The symbol `*` repeats the preceeding justification flags. 
+- The symbol `*` repeats the preceeding justification flags.
   - For example `r*3` equals `rrr`, and `(cr3)*2` equals `cr3cr3`.
 - (Experimental) Besides `r`, `c` and `l`, there is a new `u` flag which stands for "unjustified".
 
