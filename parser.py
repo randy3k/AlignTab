@@ -19,10 +19,10 @@ def input_parser(user_input):
             if not rParan.search(flag):
                 break
             for r in rParan.finditer(flag):
-                flag = flag.replace(r.group(0), r.group(1)*int(r.group(2)), 1)
+                flag = flag.replace(r.group(0), r.group(1) * int(r.group(2)), 1)
 
         for r in re.finditer(r"([lcru][0-9]*)\*([0-9]+)", flag):
-            flag = flag.replace(r.group(0), r.group(1)*int(r.group(2)), 1)
+            flag = flag.replace(r.group(0), r.group(1) * int(r.group(2)), 1)
 
         flag = re.findall(r"[lcru][0-9]*", flag)
         flag = list(map(lambda x: [x[0], 1] if len(x) == 1
@@ -31,7 +31,7 @@ def input_parser(user_input):
 
         # for f
         f = 0 if not f else 1 if len(f) == 1 else int(f[1:])
-    except:
+    except Exception:
         [regex, flag, f] = [user_input, [['l', 1]], 0]
 
     return [regex, flag, f]

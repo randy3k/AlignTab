@@ -81,14 +81,14 @@ class Aligner:
                 if thisrow not in self.rows:
                     continue
                 beginrow = endrow = thisrow
-                while endrow+1 <= lastrow and not (endrow+1 in self.rows):
-                    if not self.add_rows(endrow+1):
+                while endrow + 1 <= lastrow and not (endrow + 1 in self.rows):
+                    if not self.add_rows(endrow + 1):
                         break
-                    endrow = endrow+1
-                while beginrow-1 >= 0 and not (beginrow-1 in self.rows):
-                    if not self.add_rows(beginrow-1):
+                    endrow = endrow + 1
+                while beginrow - 1 >= 0 and not (beginrow - 1 in self.rows):
+                    if not self.add_rows(beginrow - 1):
                         break
-                    beginrow = beginrow-1
+                    beginrow = beginrow - 1
 
     def fill_spaces(self, content):
         for k in range(len(content)):
@@ -96,18 +96,18 @@ class Aligner:
                 continue
             thisf = self.flag[k % len(self.flag)]
             align = thisf[0]
-            if k == len(content)-1 or self.get_flag(k+1)[0] == 'u':
+            if k == len(content) - 1 or self.get_flag(k + 1)[0] == 'u':
                 pedding = ""
             else:
-                pedding = " "*thisf[1]
-            fill = self.colwidth[k]-wclen(content[k])
+                pedding = " " * thisf[1]
+            fill = self.colwidth[k] - wclen(content[k])
             if align == 'l' or align == 'u':
-                content[k] = content[k] + " "*fill + pedding
+                content[k] = content[k] + " " * fill + pedding
             elif align == 'r':
-                content[k] = " "*fill + content[k] + pedding
+                content[k] = " " * fill + content[k] + pedding
             elif align == 'c':
-                lfill = " "*int(fill/2)
-                rfill = " "*(fill-int(fill/2))
+                lfill = " " * int(fill / 2)
+                rfill = " " * (fill - int(fill / 2))
                 content[k] = lfill + content[k] + rfill + pedding
 
     def get_span(self, row):
@@ -118,9 +118,9 @@ class Aligner:
             p = p[0:self.f]
         p.append((len(line), None))
         cell = [(0, p[0][0])]
-        for i in range(len(p)-1):
+        for i in range(len(p) - 1):
             cell.append(p[i])
-            cell.append((p[i][1], p[i+1][0]))
+            cell.append((p[i][1], p[i + 1][0]))
         trimcell = []
         s = 0
         for i, c in enumerate(cell):
@@ -143,9 +143,9 @@ class Aligner:
         for row in rows:
             if len(self.get_cells(row)) > 1:
                 continue
-            elif row-1 >= 0 and len(self.get_cells(row-1)) > 1:
+            elif row - 1 >= 0 and len(self.get_cells(row - 1)) > 1:
                 continue
-            elif row+1 <= lastrow and len(self.get_cells(row+1)) > 1:
+            elif row + 1 <= lastrow and len(self.get_cells(row + 1)) > 1:
                 continue
             else:
                 return False
@@ -165,9 +165,9 @@ class Aligner:
                 newcur = 0
                 if c[0] < cur:
                     if cur <= c[1]:
-                        newcur = cur-c[0]+new_span[i][0]
+                        newcur = cur - c[0] + new_span[i][0]
                     else:
-                        newcur = new_span[i][1]+self.get_flag(len(old_span)-i)[1]
+                        newcur = new_span[i][1] + self.get_flag(len(old_span) - i)[1]
                     break
             pt = view.text_point(row, newcur)
             view.sel().add(sublime.Region(pt, pt))
@@ -176,7 +176,7 @@ class Aligner:
         view = self.view
 
         if self.flag[0][0] != "u":
-            indentation = min([re.match("^(\s*)",
+            indentation = min([re.match(r"^(\s*)",
                               self.get_line(row)).group(1) for row in self.rows])
         else:
             indentation = ""
@@ -201,7 +201,7 @@ class Aligner:
         # check if regex is valid
         try:
             re.compile(self.regex)
-        except:
+        except Exception:
             return False
 
         self.detect_rows()

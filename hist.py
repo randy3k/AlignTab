@@ -31,6 +31,7 @@ class History:
     def reset_index(self):
         self.index = None
 
+
 if 'history' not in globals():
     history = History()
 
