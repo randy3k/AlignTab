@@ -24,7 +24,7 @@ class TestTable(DeferrableTestCase):
         self.view.run_command("insert", {"characters": string})
 
     def getRow(self, row):
-        return self.view.substr(self.view.line(self.view.text_point(row-1, 0)))
+        return self.view.substr(self.view.line(self.view.text_point(row - 1, 0)))
 
     def test_table_mode(self):
         string = """a | b |   c
@@ -61,3 +61,18 @@ class TestTable(DeferrableTestCase):
         self.assertEqual(second_row,
                          r"      Totally related text              " +
                          r"& that is aligned differently, unfortunately & blah \\ \hline")
+
+    def test_no_new_line(self):
+        # https://github.com/randy3k/AlignTab/issues/78
+        string = """I = a  | b  | aP | bP
+S = a  |
+        """
+        self.setText(string)
+        self.view.sel().clear()
+        self.view.sel().add(sublime.Region(30, 30))
+        self.view.run_command("align_tab", {"user_input": "\\|", "mode": True})
+        history.insert("\\|")
+        yield 400
+        self.setText(" ")
+        yield 1000
+        self.assertEqual(self.view.sel()[0].end(), 28)

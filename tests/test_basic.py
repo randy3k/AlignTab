@@ -1,9 +1,8 @@
 import sublime
 from unittest import TestCase
+import AlignTab.aligner as aligner
 
 version = sublime.version()
-
-import AlignTab.aligner as aligner
 
 
 class TestAlignTab(TestCase):
@@ -22,7 +21,7 @@ class TestAlignTab(TestCase):
         self.view.run_command("insert", {"characters": string})
 
     def getRow(self, row):
-        return self.view.substr(self.view.line(self.view.text_point(row-1, 0)))
+        return self.view.substr(self.view.line(self.view.text_point(row - 1, 0)))
 
     def test_align_equal(self):
         string = """apple =  1==0

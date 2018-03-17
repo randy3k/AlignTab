@@ -24,7 +24,7 @@ class TestJSExamples(TestCase):
         self.view.run_command("goto_line", {"line": line})
 
     def getRow(self, row):
-        return self.view.substr(self.view.line(self.view.text_point(row-1, 0)))
+        return self.view.substr(self.view.line(self.view.text_point(row - 1, 0)))
 
     def test_align_js1(self):
         string = """var x = {

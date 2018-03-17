@@ -169,7 +169,8 @@ class Aligner:
                     else:
                         newcur = new_span[i][1] + self.get_flag(len(old_span) - i)[1]
                     break
-            pt = view.text_point(row, newcur)
+            endcol = view.rowcol(view.line(view.text_point(row, 0)).end())[1]
+            pt = view.text_point(row, min(newcur, endcol))
             view.sel().add(sublime.Region(pt, pt))
 
     def replace(self, edit):
