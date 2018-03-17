@@ -74,5 +74,5 @@ S = a  |
         history.insert("\\|")
         yield 400
         self.setText(" ")
-        yield 1000
-        self.assertEqual(self.view.sel()[0].end(), 28)
+        yield 2000
+        self.assertEqual(self.view.sel()[0].end(), 27)
