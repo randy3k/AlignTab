@@ -23,6 +23,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         view = self.view
         if not user_input:
             self.aligned = False
+            history.reset_index()
             history.roll(backwards=True)
             last = history.get()
             v = self.view.window().show_input_panel(
