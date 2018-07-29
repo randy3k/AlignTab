@@ -5,6 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/randy3k/AlignTab/badge.svg?branch=master)](https://coveralls.io/github/randy3k/AlignTab?branch=master)
 <a href="https://packagecontrol.io/packages/AlignTab"><img src="https://packagecontrol.herokuapp.com/downloads/AlignTab.svg"></a>
 <a href="https://www.paypal.me/randy3k/5usd" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/paypal-donate-blue.svg" /></a>
+<a href="https://liberapay.com/randy3k/donate"><img src="http://img.shields.io/liberapay/receives/randy3k.svg?logo=liberapay"></a>
 
 
 The most flexible alignment plugin for Sublime Text 3. This plugin is inspired by the excellent VIM plugin, [tabular](https://github.com/godlygeek/tabular).
