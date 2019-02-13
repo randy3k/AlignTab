@@ -23,7 +23,7 @@ def resolve_input(user_input):
 # After work - returning into first selection
 ####################################################
 
-class AlignButifyCommand(sublime_plugin.TextCommand):
+class AlignBeautifyCommand(sublime_plugin.TextCommand):
   def run(self, edit, user_input, block_no_align_rows = 0):
     view = self.view
     sel = view.sel()
