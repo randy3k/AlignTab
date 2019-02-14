@@ -160,26 +160,6 @@ If you want to apply AlignTab to all blocks independently, use `align_beautify` 
 ```
 
 
-To define new item in the context menu, launch `Preferences: AlignTab Context Menu` and add, for example
-
-```
-[
-   {"caption" : "-"},
-    {
-      "id": "aligntab",
-      "caption": "AlignTab",
-      "children": [
-          {
-          "caption" : "{",
-          "command" : "align_tab",
-          "args"    : {"user_input" : "\\{"}
-          }
-      ]
-  }
-]
-```
-
-
 ## CJK Support
 
 AlignTab supoorts CJK characters, but you have to choose a correct font face and font size.
