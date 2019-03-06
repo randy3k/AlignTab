@@ -146,6 +146,8 @@ To define new item in the context menu, launch `Preferences: AlignTab Context Me
 ]
 ```
 
+Made by [Dubrovin Egor](https://github.com/twobrowin)
+
 ## Beautify the Code
 
 If you want to apply AlignTab to all lines independently, use `align_beautify` command:
