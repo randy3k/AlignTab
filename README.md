@@ -148,8 +148,7 @@ To define new item in the context menu, launch `Preferences: AlignTab Context Me
 
 ## Beautify the Code
 
-The whole code file is consist of blocks: lines that separates one from other via empty lines.
-If you want to apply AlignTab to all blocks independently, use `align_beautify` command:
+If you want to apply AlignTab to all lines independently, use `align_beautify` command:
 
 ```
   "command": "align_beautify",
