@@ -2,7 +2,7 @@ import sublime_plugin
 import threading
 
 
-def toogle_table_mode(view, on=True):
+def toggle_table_mode(view, on=True):
     if on:
         view.settings().set("AlignTabTableMode", True)
         view.set_status("aligntab", "[Table Mode]")
@@ -78,7 +78,7 @@ class AlignTabClearMode(sublime_plugin.TextCommand):
         view = self.view
         if view.is_scratch() or view.settings().get('is_widget'):
             return
-        toogle_table_mode(view, False)
+        toggle_table_mode(view, False)
 
     def is_enabled(self):
         return self.view.settings().get("AlignTabTableMode", False)

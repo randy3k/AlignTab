@@ -1,7 +1,7 @@
 import sublime
 import sublime_plugin
 from .hist import history
-from .table import toogle_table_mode
+from .table import toggle_table_mode
 from .aligner import Aligner
 
 
@@ -49,12 +49,12 @@ class AlignTabCommand(sublime_plugin.TextCommand):
                     if mode:
                         # to allow keybinds/commands for tablemode
                         history.insert(uinput)
-                        toogle_table_mode(view, True)
+                        toggle_table_mode(view, True)
                     else:
                         sublime.status_message("")
                 else:
                     if mode and not aligner.adjacent_lines_match():
-                        toogle_table_mode(view, False)
+                        toggle_table_mode(view, False)
                     else:
                         error.append(uinput)
             if error:
