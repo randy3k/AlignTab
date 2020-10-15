@@ -4,6 +4,11 @@
         "command": "align_tab"
     },
     {
+        "caption": "AlignTab: Unalign",
+        "command": "align_tab",
+        "args": {"unalign" : true}
+    },
+    {
         "caption": "AlignTab: Table Mode",
         "command": "align_tab",
         "args": {"mode" : true}
