@@ -8,6 +8,8 @@ from .table import get_table_rows, set_table_rows
 class Aligner:
     def __init__(self, view, user_input, mode=False):
         [regex, flag, f] = input_parser(user_input)
+        self.comment = "//"
+        self.split = regex
         regex = '(' + regex + ')'
         self.view = view
         self.regex = regex
@@ -29,7 +31,16 @@ class Aligner:
         return view.substr(view.line(view.text_point(row, 0)))
 
     def get_cells(self, row):
-        content = [s for s in re.split(self.regex, self.get_line(row), self.f)]
+        row_line = self.get_line(row)
+        line = row_line.split(self.comment, 1)
+        if (len(line) > 1):
+            contentcount = [s for s in re.split(self.split, line[0], self.f)]
+            if (len(contentcount) > 1):
+                content = [s for s in re.split(self.regex, row_line, len(contentcount)-1)]
+            else:
+                content = [row_line]
+        else:
+            content = [s for s in re.split(self.regex, row_line, self.f)]
 
         # remove indentation
         if len(content) > 1:
@@ -46,10 +57,11 @@ class Aligner:
                 content[k] = content[k].rstrip(self.strip_char)
             else:
                 content[k] = content[k].strip(self.strip_char)
-        return content
+        
+        return content, len(line)
 
     def update_colwidth(self, content):
-        thiscolwidth = [wclen(c) for c in content]
+        thiscolwidth = [wclen(c.split(self.comment,1)[0]) for c in content]
         for i, w in enumerate(thiscolwidth):
             if i < len(self.colwidth):
                 self.colwidth[i] = max(self.colwidth[i], w)
@@ -57,8 +69,8 @@ class Aligner:
                 self.colwidth.append(w)
 
     def add_rows(self, row):
-        content = self.get_cells(row)
-        if len(content) <= 1:
+        [content, splits] = self.get_cells(row)
+        if len(content) <= 1 and splits <= 1:
             return False
         self.update_colwidth(content)
         self.rows.append(row)
@@ -190,8 +202,9 @@ class Aligner:
                 cursor = [view.rowcol(s.end())[1] for s in view.sel()
                           if s.empty and view.rowcol(s.end())[0] == row]
 
-            content = self.get_cells(row)
-            self.fill_spaces(content)
+            [content, splits] = self.get_cells(row)
+            if len(content) > 1 or splits > 1:
+                self.fill_spaces(content)
             line = view.line(view.text_point(row, 0))
             view.replace(edit, line, (indentation + "".join(content).rstrip(self.strip_char)))
 
