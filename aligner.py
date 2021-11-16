@@ -6,7 +6,7 @@ from .table import get_table_rows, set_table_rows
 
 
 class Aligner:
-    def __init__(self, view, user_input, mode=False):
+    def __init__(self, view, user_input, mode=False, unalign=False):
         [regex, flag, f] = input_parser(user_input)
         regex = '(' + regex + ')'
         self.view = view
@@ -20,6 +20,7 @@ class Aligner:
         self.rows = []
         self.colwidth = []
         self.mode = mode
+        self.unalign = unalign
 
     def get_flag(self, col):
         return self.flag[col % len(self.flag)]
@@ -191,7 +192,8 @@ class Aligner:
                           if s.empty and view.rowcol(s.end())[0] == row]
 
             content = self.get_cells(row)
-            self.fill_spaces(content)
+            if not self.unalign:
+                self.fill_spaces(content)
             line = view.line(view.text_point(row, 0))
             view.replace(edit, line, (indentation + "".join(content).rstrip(self.strip_char)))
 

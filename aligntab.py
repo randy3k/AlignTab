@@ -19,8 +19,13 @@ def resolve_input(user_input):
 
 
 class AlignTabCommand(sublime_plugin.TextCommand):
-    def run(self, edit, user_input=None, mode=False, live_preview=False):
+    def run(self, edit, user_input=None, mode=False, live_preview=False, unalign=False):
         view = self.view
+        if mode and unalign:
+            sublime.status_message("Incompatible arguments mode and unalign")
+            return
+        if unalign:
+            toggle_table_mode(view, False)
         if not user_input:
             self.aligned = False
             history.reset_index()
@@ -29,7 +34,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             v = self.view.window().show_input_panel(
                 'Align By RegEx:', last or "",
                 # On Done
-                lambda x: self.on_done(x, mode, live_preview),
+                lambda x: self.on_done(x, mode, live_preview, unalign),
                 # On Change
                 lambda x: self.on_change(x) if live_preview else None,
                 # On Cancel
@@ -42,7 +47,7 @@ class AlignTabCommand(sublime_plugin.TextCommand):
             error = []
             for uinput in user_input:
                 # apply align_tab
-                aligner = Aligner(view, uinput, mode)
+                aligner = Aligner(view, uinput, mode, unalign)
                 self.aligned = aligner.run(edit)
 
                 if self.aligned:
@@ -69,8 +74,8 @@ class AlignTabCommand(sublime_plugin.TextCommand):
         if user_input:
             self.view.run_command("align_tab", {"user_input": user_input, "live_preview": True})
 
-    def on_done(self, user_input, mode, live_preview):
+    def on_done(self, user_input, mode, live_preview, unalign):
         history.insert(user_input)
         # do not double align when done with live preview mode
         if not live_preview:
-            self.view.run_command("align_tab", {"user_input": user_input, "mode": mode})
+            self.view.run_command("align_tab", {"user_input": user_input, "mode": mode, "unalign": unalign})
